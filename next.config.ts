@@ -1,4 +1,6 @@
 import type { NextConfig } from "next";
+// Parses data/resume.json on every `next build` / `next dev`; a malformed edit throws and stops the build.
+import "./src/lib/resume.ts";
 
 const nextConfig: NextConfig = {
   /* config options here */

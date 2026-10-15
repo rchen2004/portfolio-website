@@ -51,5 +51,8 @@
 - **Technologies on mobile:** 10 items laid out as rows of 3, 4, 3, not 3 + 3 + 3 + 1.
 - **Company logos:** Supplied as PNG, at least 80 × 80px.
 - **Theme file ownership:** Frontend owns the Tailwind v4 theme CSS (`globals.css`), as recorded in `CLAUDE.md`.
+- **Assets supplied (in `public/`, not yet committed or wired into `resume.json`):** `Professional.jpg` (hero photo, 2160 × 2880, no EXIF or GPS data), plus company logos `neuscout_logo.jpg` (Scout), `babelstreet_logo.jpg`, `verisk_analytics_logo.jpg` and `ventus.jpg` (Ventus Health), each 100 × 100 JPG.
+- **Hero photo size:** Approved as shown in the preview: 280 × 350px (4:5) beside the text on desktop, full-width 4:3 on mobile. The image must use `height: auto`; otherwise its intrinsic height overrides the aspect ratio and it renders as a tall sliver.
+- **Hero photo crop (approved):** Same box sizes, zoomed in so Ryan fills more of the frame. The values from the preview: the frame is `overflow: hidden`, and the image uses `object-fit: cover`, `object-position: 50% 75%`, `transform: translateY(-8%) scale(1.6)` and `transform-origin: 51% 60%` (about the face). The 8% shift up shows more of the torso. The source has enough resolution: at 1.6× the visible area is about 1350px wide. Frontend may implement it as a pre-cropped copy instead, as long as the result matches.
 - **Visual reference:** `docs/design-preview.html` (a throwaway mockup, approved by the owner as the look and feel for the spec).
 - **Color modes:** One palette, light only. Dark mode is out of scope (removes it from Phase 5).

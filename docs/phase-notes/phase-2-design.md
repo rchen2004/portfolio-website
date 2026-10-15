@@ -368,6 +368,29 @@ I updated `docs/design-spec.md` with the owner's answers to the six open questio
 - **Keyboard `:focus-visible` does not tilt; it gets the ring only.** Rotating the link would rotate its ring, and the ring is the clearer cue.
 - **Tilt only under `@media (hover: hover)`.** Touch browsers can keep a "sticky" hover after a tap, which would leave an icon tilted. The color change stays unconditional.
 
+---
+
+# Step 2 update: final sync before merge (2026-10-15)
+
+## What I did
+- **Nav (§1.2, §1.6, §6.6, §6.8, §9.2, §10, §13):**
+  - "Ryan Chen" is 24px/600 and the links are 20px at every width.
+  - The links have 8px vertical padding, so they are 45px tall.
+  - The rail marker is 32px tall.
+  - The header links are a 2 x 2 grid under 600px, one row from 600 to 1199px, and the rail at 1200px and up.
+- **Photo (§5, §13):**
+  - The file is `public/Professional.jpg` (2160 x 2880). The frame sizes are unchanged and the frame has `overflow: hidden`.
+  - The approved crop: `object-fit: cover`, `object-position: 50% 75%`, `translateY(-8%) scale(1.6)`, origin `51% 60%`, and the required `height: auto`.
+  - `sizes` is raised to 448px / 160vw for the scale. A matching pre-cropped copy is allowed.
+- **Company logos (§6.4, §11, §14):** the supplied 100 x 100 JPGs in `public/`, shown at 40px with a 1px Rule border.
+
+## Files changed
+- `docs/design-spec.md`
+- `docs/phase-notes/phase-2-design.md`
+
+## Open questions
+- None.
+
 ## Files changed
 - `docs/design-spec.md`
 - `docs/phase-notes/phase-2-design.md`

@@ -43,9 +43,11 @@ ul, ol { margin: 0; padding: 0; }
 
 /* Rail (desktop) / plain header (smaller) */
 .rail { padding-block: 28px 8px; display: grid; gap: 10px; }
-.rail .name { font-size: 18px; font-weight: 600; text-decoration: none; }
+.rail .name { font-size: 24px; font-weight: 600; text-decoration: none; }
 .rail ul { list-style: none; display: flex; flex-wrap: wrap; gap: 4px 18px; position: relative; }
-.rail li a { display: inline-block; padding-block: 10px; font-size: 15px; color: var(--pebble); text-decoration: none; }
+.rail li a { display: inline-block; padding-block: 10px; font-size: 20px; color: var(--pebble); text-decoration: none; }
+/* At 20px the four links don't fit one phone row; 2 x 2 avoids a lone "Projects" on row 2 */
+@media (max-width: 599px) { .rail ul { display: grid; grid-template-columns: repeat(2, max-content); column-gap: 28px; } }
 .rail li a[aria-current="true"] { color: var(--charcoal); }
 .rail .marker { display: none; }
 @media (min-width: 1200px) {
@@ -53,7 +55,7 @@ ul, ol { margin: 0; padding: 0; }
   .rail ul { flex-direction: column; gap: 0; padding-left: 15px; }
   .rail li a { padding-block: 7px; }
   .rail .marker {
-    display: block; position: absolute; left: 0; top: 0; width: 3px; height: 26px;
+    display: block; position: absolute; left: 0; top: 0; width: 3px; height: 32px;
     background: var(--accent); border-radius: 2px;
     transform: translateY(var(--y, 7px));
   }

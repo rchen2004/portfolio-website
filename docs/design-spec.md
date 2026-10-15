@@ -53,8 +53,8 @@ There is one light palette and no dark mode. `color-scheme: light`.
 | Meta (title, dates, tech list) | 15px | 15px | 400 | 1.45 | Pebble |
 | Link labels (hero, repo, GitHub) | 15px | 15px | 600 | 1.45 | |
 | Technology name | 15px | 15px | 600 | 1.45 | centered |
-| Rail name | 18px | 18px | 600 | 1.3 | |
-| Rail and header nav links | 15px | 15px | 400 | 1.45 | |
+| Nav name "Ryan Chen" (rail and header) | 24px | 24px | 600 | 1.25 | |
+| Nav section links (rail and header) | 20px | 20px | 400 | 1.45 | |
 | Footer | 14px | 14px | 400 | 1.45 | Pebble |
 
 The root body size is 17px at 720px and up, and 16px below.
@@ -98,7 +98,7 @@ These replace Tailwind's defaults, so only three exist.
 
 | Token | Min width | What changes |
 |---|---|---|
-| `--breakpoint-sm` | 600px (37.5rem) | Technologies grid goes from 3 to 5 columns. |
+| `--breakpoint-sm` | 600px (37.5rem) | Technologies grid goes from rows of 3/4/3 to 5 + 5. Header links go from a 2 x 2 grid to one row. |
 | `--breakpoint-md` | 720px (45rem) | Hero becomes two columns (text, then photo). Desktop type sizes apply. Card text indents past the logo. Card padding goes from 24 to 28. |
 | `--breakpoint-xl` | 1200px (75rem) | The sticky left rail replaces the top header. |
 
@@ -206,15 +206,17 @@ The hero greeting is the page's only h1.
 
 ## 5. Photo
 
-- **Source:** `basics.image` (`src`, `alt` = "Ryan at the Golden Gate Bridge", approved).
-- **Rendering:** `next/image` with `fill` inside an aspect-ratio box, `object-fit: cover` and `priority`. It is the LCP element.
-- **`sizes`:** `(min-width: 720px) 280px, 100vw`.
-- **Crop:**
-  - 4:5 at 720px and up, at 280 x 350.
-  - 4:3 under 720px, at full column width.
-  - The default `object-position` is center. If the face sits off-center, use a focal point (§11).
-- **Shape:** 12px radius, no border, no filter or tint.
-- **The source file:** see `design-directions.md`, "The photo: how to supply and crop it". The face should be near the horizontal center, with key content in the central 60%. Supply at least 1600px on the long edge.
+- **Source:** `basics.image` (`src`, `alt` = "Ryan at the Golden Gate Bridge", approved). The real file is `public/Professional.jpg`, 2160 x 2880 (3:4).
+- **Frame (the box):** 4:5 at 280 x 350 at 720px and up; 4:3 at full column width under 720px. It has a 12px radius and `overflow: hidden`. No border, filter or tint.
+- **Image inside the frame** (the approved crop, matching the preview):
+  - `object-fit: cover`
+  - `object-position: 50% 75%`
+  - `transform: translateY(-8%) scale(1.6)`
+  - `transform-origin: 51% 60%`
+  - **`height: auto`** is required. If the `<img>` has explicit width and height attributes (as `next/image` emits), the intrinsic height otherwise overrides the frame's aspect ratio.
+- **Rendering:** `next/image` with `priority`. It is the LCP element.
+  - `sizes`: `(min-width: 720px) 448px, 160vw`. That is 280px × 1.6 for the scale, so the zoomed image stays sharp.
+- **Pre-cropped alternative:** Frontend may instead export a pre-cropped copy that matches this framing. With it, no transform is needed and fewer bytes are sent. If the pre-crop is used, it must match the approved crop by eye at both aspect ratios.
 - **If `basics.image` is missing:** the hero is text only. The grid collapses to one column and no space is reserved.
 
 ---
@@ -378,7 +380,7 @@ See §4.2. The section has `aria-labelledby` pointing at its h2.
 - **Scout's repo links:** 12px below the highlights, a wrapping row with a 20px gap. They use the labeled link style (§6.1, "Repo and project links") with the 18px outline `brand-github` icon (§6.1 link icons), labels from `links[].label`, and a new tab. Same 54px indent.
 
 **Company logo (box):**
-- 40 x 40, 8px radius, `object-fit: contain`. Supplied by the owner (§11).
+- 40 x 40, 8px radius, a **1px Rule border**, `object-fit: contain`. The files are the owner-supplied **100 x 100 JPGs in `public/`** (§11).
 - Decorative: `alt=""`, because the company name sits right next to it.
 - **If a company has no logo:** the box is omitted for that card and its 54px indent drops to 0. The owner plans to supply all four, so this is a fallback only.
 
@@ -434,15 +436,15 @@ See §4.2. The section has `aria-labelledby` pointing at its h2.
 - `position: sticky`, `top: 0` (plus the safe-area inset), aligned to the start.
 - Padding 56px top and bottom, with a 20px gap between the name and the list.
 
-**Name:** "Ryan Chen" (`basics.name`), 18px/600, Charcoal, no underline. It links to `#top`.
+**Name:** "Ryan Chen" (`basics.name`), 24px/600, Charcoal, no underline. It links to `#top`.
 
 **List:**
 - A vertical list, indented 15px to make room for the marker.
-- Each link is 15px, Pebble, no underline, block-level, with a **minimum height of 44px** (10px vertical padding with the 24px line).
+- Each link is 20px, Pebble, no underline, block-level, with a **minimum height of 44px** (8px vertical padding with the 29px line).
 - The current link is Charcoal and gets `aria-current="true"` (`"location"` is also acceptable). All other links get no `aria-current`.
 
 **Marker:**
-- A 3 x 26px Accent bar with a 2px radius, `aria-hidden`.
+- A 3 x 32px Accent bar with a 2px radius, `aria-hidden`.
 - It is absolutely positioned at the list's left edge and moved with `transform: translateY(...)` so it is centered on the current link.
 - It moves over 200ms with `cubic-bezier(0.2, 0, 0, 1)`.
 
@@ -464,8 +466,10 @@ See §4.2. The section has `aria-labelledby` pointing at its h2.
 
 - The same `<nav>` element as the rail, styled as a plain header above main. **It does not stick.**
 - Padding 28px top and 8px bottom, with a 10px gap between the two rows.
-- **Row 1:** "Ryan Chen", 18px/600, linking to `#top`.
-- **Row 2:** the four links in a wrapping row, with gaps of 4px vertically and 18px horizontally. Each link is 15px Pebble, with a minimum height of 44px (10px vertical padding).
+- **Row 1:** "Ryan Chen", 24px/600, linking to `#top`.
+- **The links:** 20px, Pebble, with a minimum height of 44px (8px vertical padding).
+  - **600 to 1199px:** one row of four, with an 18px gap. The row does not wrap.
+  - **Under 600px:** a **2 x 2 grid** in reading order: About, Technologies / Experience, Projects. Use two equal columns, an 18px column gap and no row gap (the 44px heights already space the rows).
 - **No marker** is shown, but the current link still gets Charcoal and `aria-current`, using the same logic.
 - No hamburger menu.
 
@@ -554,7 +558,7 @@ I calculated the ratios by hand with the WCAG 2.x formula and rounded them down.
 - **Icon contrast:** Charcoal icons are 14.5:1 on Paper; Accent icons on hover are 4.9:1. Both exceed the 3:1 needed for meaningful graphics, which matters here because in the hero row the icon is the only visible cue.
 - **Alignment offset:** the hero row's -10px pull does not shrink any target. The focus ring may draw into the page padding (at least 16px), and it stays fully visible.
 - The summaries are far larger.
-- The rail links need 10px vertical padding. The preview's 7px gives 38px, which is too small (§13).
+- The nav links (20px text, 29px line) need 8px vertical padding to reach 44px (§13).
 
 ### 9.3 Accordion semantics
 
@@ -580,7 +584,8 @@ I calculated the ratios by hand with the WCAG 2.x formula and rounded them down.
 
 | Area | Mobile (under 720px) | Tablet (720 to 1199px) | Desktop (1200px and up) |
 |---|---|---|---|
-| Nav | Header, 2 rows, not sticky | Same as mobile | Sticky 220px rail with marker |
+| Nav | Header, not sticky: name, then links in a 2 x 2 grid (under 600px) | Header, not sticky: name, then links in one row | Sticky 220px rail with a 32px marker |
+| Nav text | Name 24px/600, links 20px | Same | Same |
 | Hero | Photo 4:3 on top, text below | Text with 280px photo at 4:5 | Same as tablet |
 | Hero links | Icon-only: one row of 44px targets, 24px icons, 8px gap, pulled left 10px; tilt on hover only where the device supports hover | Same | Same |
 | Repo and project links | Icon + label | Icon + label | Icon + label |
@@ -601,7 +606,7 @@ Backend owns `data/` and proposes the schema; the owner approves. The field name
 | 1 | Hero greeting | A new string, e.g. `basics.greeting` = "Hello, I'm Ryan." | Required. It must not be hardcoded. |
 | 2 | Instagram profile | Add `{ "network": "Instagram", "url": "https://www.instagram.com/ryan.chen2" }` to `basics.profiles` | Hero order is LinkedIn, GitHub, Instagram. Rec.: render in array order, so put Instagram last. Frontend maps `network` to an icon. |
 | 3 | Curated technologies | A new ordered list, e.g. `technologies: [{ name, icon }]`, where `icon` is a Simple Icons slug or the marker `"database"` for SQL | The 10 entries in the §6.3 order. Validation could reject unknown icon values. |
-| 4 | Company logo per experience | Optional, e.g. `experience[].logo` = a site-root `src` path | Rec.: `src` only, always decorative, because the name sits beside it. If Backend reuses the existing `image` shape (where `alt` is required), it must allow an empty `alt`. Files go in `public/` (Backend owns it). The owner supplies **PNG files, at least 80 x 80px** (2x for the 40px box), ideally square with a transparent background. Render them with `next/image` at 40 x 40. |
+| 4 | Company logo per experience | Optional, e.g. `experience[].logo` = a site-root `src` path | Rec.: `src` only, always decorative, because the name sits beside it. If Backend reuses the existing `image` shape (where `alt` is required), it must allow an empty `alt`. Files go in `public/` (Backend owns it). The owner has supplied **100 x 100 JPGs in `public/`** (more than 2x for the 40px box). Render them with `next/image` at 40 x 40, with a 1px Rule border. |
 | 5 | Photo | Populate the existing `basics.image`: `src` (e.g. `/images/...`) and `alt` "Ryan at the Golden Gate Bridge" | The file comes from the owner. An optional focal point (e.g. `basics.image.position`) is needed only if the face is off-center. |
 | 6 | Remove `featured` | Delete it from `data/schema.ts` and `resume.json` | Nothing renders it. This reverses the Phase 0 and Phase 1 decisions; record it in `decisions.md`. |
 | 7 | Experience sort helper | In `src/lib/`: null `endDate` first, then `endDate` descending, then `startDate` descending as a tie-breaker | Result today: Scout, Babel Street, Verisk, Ventus Health. Frontend opens the first result by default. |
@@ -644,7 +649,8 @@ These are notes, not code.
 |---|---|---|
 | Lucide-style link glyphs with preview optical scales | Tabler outline glyphs; the scales are starting values that Frontend re-tunes by eye at 24px | Lucide no longer ships brand icons, and Tabler's shapes differ |
 | Hero tilt on hover (the preview's exact touch and focus handling not checked) | Tilt only under `(hover: hover)`, never on `:focus-visible`, never under reduced motion | Avoids icons stuck tilted after a tap on touch screens, and keeps the focus ring steady |
-| Rail links with 7px vertical padding (38px tall) | 10px padding (44px or more), marker re-centered | 44px hit areas |
+| Nav links with too little vertical padding for 44px | 8px padding on 20px text (45px tall), with the 32px marker centered | 44px hit areas |
+| Photo `<img>` in the preview | Same crop values, plus `sizes` set for the 1.6 scale, with a pre-cropped file allowed | Keeps the zoomed image sharp; a pre-crop sends fewer bytes |
 | Company name as an h3 inside `<summary>` | Plain text in the summary | Headings inside summaries are announced unreliably by screen readers |
 | One timeline line with a fixed `bottom` | A connector per entry, from dot to next dot | The line overshoots when the last card is open |
 | Email link `title` tooltip with the address | No `title` | Hover-only text isn't available to keyboard or touch users. The address is hidden by owner decision. |
@@ -667,7 +673,7 @@ All six questions were answered by the owner and are recorded in `docs/decisions
 | 2 | Keep or remove `education` and `skills`? | Keep both, unrendered. `technologies` is added alongside them. | §11 |
 | 3 | Shorten `basics.summary`? | No, it stays as is | §4.2 (no change) |
 | 4 | Technologies layout on mobile | Rows of 3, 4 and 3 | §4.3 |
-| 5 | Company logo format | PNG, at least 80 x 80px | §11 #4 |
+| 5 | Company logo format | Originally PNG at least 80 x 80px. Now supplied as 100 x 100 JPGs. | §11 #4, §6.4 |
 | 6 | Who owns the Tailwind v4 theme CSS? | Frontend owns `globals.css` | §0 |
 
 **Closed: the hero-link tablet gap.** The labeled hero row couldn't fit on one line at viewports from 720 to about 850px. The owner resolved this by making the hero links icon-only at every width (§6.1).

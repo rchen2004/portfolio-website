@@ -384,6 +384,28 @@ I updated `docs/design-spec.md` with the owner's answers to the six open questio
   - `sizes` is raised to 448px / 160vw for the scale. A matching pre-cropped copy is allowed.
 - **Company logos (§6.4, §11, §14):** the supplied 100 x 100 JPGs in `public/`, shown at 40px with a 1px Rule border.
 
+---
+
+# Step 2 update: no nav below 1200px (2026-10-15)
+
+## What I did
+- **Removed:** the mobile and tablet header component (former §6.8), its 2 x 2 grid and its one-row variant.
+- **Below 1200px:**
+  - There is no header or nav. The rail is `display: none`, so it also leaves the accessibility tree.
+  - Main opens on the hero with 32px top padding, and visitors scroll.
+- **Desktop rail:** unchanged (24px name, 20px links, 32px bar).
+- **Rail script (§6.6):** gated by `matchMedia("(min-width: 1200px)")`. Its listeners attach only while the query matches and detach on `change`.
+- **Skip link (§6.7):** kept at 1200px and up only, where five rail links come before the content. Below 1200px it is not rendered, because there is nothing to skip.
+- **Full name:** below 1200px, "Ryan Chen" appears only in the footer and `<title>`. The owner accepted this; it is noted in §3.
+- **Also updated:** §1.2 (type scale), §1.3 (main padding), §1.6 (breakpoints), §2, §3 (nav and above the fold), §8, §9.2 and §9.4 (landmarks, keyboard order), §10 and §13. The footer is renumbered to §6.8.
+
+## Files changed
+- `docs/design-spec.md`
+- `docs/phase-notes/phase-2-design.md`
+
+## Open questions
+- None.
+
 ## Files changed
 - `docs/design-spec.md`
 - `docs/phase-notes/phase-2-design.md`

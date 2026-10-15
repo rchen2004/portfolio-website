@@ -53,8 +53,8 @@ There is one light palette and no dark mode. `color-scheme: light`.
 | Meta (title, dates, tech list) | 15px | 15px | 400 | 1.45 | Pebble |
 | Link labels (hero, repo, GitHub) | 15px | 15px | 600 | 1.45 | |
 | Technology name | 15px | 15px | 600 | 1.45 | centered |
-| Nav name "Ryan Chen" (rail and header) | 24px | 24px | 600 | 1.25 | |
-| Nav section links (rail and header) | 20px | 20px | 400 | 1.45 | |
+| Rail name "Ryan Chen" (1200px and up only) | 24px | n/a | 600 | 1.25 | |
+| Rail section links (1200px and up only) | 20px | n/a | 400 | 1.45 | |
 | Footer | 14px | 14px | 400 | 1.45 | Pebble |
 
 The root body size is 17px at 720px and up, and 16px below.
@@ -71,7 +71,7 @@ Named uses:
 |---|---|
 | Page side padding | 16px, or the safe-area inset if that is larger |
 | Gap between sections in main | 72px |
-| Main padding | 16px top (56px at 1200px and up), 80px bottom |
+| Main padding | 32px top (56px at 1200px and up), 80px bottom |
 | Rail-to-content column gap | 60px |
 | Card padding | 28px (24px under 720px) |
 | Gap between timeline items | 24px (20px under 720px) |
@@ -98,9 +98,9 @@ These replace Tailwind's defaults, so only three exist.
 
 | Token | Min width | What changes |
 |---|---|---|
-| `--breakpoint-sm` | 600px (37.5rem) | Technologies grid goes from rows of 3/4/3 to 5 + 5. Header links go from a 2 x 2 grid to one row. |
+| `--breakpoint-sm` | 600px (37.5rem) | Technologies grid goes from rows of 3/4/3 to 5 + 5. |
 | `--breakpoint-md` | 720px (45rem) | Hero becomes two columns (text, then photo). Desktop type sizes apply. Card text indents past the logo. Card padding goes from 24 to 28. |
-| `--breakpoint-xl` | 1200px (75rem) | The sticky left rail replaces the top header. |
+| `--breakpoint-xl` | 1200px (75rem) | The sticky left rail and the skip link appear. Below this width there is no nav at all. |
 
 Naming: "mobile" means under 720px, "tablet" means 720 to 1199px, and "desktop" means 1200px and up.
 
@@ -108,7 +108,7 @@ Naming: "mobile" means under 720px, "tablet" means 720 to 1199px, and "desktop" 
 
 ## 2. Layout grid
 
-- **Below 1200px:** one column, centered, max 1000px wide, with 16px side padding. The nav is a plain header above main (§6.8). Main is max 880px.
+- **Below 1200px:** one column, centered, max 1000px wide, with 16px side padding. There is no nav: main comes first, with 32px top padding, and opens on the hero. Main is max 880px.
 - **1200px and up:** a two-column grid, `220px minmax(0, 1fr)`, with a 60px gap, max 1180px wide and centered. The rail is in column 1 and main in column 2, capped at 880px.
 - **Alignment:** everything is left-aligned except the technology items (centered in their cells).
 - **Line length:** at 17px, an 880px column runs about 95 characters. Long body text is capped so it stays readable:
@@ -121,7 +121,9 @@ Naming: "mobile" means under 720px, "tablet" means 720 to 1199px, and "desktop" 
 
 **Order:** Hero, About, Technologies, Experience, Projects, Footer.
 
-**Nav:** About, Technologies, Experience, Projects. The hero is reached through the "Ryan Chen" name link.
+**Nav (1200px and up only):** About, Technologies, Experience, Projects. The hero is reached through the "Ryan Chen" name link. Below 1200px there is no nav; visitors scroll, and the footer's "Back to top" returns them to the hero.
+
+**Full name below 1200px:** the greeting uses the first name only. "Ryan Chen" then appears only in the footer and the page `<title>` (accepted by the owner).
 
 **Section anchors:**
 
@@ -137,8 +139,8 @@ The hero greeting is the page's only h1.
 
 **Above the fold:**
 - **Desktop (1440 x 900):** the rail, the full hero (greeting, tagline, all five links, the photo at 280 x 350) and the About section. The Technologies heading starts near the bottom edge.
-- **Tablet (768 x 1024):** the header, the full hero, About and most of Technologies.
-- **Mobile (390 x 844):** the header, the photo (4:3), the greeting, the tagline and the row of five icon links. About starts at or just below the fold.
+- **Tablet (768 x 1024):** with no header, the full hero, About and all or most of Technologies.
+- **Mobile (390 x 844):** with no header, the page starts 32px from the top: the photo (4:3), the greeting, the tagline and the row of five icon links. About starts at or just below the fold.
 
 **What a recruiter gets in 30 seconds:**
 1. Name and role: the greeting and tagline.
@@ -455,25 +457,22 @@ See §4.2. The section has `aria-labelledby` pointing at its h2.
 - If the page is scrolled to the bottom (within 4px), the last section (Projects) is current.
 - Before the first section reaches the 35% line, the first link (About) is current.
 - The check runs on scroll (a passive listener), on resize, and on every experience `toggle`.
+- **The script runs only while the rail is shown.**
+  - Gate it with `matchMedia("(min-width: 1200px)")`.
+  - Attach the scroll, resize and `toggle` listeners only while that query matches.
+  - Detach them when it stops matching (listen for the query's `change` event).
+  - Below 1200px, no scroll tracking runs at all.
 
-### 6.7 Skip link
+**Below 1200px the rail is not rendered.** Use `display: none`, so it also leaves the accessibility tree. There is **no header or nav of any kind** on phones and tablets: no top bar and no menu. The page opens straight on the hero and visitors scroll (owner decision).
 
-- The first focusable element on the page: "Skip to content", linking to `#top` (`<main>`).
-- It is visually hidden until focused. When focused, it appears at the top left: White background, Charcoal text, 12px horizontal and 8px vertical padding, the focus ring, at least 44px tall.
-- It is needed because five nav links come before the content.
+### 6.7 Skip link (1200px and up only)
 
-### 6.8 Mobile and tablet header (under 1200px)
+- **On desktop** it is the first focusable element: "Skip to content", linking to `#top` (`<main>`).
+  - It is visually hidden until focused. When focused, it appears at the top left: White background, Charcoal text, 12px horizontal and 8px vertical padding, the focus ring, at least 44px tall.
+  - It exists because the rail's five links (the name and four sections) come before the content.
+- **Below 1200px** it is not rendered (`display: none`). With no nav, `<main>` is already the first content, so a skip link would skip nothing.
 
-- The same `<nav>` element as the rail, styled as a plain header above main. **It does not stick.**
-- Padding 28px top and 8px bottom, with a 10px gap between the two rows.
-- **Row 1:** "Ryan Chen", 24px/600, linking to `#top`.
-- **The links:** 20px, Pebble, with a minimum height of 44px (8px vertical padding).
-  - **600 to 1199px:** one row of four, with an 18px gap. The row does not wrap.
-  - **Under 600px:** a **2 x 2 grid** in reading order: About, Technologies / Experience, Projects. Use two equal columns, an 18px column gap and no row gap (the 44px heights already space the rows).
-- **No marker** is shown, but the current link still gets Charcoal and `aria-current`, using the same logic.
-- No hamburger menu.
-
-### 6.9 Footer
+### 6.8 Footer
 
 See §4.6.
 - **Year:** rendered at build time. It updates on the next deploy, which is acceptable for a static site.
@@ -517,7 +516,7 @@ There is one ambient motion (the timeline reveal), plus state changes and small 
 
 ## 8. Hover and focus rules
 
-- **Focus:** every focusable element shows a 2px Charcoal outline with a 2px offset and 4px rounded corners on `:focus-visible`. This includes links, summaries, the skip link and nav links. Never remove the outline without replacing it.
+- **Focus:** every focusable element shows a 2px Charcoal outline with a 2px offset and 4px rounded corners on `:focus-visible`. This includes links, summaries, and (at 1200px and up) the skip link and rail links. Never remove the outline without replacing it.
 - **Summary focus:** the outline is drawn on the `<summary>`, inside the card padding. Use `outline-offset: 4px` so the ring clears the logo and the text.
 - **Hover is never the only cue.** Links are always underlined, with three exceptions: nav links (identified by their position in the nav), the name link, and the icon-only hero links (identified by their icon glyphs, in a row directly under the tagline). Summaries always show the chevron.
 - **Disabled states:** none exist.
@@ -547,7 +546,7 @@ I calculated the ratios by hand with the WCAG 2.x formula and rounded them down.
 
 ### 9.2 Hit areas
 
-- Every interactive element is at least **44 x 44px**: hero links, repo and GitHub links, nav links (rail and header), the name link, the footer link and the skip link.
+- Every interactive element is at least **44 x 44px**: hero links, repo and GitHub links, the rail's name and section links, the footer link and the skip link.
 - **Icon-only hero links (every width):**
   - Each is exactly 44 x 44px, with 8px between targets.
   - Each keeps its accessible name through the visually hidden label (§6.1).
@@ -576,7 +575,8 @@ I calculated the ratios by hand with the WCAG 2.x formula and rounded them down.
 - **Lists:** Technologies is a `<ul>`, Experience an `<ol>`, Projects a `<ul>`.
 - **Language:** `<html lang="en">`.
 - **New-tab links** announce it with visually hidden text (§6.1).
-- **Keyboard order:** skip link, name, nav links, hero links, summaries (with Scout's repo links when its card is open), project GitHub links, back to top.
+- **Landmarks below 1200px:** there is no nav landmark, only `<main>` and `<footer>`. Screen-reader users move through the sections by their h2 headings.
+- **Keyboard order:** (at 1200px and up) skip link, name, rail links; then, at every width, hero links, summaries (with Scout's repo links when its card is open), project GitHub links, back to top.
 
 ---
 
@@ -584,8 +584,9 @@ I calculated the ratios by hand with the WCAG 2.x formula and rounded them down.
 
 | Area | Mobile (under 720px) | Tablet (720 to 1199px) | Desktop (1200px and up) |
 |---|---|---|---|
-| Nav | Header, not sticky: name, then links in a 2 x 2 grid (under 600px) | Header, not sticky: name, then links in one row | Sticky 220px rail with a 32px marker |
-| Nav text | Name 24px/600, links 20px | Same | Same |
+| Nav | None. Opens on the hero, main has 32px top padding | None (same as mobile) | Sticky 220px rail: name 24px/600, links 20px, 32px marker |
+| Skip link | None | None | On focus |
+| Rail scroll script | Not running | Not running | Running |
 | Hero | Photo 4:3 on top, text below | Text with 280px photo at 4:5 | Same as tablet |
 | Hero links | Icon-only: one row of 44px targets, 24px icons, 8px gap, pulled left 10px; tilt on hover only where the device supports hover | Same | Same |
 | Repo and project links | Icon + label | Icon + label | Icon + label |
@@ -655,7 +656,8 @@ These are notes, not code.
 | One timeline line with a fixed `bottom` | A connector per entry, from dot to next dot | The line overshoots when the last card is open |
 | Email link `title` tooltip with the address | No `title` | Hover-only text isn't available to keyboard or touch users. The address is hidden by owner decision. |
 | Footer inside `<main>` | Footer outside `<main>` | Correct contentinfo landmark |
-| No skip link | Skip link | Five nav links come before the content |
+| No skip link | Skip link at 1200px and up only | Five rail links come before the content on desktop. Below 1200px there is no nav to skip. |
+| Rail script runs at every width | Gated by `matchMedia("(min-width: 1200px)")` | No scroll work when the rail is hidden |
 | No scroll correction when the exclusive accordion closes a card above | Scroll the opened summary into view if it moves off screen | Otherwise a click can push the content out of view |
 | Simple Icons v13 from a CDN, `openjdk` and `css3` | Pinned v16.35.0, inlined, `java` and `css` (Devicon `css3` as the fallback) | Performance; the correct Java logo |
 | `.btn` styles and `.edu` styles | Removed | No button and no Education section |

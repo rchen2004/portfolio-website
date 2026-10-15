@@ -33,6 +33,7 @@
       "startDate": "2026-01",
       "endDate": "2026-06",
       "dateLabel": "Jan - Jun 2026",
+      "featured": true,
       "highlights": [
         "Designed and developed Region of Origin classification feature to improve matching of multi-regional names, including SDK integration, testing, license gating, and packaging",
         "Built a multilingual person-name data pipeline in Python by parsing a Wikidata dump, merging and deduplicating multilingual name records",
@@ -47,6 +48,7 @@
       "startDate": "2025-01",
       "endDate": "2025-06",
       "dateLabel": "Jan - Jun 2025",
+      "featured": true,
       "highlights": [
         "Designed and implemented a modular, reusable Secure Internal API framework — from proof of concept to deployment — standardizing token management and authentication across 10+ services",
         "Contributed to the development of SFPublish, an internal API that facilitates data transfers from S3 to Snowflake, enabling ingestion of JSON-formatted files",
@@ -60,6 +62,11 @@
       "startDate": "2025-09",
       "endDate": null,
       "dateLabel": "Sep 2025 - Present",
+      "links": [
+        { "label": "NUMAC", "url": "https://github.com/Scout-NU/numac" },
+        { "label": "3 Stones App", "url": "https://github.com/Scout-NU/3-Stones-App" },
+        { "label": "3 Stones Web", "url": "https://github.com/Scout-NU/3-stones" }
+      ],
       "highlights": [
         "Co-led development of a React/Tailwind frontend for NUMAC, Northeastern's student marketing consultancy, managing a 3-person junior dev team to build a client-facing project portfolio",
         "Built React-based frontend for 3 Stones, a real-estate startup, implementing mobile application from high-fidelity mockups and landing page with waitlist functionality, serving as the primary user acquisition channel for pre-launch"
@@ -83,6 +90,7 @@
       "startDate": "2025-10",
       "endDate": "2025-12",
       "dateLabel": "Oct - Dec 2025",
+      "links": [{ "label": "GitHub", "url": "https://github.com/rchen2004/CodeStack" }],
       "highlights": [
         "Implemented social networking features including follow/unfollow system with real-time updates via Socket.io, direct messaging with privacy settings, and inline follow buttons on user lists, reducing navigation time by 60%",
         "Developed two-factor authentication with QR code integration and session timeout system with warning modals, while redesigning application UI with centralized CSS variable system to maintain consistent purple gradient theme across 15+ components"
@@ -94,6 +102,7 @@
       "startDate": "2024-03",
       "endDate": "2024-04",
       "dateLabel": "Mar - Apr 2024",
+      "links": [{ "label": "GitHub", "url": "https://github.com/rchen2004/FakebookCrawler" }],
       "highlights": [
         "Created a web crawler in Python, capable of navigating through secure HTTPS connections using SSL, handling session management, and parsing HTML to efficiently extract secret flags from a simulated social media site"
       ]
@@ -104,6 +113,7 @@
       "startDate": "2023-11",
       "endDate": "2023-12",
       "dateLabel": "Nov - Dec 2023",
+      "links": [{ "label": "GitHub", "url": "https://github.com/rchen2004/Reversi" }],
       "highlights": [
         "Developed a feature-rich Java implementation of Reversi on a hexagonal grid, utilizing Swing for a graphical user interface (GUI) and engineering a text-based view; applied advanced design patterns including MVC architecture, observer pattern, strategy pattern, and adapter pattern, ensuring modularity and maintainability of the codebase"
       ]

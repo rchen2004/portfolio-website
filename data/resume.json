@@ -1,0 +1,112 @@
+{
+  "basics": {
+    "name": "Ryan Chen",
+    "tagline": "Software engineer who learns fast, adapts quickly, and loves a hard problem.",
+    "summary": "I'm a Computer Science student at Northeastern, graduating in December 2026. I started programming because of video games, and that curiosity led to co-ops building API frameworks and data pipelines at Verisk and name-matching and search features at Babel Street. Outside of code, I'm usually learning a new board game, trying out a recipe, or out with friends.",
+    "email": "ry.chen2004@gmail.com",
+    "profiles": [
+      { "network": "LinkedIn", "url": "https://linkedin.com/in/chen-ryan1" },
+      { "network": "GitHub", "url": "https://github.com/rchen2004" }
+    ]
+  },
+  "education": [
+    {
+      "institution": "Northeastern University",
+      "location": "Boston, MA",
+      "degree": "Bachelor of Science",
+      "field": "Computer Science",
+      "gpa": "3.6/4.0",
+      "endDate": "2026-12",
+      "dateLabel": "Expected Dec 2026",
+      "honors": ["Dean's List"]
+    }
+  ],
+  "skills": {
+    "languages": ["Java", "Python", "TypeScript", "C++", "SQL", "C#", "HTML", "CSS"],
+    "frameworks": ["React.js", "Next.js", "Tailwind", ".NET", "Angular", "Jupyter", "Pandas", "NumPy", "Scikit-learn", "Swing", "JUnit", "Jest"],
+    "tools": ["Claude", "GitHub Copilot", "Microsoft Copilot", "AWS S3", "AWS Bedrock", "AWS EC2", "Jenkins", "Jira", "MongoDB", "VS Code", "Snowflake", "Git", "GitHub", "Bitbucket", "Confluence", "Postman", "Bamboo", "Elasticsearch", "OpenSearch"]
+  },
+  "experience": [
+    {
+      "company": "Babel Street",
+      "title": "Software Engineer Co-op",
+      "startDate": "2026-01",
+      "endDate": "2026-06",
+      "dateLabel": "Jan - Jun 2026",
+      "highlights": [
+        "Designed and developed Region of Origin classification feature to improve matching of multi-regional names, including SDK integration, testing, license gating, and packaging",
+        "Built a multilingual person-name data pipeline in Python by parsing a Wikidata dump, merging and deduplicating multilingual name records",
+        "Collaborated on an LLM-agent vendor vetting tool at a company hackathon, featuring an agentic workflow with sanctions screening, entity relationship graphing, and risk scoring",
+        "Led Java 25 migration across five repositories; surfaced Solr and OpenSearch Security Manager compatibility blockers that shaped the team's runtime roadmap",
+        "Improved API error-code accuracy on REST API endpoints and back-ported the fix across multiple release branches in both Elasticsearch and OpenSearch plugins"
+      ]
+    },
+    {
+      "company": "Verisk Analytics Inc.",
+      "title": "Junior Software Developer Co-op",
+      "startDate": "2025-01",
+      "endDate": "2025-06",
+      "dateLabel": "Jan - Jun 2025",
+      "highlights": [
+        "Designed and implemented a modular, reusable Secure Internal API framework — from proof of concept to deployment — standardizing token management and authentication across 10+ services",
+        "Contributed to the development of SFPublish, an internal API that facilitates data transfers from S3 to Snowflake, enabling ingestion of JSON-formatted files",
+        "Developed an automated API deployment script and migrated legacy scripts from shell to Python, improving maintainability and deployment speed by 30%",
+        "Built and maintained Snowpipes to automate ingestion of files from S3 into Snowflake for users, supporting a fully operational end-to-end data pipeline"
+      ]
+    },
+    {
+      "company": "Scout",
+      "title": "Senior Developer",
+      "startDate": "2025-09",
+      "endDate": null,
+      "dateLabel": "Sep 2025 - Present",
+      "highlights": [
+        "Co-led development of a React/Tailwind frontend for NUMAC, Northeastern's student marketing consultancy, managing a 3-person junior dev team to build a client-facing project portfolio",
+        "Built React-based frontend for 3 Stones, a real-estate startup, implementing mobile application from high-fidelity mockups and landing page with waitlist functionality, serving as the primary user acquisition channel for pre-launch"
+      ]
+    },
+    {
+      "company": "Ventus Health",
+      "title": "Project Manager Assistant",
+      "startDate": "2024-06",
+      "endDate": "2024-09",
+      "dateLabel": "Jun - Sep 2024",
+      "highlights": [
+        "Collaborated in the design and development of a mobile application aimed at connecting 100+ patients with local healthcare providers, inspired by Zocdoc"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "CodeStack",
+      "technologies": ["React.js", "TypeScript", "MongoDB", "Socket.io", "CSS", "Jest"],
+      "startDate": "2025-10",
+      "endDate": "2025-12",
+      "dateLabel": "Oct - Dec 2025",
+      "highlights": [
+        "Implemented social networking features including follow/unfollow system with real-time updates via Socket.io, direct messaging with privacy settings, and inline follow buttons on user lists, reducing navigation time by 60%",
+        "Developed two-factor authentication with QR code integration and session timeout system with warning modals, while redesigning application UI with centralized CSS variable system to maintain consistent purple gradient theme across 15+ components"
+      ]
+    },
+    {
+      "name": "Fakebook Crawler",
+      "technologies": ["Python", "Git"],
+      "startDate": "2024-03",
+      "endDate": "2024-04",
+      "dateLabel": "Mar - Apr 2024",
+      "highlights": [
+        "Created a web crawler in Python, capable of navigating through secure HTTPS connections using SSL, handling session management, and parsing HTML to efficiently extract secret flags from a simulated social media site"
+      ]
+    },
+    {
+      "name": "Hexagonal Reversi",
+      "technologies": ["Java", "Swing", "Git", "JUnit"],
+      "startDate": "2023-11",
+      "endDate": "2023-12",
+      "dateLabel": "Nov - Dec 2023",
+      "highlights": [
+        "Developed a feature-rich Java implementation of Reversi on a hexagonal grid, utilizing Swing for a graphical user interface (GUI) and engineering a text-based view; applied advanced design patterns including MVC architecture, observer pattern, strategy pattern, and adapter pattern, ensuring modularity and maintainability of the codebase"
+      ]
+    }
+  ]
+}

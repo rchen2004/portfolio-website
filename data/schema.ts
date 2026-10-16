@@ -1,7 +1,9 @@
 import { z } from "zod";
 
 // "YYYY-MM", e.g. "2026-01"
-const yearMonth = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, 'Use "YYYY-MM", e.g. "2026-01"');
+const yearMonth = z
+  .string()
+  .regex(/^\d{4}-(0[1-9]|1[0-2])$/, 'Use "YYYY-MM", e.g. "2026-01"');
 
 const link = z.strictObject({
   label: z.string().min(1),
@@ -10,14 +12,19 @@ const link = z.strictObject({
 
 // src is a site-root path served from public/, e.g. "/images/headshot.jpg"; alt is required for accessibility.
 const image = z.strictObject({
-  src: z.string().regex(/^\/\S+$/, 'Use a site-root path, e.g. "/images/headshot.jpg"'),
+  src: z
+    .string()
+    .regex(/^\/\S+$/, 'Use a site-root path, e.g. "/images/headshot.jpg"'),
   alt: z.string().min(1),
 });
 
 // "YYYY-MM" strings compare correctly as plain strings.
 const endNotBeforeStart = (d: { startDate: string; endDate: string | null }) =>
   d.endDate === null || d.endDate >= d.startDate;
-const endBeforeStartError = { message: "endDate is before startDate", path: ["endDate"] };
+const endBeforeStartError = {
+  message: "endDate is before startDate",
+  path: ["endDate"],
+};
 
 const basics = z.strictObject({
   name: z.string().min(1),
@@ -25,7 +32,9 @@ const basics = z.strictObject({
   summary: z.string().min(1),
   email: z.email(),
   image: image.optional(),
-  profiles: z.array(z.strictObject({ network: z.string().min(1), url: z.url() })),
+  profiles: z.array(
+    z.strictObject({ network: z.string().min(1), url: z.url() }),
+  ),
 });
 
 const education = z.strictObject({

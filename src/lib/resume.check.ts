@@ -1,11 +1,21 @@
 // Self-check for the resume helpers. Run: npm run check:data (plain Node 24, no test framework).
 import assert from "node:assert/strict";
-import { resume, formatDateRange, sortByDate, featuredExperience, compactExperience } from "./resume.ts";
+import {
+  resume,
+  formatDateRange,
+  sortByDate,
+  featuredExperience,
+  compactExperience,
+} from "./resume.ts";
 
 // The derived range must reproduce every existing dateLabel, so the overrides stay optional.
 for (const item of [...resume.experience, ...resume.projects]) {
   if (item.dateLabel !== undefined) {
-    assert.equal(formatDateRange(item.startDate, item.endDate), item.dateLabel, `${"company" in item ? item.company : item.name}`);
+    assert.equal(
+      formatDateRange(item.startDate, item.endDate),
+      item.dateLabel,
+      `${"company" in item ? item.company : item.name}`,
+    );
   }
 }
 
@@ -24,7 +34,13 @@ assert.deepEqual(
   ["2024-01", "2024-04", "2024-02", "2023-01"],
 );
 
-assert.deepEqual(featuredExperience().map((e) => e.company), ["Babel Street", "Verisk Analytics Inc."]);
-assert.deepEqual(compactExperience().map((e) => e.company), ["Scout", "Ventus Health"]);
+assert.deepEqual(
+  featuredExperience().map((e) => e.company),
+  ["Babel Street", "Verisk Analytics Inc."],
+);
+assert.deepEqual(
+  compactExperience().map((e) => e.company),
+  ["Scout", "Ventus Health"],
+);
 
 console.log("resume helpers: all checks passed");

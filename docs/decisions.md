@@ -73,3 +73,5 @@
 - **Formatter (2026-10-16):** Prettier plus `prettier-plugin-tailwindcss` (two dev dependencies, approved).
 - **Vercel project (2026-10-16):** Project name `rchen2004`, so the free URL is `rchen2004.vercel.app` once the owner connects it through the GitHub integration. The owner connects it themselves.
 - **Phone in git history (2026-10-16):** The phone number in old git history is left as is, with no history rewrite. This closes the Phase 1 open question.
+- **Tooling defaults (2026-10-16):** npm (the existing lockfile), GitHub Actions for CI (type-check, lint, format check, `check:data`, build), and Node 24 pinned in `engines` and `.nvmrc`.
+- **Deploys (2026-10-16):** `main` is the production branch. Every other branch and PR gets a preview URL, and previews stay behind Vercel login. The custom domain waits until Phase 7.

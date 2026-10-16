@@ -1,12 +1,18 @@
 {
   "basics": {
     "name": "Ryan Chen",
-    "tagline": "Software engineer who learns fast, adapts quickly, and loves a hard problem.",
+    "tagline": "Software engineer who learns fast, adapts quickly, and loves a challenging problem.",
     "summary": "I'm a Computer Science student at Northeastern, graduating in December 2026. I started programming because of video games, and that curiosity led to co-ops building API frameworks and data pipelines at Verisk and name-matching and search features at Babel Street. Outside of code, I'm usually learning a new board game, trying out a recipe, or out with friends.",
     "email": "ry.chen2004@gmail.com",
     "profiles": [
-      { "network": "LinkedIn", "url": "https://linkedin.com/in/chen-ryan1" },
-      { "network": "GitHub", "url": "https://github.com/rchen2004" }
+      {
+        "network": "LinkedIn",
+        "url": "https://linkedin.com/in/chen-ryan1"
+      },
+      {
+        "network": "GitHub",
+        "url": "https://github.com/rchen2004"
+      }
     ]
   },
   "education": [
@@ -18,13 +24,55 @@
       "gpa": "3.6/4.0",
       "endDate": "2026-12",
       "dateLabel": "Expected Dec 2026",
-      "honors": ["Dean's List"]
+      "honors": [
+        "Dean's List"
+      ]
     }
   ],
   "skills": {
-    "languages": ["Java", "Python", "TypeScript", "C++", "SQL", "C#", "HTML", "CSS"],
-    "frameworks": ["React.js", "Next.js", "Tailwind", ".NET", "Angular", "Jupyter", "Pandas", "NumPy", "Scikit-learn", "Swing", "JUnit", "Jest"],
-    "tools": ["Claude", "GitHub Copilot", "Microsoft Copilot", "AWS S3", "AWS Bedrock", "AWS EC2", "Jenkins", "Jira", "MongoDB", "VS Code", "Snowflake", "Git", "GitHub", "Bitbucket", "Confluence", "Postman", "Bamboo", "Elasticsearch", "OpenSearch"]
+    "languages": [
+      "Java",
+      "Python",
+      "TypeScript",
+      "JavaScript",
+      "SQL",
+      "C++",
+      "HTML",
+      "CSS"
+    ],
+    "frameworks": [
+      "React.js",
+      "Next.js",
+      "Node.js",
+      "Express",
+      "Tailwind",
+      "Socket.io",
+      "Pandas",
+      "NumPy",
+      "JUnit",
+      "Jest"
+    ],
+    "tools": [
+      "Claude Code",
+      "GitHub Copilot",
+      "AWS S3",
+      "AWS Bedrock",
+      "AWS EC2",
+      "Docker",
+      "Jenkins",
+      "Jira",
+      "MongoDB",
+      "VS Code",
+      "Snowflake",
+      "Git",
+      "GitHub",
+      "Bitbucket",
+      "Confluence",
+      "Postman",
+      "Bamboo",
+      "Elasticsearch",
+      "OpenSearch"
+    ]
   },
   "experience": [
     {
@@ -35,11 +83,12 @@
       "dateLabel": "Jan - Jun 2026",
       "featured": true,
       "highlights": [
-        "Designed and developed Region of Origin classification feature to improve matching of multi-regional names, including SDK integration, testing, license gating, and packaging",
-        "Built a multilingual person-name data pipeline in Python by parsing a Wikidata dump, merging and deduplicating multilingual name records",
-        "Collaborated on an LLM-agent vendor vetting tool at a company hackathon, featuring an agentic workflow with sanctions screening, entity relationship graphing, and risk scoring",
-        "Led Java 25 migration across five repositories; surfaced Solr and OpenSearch Security Manager compatibility blockers that shaped the team's runtime roadmap",
-        "Improved API error-code accuracy on REST API endpoints and back-ported the fix across multiple release branches in both Elasticsearch and OpenSearch plugins"
+        "Shipped a Region-of-Origin classifier answering an enterprise customer's top accuracy complaint, validated on 600 multi-regional names, by building its SDK endpoint, CLI, ranked top-k predictions, and license gating",
+        "Fixed 4 customer-reported name-matching defects, including a cross-script false 100% match and a numeric leet-speak crash, by tracing normalization logic in the Java engine and adding regression tests",
+        "Produced multilingual person-name dictionaries of roughly 100K records in 13 languages by building Python pipelines that parse the Wikidata dump, merge OFAC-translated lists, filter by script, and deduplicate entries",
+        "Migrated 5 repositories to Java 25, including both search plugins, by updating builds, Docker images, and Jenkins CI/CD, surfacing Solr and OpenSearch Security Manager blockers that shaped the team's runtime roadmap",
+        "Corrected HTTP status codes on dynamic-config REST endpoints from 500 to 400/422 by remapping exception handling and adding integration tests, then back-ported to 5 Elasticsearch and OpenSearch release branches",
+        "Placed 2nd of 8+ teams at a company hackathon by building the OFAC sanctions-screening tool for an LLM-agent vendor-vetting workflow with entity relationship graphing and risk scoring"
       ]
     },
     {
@@ -50,10 +99,10 @@
       "dateLabel": "Jan - Jun 2025",
       "featured": true,
       "highlights": [
-        "Designed and implemented a modular, reusable Secure Internal API framework — from proof of concept to deployment — standardizing token management and authentication across 10+ services",
-        "Contributed to the development of SFPublish, an internal API that facilitates data transfers from S3 to Snowflake, enabling ingestion of JSON-formatted files",
-        "Developed an automated API deployment script and migrated legacy scripts from shell to Python, improving maintainability and deployment speed by 30%",
-        "Built and maintained Snowpipes to automate ingestion of files from S3 into Snowflake for users, supporting a fully operational end-to-end data pipeline"
+        "Standardized token management and authentication across 10+ internal services by designing a modular, reusable Secure Internal API framework and owning it from proof of concept through production deployment",
+        "Extended SFPublish, an internal S3-to-Snowflake API, from CSV-only to JSON ingestion by designing the SQL schema and delimiter configuration on the existing parser, so teams could publish JSON without conversion",
+        "Cut per-endpoint API deployment time by 30% by writing a Python deployment script that stores base endpoints and login credentials, and migrated legacy shell scripts to Python for maintainability",
+        "Automated customer data ingestion into Snowflake by building an event-driven Snowpipe pipeline from S3, defining the expected data schema, and validating that uploaded files auto-created and populated tables"
       ]
     },
     {
@@ -63,13 +112,23 @@
       "endDate": null,
       "dateLabel": "Sep 2025 - Present",
       "links": [
-        { "label": "NUMAC", "url": "https://github.com/Scout-NU/numac" },
-        { "label": "3 Stones App", "url": "https://github.com/Scout-NU/3-Stones-App" },
-        { "label": "3 Stones Web", "url": "https://github.com/Scout-NU/3-stones" }
+        {
+          "label": "NUMAC",
+          "url": "https://github.com/Scout-NU/numac"
+        },
+        {
+          "label": "3 Stones App",
+          "url": "https://github.com/Scout-NU/3-Stones-App"
+        },
+        {
+          "label": "3 Stones Web",
+          "url": "https://github.com/Scout-NU/3-stones"
+        }
       ],
       "highlights": [
-        "Co-led development of a React/Tailwind frontend for NUMAC, Northeastern's student marketing consultancy, managing a 3-person junior dev team to build a client-facing project portfolio",
-        "Built React-based frontend for 3 Stones, a real-estate startup, implementing mobile application from high-fidelity mockups and landing page with waitlist functionality, serving as the primary user acquisition channel for pre-launch"
+        "Co-led a 3-dev team building a React/Tailwind client portfolio site for NUMAC, a student marketing consultancy",
+        "Built a React mobile app and landing page from high-fidelity designs for 3 Stones, a pre-launch real-estate startup",
+        "Redesigning the Shopify storefront for Purely Puff'd Up, a small-business client (in progress)"
       ]
     },
     {
@@ -79,41 +138,73 @@
       "endDate": "2024-09",
       "dateLabel": "Jun - Sep 2024",
       "highlights": [
-        "Collaborated in the design and development of a mobile application aimed at connecting 100+ patients with local healthcare providers, inspired by Zocdoc"
+        "Designed the landing page and contact form for a Zocdoc-style patient booking app based on competitor research"
       ]
     }
   ],
   "projects": [
     {
       "name": "CodeStack",
-      "technologies": ["React.js", "TypeScript", "MongoDB", "Socket.io", "CSS", "Jest"],
+      "technologies": [
+        "React.js",
+        "TypeScript",
+        "Node.js",
+        "Express",
+        "MongoDB",
+        "Socket.io",
+        "Jest"
+      ],
       "startDate": "2025-10",
       "endDate": "2025-12",
       "dateLabel": "Oct - Dec 2025",
-      "links": [{ "label": "GitHub", "url": "https://github.com/rchen2004/CodeStack" }],
+      "links": [
+        {
+          "label": "GitHub",
+          "url": "https://github.com/rchen2004/CodeStack"
+        }
+      ],
       "highlights": [
-        "Implemented social networking features including follow/unfollow system with real-time updates via Socket.io, direct messaging with privacy settings, and inline follow buttons on user lists, reducing navigation time by 60%",
-        "Developed two-factor authentication with QR code integration and session timeout system with warning modals, while redesigning application UI with centralized CSS variable system to maintain consistent purple gradient theme across 15+ components"
+        "Cut the steps to follow a user by 75% (4 to 1) by adding inline follow buttons on user lists, alongside a real-time follow/unfollow system over Socket.io and direct messaging with per-user privacy settings",
+        "Implemented two-factor authentication with QR-code enrollment and session timeouts with warning modals",
+        "Unified styling across 15+ components by replacing ad hoc styles with a centralized CSS variable theme system"
       ]
     },
     {
       "name": "Fakebook Crawler",
-      "technologies": ["Python", "Git"],
+      "technologies": [
+        "Python",
+        "Git"
+      ],
       "startDate": "2024-03",
       "endDate": "2024-04",
       "dateLabel": "Mar - Apr 2024",
-      "links": [{ "label": "GitHub", "url": "https://github.com/rchen2004/FakebookCrawler" }],
+      "links": [
+        {
+          "label": "GitHub",
+          "url": "https://github.com/rchen2004/FakebookCrawler"
+        }
+      ],
       "highlights": [
         "Created a web crawler in Python, capable of navigating through secure HTTPS connections using SSL, handling session management, and parsing HTML to efficiently extract secret flags from a simulated social media site"
       ]
     },
     {
       "name": "Hexagonal Reversi",
-      "technologies": ["Java", "Swing", "Git", "JUnit"],
+      "technologies": [
+        "Java",
+        "Swing",
+        "Git",
+        "JUnit"
+      ],
       "startDate": "2023-11",
       "endDate": "2023-12",
       "dateLabel": "Nov - Dec 2023",
-      "links": [{ "label": "GitHub", "url": "https://github.com/rchen2004/Reversi" }],
+      "links": [
+        {
+          "label": "GitHub",
+          "url": "https://github.com/rchen2004/Reversi"
+        }
+      ],
       "highlights": [
         "Developed a feature-rich Java implementation of Reversi on a hexagonal grid, utilizing Swing for a graphical user interface (GUI) and engineering a text-based view; applied advanced design patterns including MVC architecture, observer pattern, strategy pattern, and adapter pattern, ensuring modularity and maintainability of the codebase"
       ]

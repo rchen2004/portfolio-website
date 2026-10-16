@@ -1,0 +1,405 @@
+<title>Ryan Chen Portfolio Preview</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&display=swap">
+<style>
+/* Direction D, Arrangement 1: sticky left rail (>=1200px) + one 680px column; single light palette by owner decision */
+:root {
+  --paper: #F4F3F0;
+  --white: #FFFFFF;
+  --charcoal: #24201D;
+  --pebble: #5E5751;
+  --accent: #C0362C;
+  --accent-deep: #A02D24;
+  --rule: #DAD6D0;
+  --font: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-padding-top: 24px; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+body {
+  background: var(--paper); color: var(--charcoal);
+  font-family: var(--font); font-size: 17px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--charcoal); outline-offset: 2px; border-radius: 4px; }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+ul, ol { margin: 0; padding: 0; }
+
+.note {
+  max-width: 1000px; margin: 16px auto 0; padding: 10px 14px;
+  border: 1px dashed var(--rule); border-radius: 8px;
+  font-size: 14px; line-height: 1.45; color: var(--pebble);
+}
+
+.shell { max-width: 1000px; margin: 0 auto; display: grid; gap: 0; }
+@media (min-width: 1200px) {
+  .shell { grid-template-columns: 220px minmax(0, 1fr); column-gap: 60px; max-width: 1180px; }
+}
+
+/* Rail (desktop) / plain header (smaller) */
+.rail { padding-block: 28px 8px; display: grid; gap: 10px; }
+.rail .name { font-size: 24px; font-weight: 600; text-decoration: none; }
+.rail ul { list-style: none; display: flex; flex-wrap: wrap; gap: 4px 18px; position: relative; }
+.rail li a { display: inline-block; padding-block: 10px; font-size: 20px; color: var(--pebble); text-decoration: none; }
+/* Below desktop: no header at all; the page opens straight on the hero */
+@media (max-width: 1199px) { .rail { display: none; } main { padding-top: 32px; } }
+.rail li a[aria-current="true"] { color: var(--charcoal); }
+.rail .marker { display: none; }
+@media (min-width: 1200px) {
+  .rail { position: sticky; top: env(safe-area-inset-top, 0px); align-self: start; padding-block: 56px; gap: 20px; }
+  .rail ul { flex-direction: column; gap: 0; padding-left: 15px; }
+  .rail li a { padding-block: 7px; }
+  .rail .marker {
+    display: block; position: absolute; left: 0; top: 0; width: 3px; height: 32px;
+    background: var(--accent); border-radius: 2px;
+    transform: translateY(var(--y, 7px));
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .rail .marker { transition: transform 200ms cubic-bezier(0.2, 0, 0, 1); }
+  }
+}
+
+main { min-width: 0; max-width: 880px; padding-block: 16px 80px; display: grid; gap: 72px; }
+@media (min-width: 1200px) { main { padding-top: 56px; } }
+section > h2 { font-size: 24px; line-height: 1.25; margin-bottom: 24px; }
+
+/* Hero */
+.hero { display: grid; gap: 24px; }
+@media (min-width: 720px) { .hero { grid-template-columns: minmax(0, 1fr) 280px; gap: 40px; align-items: start; } }
+.hero-text { display: grid; gap: 20px; min-width: 0; }
+.hero h1 { font-size: 48px; line-height: 1.1; letter-spacing: -0.015em; font-weight: 700; }
+.tagline { margin: 0; font-size: 24px; line-height: 1.35; }
+/* Subject sits low in the source (face ~64% down), so anchor the crop low */
+.photo { aspect-ratio: 4 / 3; width: 100%; max-width: 100%; border-radius: 12px; overflow: hidden; background: var(--rule); }
+/* Zoom: scale about the face (~51% across, ~60% down the frame) so the box size stays fixed */
+.photo img {
+  width: 100%; height: 100%; display: block; object-fit: cover; object-position: 50% 75%;
+  transform: translateY(-8%) scale(1.6); transform-origin: 51% 60%;
+}
+@media (min-width: 720px) { .photo { aspect-ratio: 4 / 5; grid-column: 2; grid-row: 1; } .hero-text { grid-row: 1; } }
+@media (max-width: 719px) { .photo { order: -1; } .hero h1 { font-size: 36px; } .tagline { font-size: 21px; } }
+
+.email { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; font-size: 17px; width: fit-content; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 22px; }
+/* Hero links are icon-only 44px targets at every width; labels stay for screen readers */
+/* Pulled left by (44 - 24) / 2 so the first glyph lines up with the text above */
+.actions { flex-wrap: nowrap; gap: 8px; margin-left: -10px; }
+.actions .icon-link { position: relative; width: 44px; height: 44px; justify-content: center; text-decoration: none; }
+.actions .icon-link:hover { color: var(--accent); }
+@media (prefers-reduced-motion: no-preference) {
+  .actions .icon-link { transition: transform 160ms cubic-bezier(0.2, 0, 0, 1), color 120ms; }
+  .actions .icon-link:hover { transform: rotate(-6deg); }
+}
+.actions .ico { width: 24px; height: 24px; }
+.actions .lbl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.btn {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0 20px; border-radius: 8px;
+  background: var(--accent); color: var(--white); font-weight: 600; font-size: 15px; text-decoration: none;
+  transition: background-color 120ms;
+}
+.btn:hover { background: var(--accent-deep); }
+.btn.secondary { background: var(--white); color: var(--charcoal); border: 1.5px solid var(--accent); gap: 8px; }
+.btn.secondary:hover { background: var(--paper); }
+.about-compact { display: grid; gap: 8px; max-width: 68ch; }
+.about-compact h2 { font-size: 15px; font-weight: 600; color: var(--pebble); margin: 0; }
+.about-compact p { margin: 0; font-size: 16px; line-height: 1.55; }
+.ulink {
+  text-decoration: underline; text-decoration-color: var(--accent);
+  text-decoration-thickness: 1px; text-underline-offset: 4px;
+  transition: color 120ms, text-decoration-thickness 120ms;
+}
+.ulink:hover { color: var(--accent); text-decoration-thickness: 2px; }
+.icon-link { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 15px; font-weight: 600; }
+/* One outline icon style for every link: same box, same stroke, no inline wrapper */
+.ico { width: 18px; height: 18px; flex: none; display: block; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+/* Optical sizing: each glyph is scaled about the centre so all read the same size; stroke stays constant */
+.ico * { vector-effect: non-scaling-stroke; }
+
+/* About */
+.about p { margin: 0; max-width: 65ch; }
+
+/* Timeline */
+.timeline { list-style: none; position: relative; display: grid; gap: 24px; padding-left: 48px; }
+.timeline::before {
+  content: ""; position: absolute; left: 5px; top: 48px; bottom: 48px; width: 2px; background: var(--rule);
+}
+.entry { position: relative; }
+.dot {
+  position: absolute; left: -48px; top: 42px; width: 12px; height: 12px; border-radius: 50%; background: var(--charcoal);
+}
+.card {
+  background: var(--white); border: 1px solid var(--rule); border-radius: 12px; padding: 28px; min-width: 0;
+}
+.card-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 16px; }
+.card h3 { font-size: 21px; line-height: 1.3; font-weight: 600; }
+.co { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.co-logo { width: 40px; height: 40px; flex: none; display: block; border-radius: 8px; border: 1px solid var(--rule); object-fit: cover; }
+.timeline .card-head { align-items: center; }
+.timeline .card .meta.sub { margin-left: 54px; }
+.timeline .card ul.hl, .timeline .card .links { margin-left: 54px; }
+@media (max-width: 719px) { .timeline .card .meta.sub, .timeline .card ul.hl, .timeline .card .links { margin-left: 0; } }
+.meta { font-size: 15px; line-height: 1.45; color: var(--pebble); }
+.card .meta.sub { margin-top: 2px; }
+.card ul.hl { margin-top: 16px; padding-left: 20px; display: grid; gap: 8px; }
+.card ul.hl li::marker { color: var(--pebble); }
+.card .links { display: flex; flex-wrap: wrap; gap: 0 20px; margin-top: 12px; }
+@media (max-width: 719px) {
+  .timeline { padding-left: 36px; gap: 20px; }
+  .dot { left: -36px; top: 38px; }
+  .timeline::before { top: 44px; bottom: 44px; }
+  .card { padding: 24px; }
+  .card h3 { font-size: 18px; }
+  body { font-size: 16px; }
+}
+
+/* Reveal: CSS default is visible; JS opts below-the-fold cards in only when motion is allowed */
+.entry.pending { opacity: 0; transform: translateY(12px); }
+.entry.shown { transition: opacity 320ms cubic-bezier(0.22, 1, 0.36, 1), transform 320ms cubic-bezier(0.22, 1, 0.36, 1); }
+
+/* Projects */
+.projects { list-style: none; display: grid; gap: 20px; }
+
+/* Technologies */
+.tech { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 16px; }
+@media (min-width: 600px) { .tech { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+@media (min-width: 1200px) { .tech { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+.tech li { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; font-size: 15px; font-weight: 600; min-width: 0; }
+.tech .logo { width: 36px; height: 36px; flex: none; display: grid; place-items: center; }
+.tech .logo svg { width: 36px; height: 36px; }
+.tech .mono {
+  width: 36px; height: 36px; border-radius: 5px; border: 1.5px solid var(--charcoal);
+  font-size: 9px; font-weight: 700; display: grid; place-items: center; letter-spacing: -0.02em;
+}
+
+/* Education */
+.edu .card-head h3 { font-size: 21px; }
+.edu p { margin: 8px 0 0; }
+
+footer { font-size: 14px; color: var(--pebble); padding-block: 24px 32px; border-top: 1px solid var(--rule); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 16px; }
+footer a { min-height: 44px; display: inline-flex; align-items: center; }
+
+/* Experience dropdowns (native details/summary: keyboard + screen-reader support for free) */
+.timeline summary { list-style: none; cursor: pointer; }
+.timeline summary::-webkit-details-marker { display: none; }
+.timeline .card-head::after {
+  content: ""; width: 9px; height: 9px; flex: none; margin-left: 4px;
+  border-right: 2px solid var(--pebble); border-bottom: 2px solid var(--pebble);
+  transform: rotate(45deg) translateY(-3px);
+}
+.timeline details[open] .card-head::after { transform: rotate(-135deg) translateY(-1px); }
+.timeline summary:hover h3 { color: var(--accent); }
+.entry:has(> details[open]) .dot {
+  background: var(--accent);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dot { transition: background-color 200ms, box-shadow 200ms; }
+}
+.timeline .card-head .meta { margin-left: auto; }
+@media (prefers-reduced-motion: no-preference) {
+  .timeline .card-head::after { transition: transform 200ms cubic-bezier(0.2, 0, 0, 1); }
+  .timeline summary h3 { transition: color 120ms; }
+}
+</style>
+
+<p class="note"><strong>Preview only.</strong> This is a mockup of Direction D (Arrangement 1) for the look and feel, not the real site. The photo and company logos are the real files. Logos load from Simple Icons when available, with plain letter tiles as a fallback. Widen the window past 1200px to see the sticky left rail.</p>
+
+<div class="shell">
+  <nav class="rail" aria-label="Sections">
+    <a class="name" href="#top">Ryan Chen</a>
+    <ul>
+      <span class="marker" aria-hidden="true"></span>
+      <li><a href="#about">About</a></li>
+      <li><a href="#technologies">Technologies</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#projects">Projects</a></li>
+    </ul>
+  </nav>
+
+  <main id="top">
+    <header class="hero">
+      <div class="hero-text">
+        <h1>Hello, I'm Ryan.</h1>
+        <p class="tagline">Software engineer who learns fast, adapts quickly, and loves a hard problem.</p>
+        <div class="actions">
+          <a class="icon-link ulink" href="#" title="Opens /resume.pdf in a new tab on the real site"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><g transform="translate(12 12) scale(0.95) translate(-12 -12)"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></g></svg><span class="lbl">Resume</span></a>
+          <a class="icon-link ulink" href="mailto:ry.chen2004@gmail.com"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><span class="lbl">Email</span></a>
+          <a class="icon-link ulink" href="https://linkedin.com/in/chen-ryan1" target="_blank" rel="noopener"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><g transform="translate(12 12) scale(0.85) translate(-12 -12)"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></g></svg><span class="lbl">LinkedIn</span></a>
+          <a class="icon-link ulink" href="https://github.com/rchen2004" target="_blank" rel="noopener"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><g transform="translate(12 12) scale(0.88) translate(-12 -12)"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg><span class="lbl">GitHub</span></a>
+          <a class="icon-link ulink" href="https://www.instagram.com/ryan.chen2" target="_blank" rel="noopener"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><g transform="translate(12 12) scale(0.82) translate(-12 -12)"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><path d="M17.5 6.5h.01"/></g></svg><span class="lbl">Instagram</span></a>
+        </div>
+      </div>
+      <div class="photo"><img src="../public/Professional.jpg" alt="Ryan at the Golden Gate Bridge" width="2160" height="2880"></div>
+    </header>
+
+    <section id="about" class="about-compact" aria-labelledby="about-h">
+      <h2 id="about-h">About</h2>
+      <p>I'm a Computer Science student at Northeastern, graduating in December 2026. I started programming because of video games, and that curiosity led to co-ops building API frameworks and data pipelines at Verisk and name-matching and search features at Babel Street. Outside of code, I'm usually learning a new board game, trying out a recipe, or out with friends.</p>
+    </section>
+
+    <section id="technologies" aria-labelledby="tech-h">
+      <h2 id="tech-h">Technologies</h2>
+      <ul class="tech">
+        <li><span class="logo si" data-icon="openjdk" data-fallback="J"></span>Java</li>
+        <li><span class="logo si" data-icon="python" data-fallback="Py"></span>Python</li>
+        <li><span class="logo si" data-icon="typescript" data-fallback="TS"></span>TypeScript</li>
+        <li><span class="logo si" data-icon="cplusplus" data-fallback="C++"></span>C++</li>
+        <li><span class="logo si" data-icon="html5" data-fallback="H"></span>HTML</li>
+        <li><span class="logo si" data-icon="css3" data-fallback="C"></span>CSS</li>
+        <li><span class="logo"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg></span>SQL</li>
+        <li><span class="logo si" data-icon="react" data-fallback="R"></span>React.js</li>
+        <li><span class="logo si" data-icon="tailwindcss" data-fallback="Tw"></span>Tailwind</li>
+        <li><span class="logo si" data-icon="nextdotjs" data-fallback="N"></span>Next.js</li>
+      </ul>
+    </section>
+
+    <section id="experience" aria-labelledby="exp-h">
+      <h2 id="exp-h">Experience</h2>
+      <ol class="timeline">
+        <li class="entry"><span class="dot" aria-hidden="true"></span><details class="card" name="experience" open><summary>
+          <div class="card-head"><div class="co"><img class="co-logo" src="../public/neuscout_logo.jpg" alt="" width="100" height="100"><h3>Scout</h3></div><span class="meta">Sep 2025 - Present</span></div>
+          <div class="meta sub">Senior Developer</div></summary>
+          <ul class="hl">
+            <li>Co-led development of a React/Tailwind frontend for NUMAC, Northeastern's student marketing consultancy, managing a 3-person junior dev team to build a client-facing project portfolio</li>
+            <li>Built React-based frontend for 3 Stones, a real-estate startup, implementing mobile application from high-fidelity mockups and landing page with waitlist functionality, serving as the primary user acquisition channel for pre-launch</li>
+          </ul>
+          <div class="links">
+            <a class="icon-link ulink" href="https://github.com/Scout-NU/numac" target="_blank" rel="noopener"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><g transform="translate(12 12) scale(0.88) translate(-12 -12)"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>NUMAC</a>
+            <a class="icon-link ulink" href="https://github.com/Scout-NU/3-Stones-App" target="_blank" rel="noopener"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><g transform="translate(12 12) scale(0.88) translate(-12 -12)"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>3 Stones App</a>
+            <a class="icon-link ulink" href="https://github.com/Scout-NU/3-stones" target="_blank" rel="noopener"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><g transform="translate(12 12) scale(0.88) translate(-12 -12)"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>3 Stones Web</a>
+          </div>
+        </details></li>
+        <li class="entry"><span class="dot" aria-hidden="true"></span><details class="card" name="experience"><summary>
+          <div class="card-head"><div class="co"><img class="co-logo" src="../public/babelstreet_logo.jpg" alt="" width="100" height="100"><h3>Babel Street</h3></div><span class="meta">Jan - Jun 2026</span></div>
+          <div class="meta sub">Software Engineer Co-op</div></summary>
+          <ul class="hl">
+            <li>Designed and developed Region of Origin classification feature to improve matching of multi-regional names, including SDK integration, testing, license gating, and packaging</li>
+            <li>Built a multilingual person-name data pipeline in Python by parsing a Wikidata dump, merging and deduplicating multilingual name records</li>
+            <li>Collaborated on an LLM-agent vendor vetting tool at a company hackathon, featuring an agentic workflow with sanctions screening, entity relationship graphing, and risk scoring</li>
+            <li>Led Java 25 migration across five repositories; surfaced Solr and OpenSearch Security Manager compatibility blockers that shaped the team's runtime roadmap</li>
+            <li>Improved API error-code accuracy on REST API endpoints and back-ported the fix across multiple release branches in both Elasticsearch and OpenSearch plugins</li>
+          </ul>
+        </details></li>
+        <li class="entry"><span class="dot" aria-hidden="true"></span><details class="card" name="experience"><summary>
+          <div class="card-head"><div class="co"><img class="co-logo" src="../public/verisk_analytics_logo.jpg" alt="" width="100" height="100"><h3>Verisk Analytics Inc.</h3></div><span class="meta">Jan - Jun 2025</span></div>
+          <div class="meta sub">Junior Software Developer Co-op</div></summary>
+          <ul class="hl">
+            <li>Designed and implemented a modular, reusable Secure Internal API framework — from proof of concept to deployment — standardizing token management and authentication across 10+ services</li>
+            <li>Contributed to the development of SFPublish, an internal API that facilitates data transfers from S3 to Snowflake, enabling ingestion of JSON-formatted files</li>
+            <li>Developed an automated API deployment script and migrated legacy scripts from shell to Python, improving maintainability and deployment speed by 30%</li>
+            <li>Built and maintained Snowpipes to automate ingestion of files from S3 into Snowflake for users, supporting a fully operational end-to-end data pipeline</li>
+          </ul>
+        </details></li>
+        <li class="entry"><span class="dot" aria-hidden="true"></span><details class="card" name="experience"><summary>
+          <div class="card-head"><div class="co"><img class="co-logo" src="../public/ventus.jpg" alt="" width="100" height="100"><h3>Ventus Health</h3></div><span class="meta">Jun - Sep 2024</span></div>
+          <div class="meta sub">Project Manager Assistant</div></summary>
+          <ul class="hl">
+            <li>Collaborated in the design and development of a mobile application aimed at connecting 100+ patients with local healthcare providers, inspired by Zocdoc</li>
+          </ul>
+        </details></li>
+      </ol>
+    </section>
+
+    <section id="projects" aria-labelledby="proj-h">
+      <h2 id="proj-h">Projects</h2>
+      <ul class="projects">
+        <li><article class="card">
+          <div class="card-head"><h3>CodeStack</h3><span class="meta">Oct - Dec 2025</span></div>
+          <div class="meta sub">React.js, TypeScript, MongoDB, Socket.io, CSS, Jest</div>
+          <ul class="hl">
+            <li>Implemented social networking features including follow/unfollow system with real-time updates via Socket.io, direct messaging with privacy settings, and inline follow buttons on user lists, reducing navigation time by 60%</li>
+            <li>Developed two-factor authentication with QR code integration and session timeout system with warning modals, while redesigning application UI with centralized CSS variable system to maintain consistent purple gradient theme across 15+ components</li>
+          </ul>
+          <div class="links"><a class="icon-link ulink" href="https://github.com/rchen2004/CodeStack" target="_blank" rel="noopener"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><g transform="translate(12 12) scale(0.88) translate(-12 -12)"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>GitHub</a></div>
+        </article></li>
+        <li><article class="card">
+          <div class="card-head"><h3>Fakebook Crawler</h3><span class="meta">Mar - Apr 2024</span></div>
+          <div class="meta sub">Python, Git</div>
+          <ul class="hl">
+            <li>Created a web crawler in Python, capable of navigating through secure HTTPS connections using SSL, handling session management, and parsing HTML to efficiently extract secret flags from a simulated social media site</li>
+          </ul>
+          <div class="links"><a class="icon-link ulink" href="https://github.com/rchen2004/FakebookCrawler" target="_blank" rel="noopener"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><g transform="translate(12 12) scale(0.88) translate(-12 -12)"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>GitHub</a></div>
+        </article></li>
+        <li><article class="card">
+          <div class="card-head"><h3>Hexagonal Reversi</h3><span class="meta">Nov - Dec 2023</span></div>
+          <div class="meta sub">Java, Swing, Git, JUnit</div>
+          <ul class="hl">
+            <li>Developed a feature-rich Java implementation of Reversi on a hexagonal grid, utilizing Swing for a graphical user interface (GUI) and engineering a text-based view; applied advanced design patterns including MVC architecture, observer pattern, strategy pattern, and adapter pattern, ensuring modularity and maintainability of the codebase</li>
+          </ul>
+          <div class="links"><a class="icon-link ulink" href="https://github.com/rchen2004/Reversi" target="_blank" rel="noopener"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><g transform="translate(12 12) scale(0.88) translate(-12 -12)"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></g></svg>GitHub</a></div>
+        </article></li>
+      </ul>
+    </section>
+
+    <footer><span>© 2026 Ryan Chen</span><a class="ulink" href="#top">Back to top</a></footer>
+  </main>
+</div>
+
+<script>
+// Letter-tile fallbacks first, so the page is complete even if the icon CDN fails.
+document.querySelectorAll('.si').forEach(function (el) {
+  var size = el.classList.contains('logo') ? 36 : 18;
+  el.innerHTML = '<span class="mono" style="width:' + size + 'px;height:' + size + 'px" aria-hidden="true">' + el.dataset.fallback + '</span>';
+});
+</script>
+<script type="module">
+// Swap in monochrome Simple Icons where the slug exists in this version.
+try {
+  const icons = await import('https://cdn.jsdelivr.net/npm/simple-icons@13.0.0/+esm');
+  document.querySelectorAll('.si').forEach((el) => {
+    const slug = el.dataset.icon;
+    const icon = icons['si' + slug.charAt(0).toUpperCase() + slug.slice(1)];
+    if (!icon) return;
+    const size = el.classList.contains('logo') ? 36 : 18;
+    el.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="${icon.path}"/></svg>`;
+  });
+} catch (e) { /* keep letter tiles */ }
+</script>
+<script>
+// Rail: mark the current section and slide the accent bar.
+(function () {
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail li a'));
+  var marker = document.querySelector('.rail .marker');
+  function setActive(id) {
+    links.forEach(function (a) {
+      var on = a.getAttribute('href') === '#' + id;
+      a.setAttribute('aria-current', on ? 'true' : 'false');
+      if (on && marker) marker.style.setProperty('--y', a.parentElement.offsetTop + 7 + 'px');
+    });
+  }
+  var sections = links.map(function (a) { return document.querySelector(a.getAttribute('href')); });
+  // Current section = the last one whose top has passed 35% of the viewport; bottom of page = last section.
+  function update() {
+    var line = window.innerHeight * 0.35, cur = sections[0];
+    sections.forEach(function (s) { if (s.getBoundingClientRect().top <= line) cur = s; });
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) cur = sections[sections.length - 1];
+    setActive(cur.id);
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  document.querySelectorAll('.timeline details').forEach(function (d) { d.addEventListener('toggle', update); });
+  update();
+})();
+
+// Timeline reveal: only cards below the fold, only when motion is allowed, only once.
+(function () {
+  if (!window.matchMedia('(prefers-reduced-motion: no-preference)').matches) return;
+  var entries = document.querySelectorAll('.timeline .entry');
+  var below = Array.prototype.filter.call(entries, function (el) { return el.getBoundingClientRect().top > window.innerHeight; });
+  below.forEach(function (el) { el.classList.add('pending'); });
+  var io = new IntersectionObserver(function (items) {
+    items.forEach(function (it) {
+      if (!it.isIntersecting) return;
+      it.target.classList.add('shown');
+      requestAnimationFrame(function () { it.target.classList.remove('pending'); });
+      io.unobserve(it.target);
+    });
+  }, { threshold: 0.15 });
+  below.forEach(function (el) { io.observe(el); });
+})();
+</script>

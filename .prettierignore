@@ -1,0 +1,12 @@
+.next
+node_modules
+package-lock.json
+public
+# Approved prose; reformatting would churn reviewed diffs. AGENTS.md is rewritten by `next dev`.
+docs
+plan.md
+CLAUDE.md
+AGENTS.md
+README.md
+.claude
+.mcp.json

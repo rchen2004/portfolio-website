@@ -24,9 +24,7 @@
       "gpa": "3.6/4.0",
       "endDate": "2026-12",
       "dateLabel": "Expected Dec 2026",
-      "honors": [
-        "Dean's List"
-      ]
+      "honors": ["Dean's List"]
     }
   ],
   "skills": {
@@ -81,7 +79,6 @@
       "startDate": "2026-01",
       "endDate": "2026-06",
       "dateLabel": "Jan - Jun 2026",
-      "featured": true,
       "highlights": [
         "Shipped a Region-of-Origin classifier answering an enterprise customer's top accuracy complaint, validated on 600 multi-regional names, by building its SDK endpoint, CLI, ranked top-k predictions, and license gating",
         "Fixed 4 customer-reported name-matching defects, including a cross-script false 100% match and a numeric leet-speak crash, by tracing normalization logic in the Java engine and adding regression tests",
@@ -97,7 +94,6 @@
       "startDate": "2025-01",
       "endDate": "2025-06",
       "dateLabel": "Jan - Jun 2025",
-      "featured": true,
       "highlights": [
         "Standardized token management and authentication across 10+ internal services by designing a modular, reusable Secure Internal API framework and owning it from proof of concept through production deployment",
         "Extended SFPublish, an internal S3-to-Snowflake API, from CSV-only to JSON ingestion by designing the SQL schema and delimiter configuration on the existing parser, so teams could publish JSON without conversion",
@@ -171,10 +167,7 @@
     },
     {
       "name": "Fakebook Crawler",
-      "technologies": [
-        "Python",
-        "Git"
-      ],
+      "technologies": ["Python", "Git"],
       "startDate": "2024-03",
       "endDate": "2024-04",
       "dateLabel": "Mar - Apr 2024",
@@ -190,12 +183,7 @@
     },
     {
       "name": "Hexagonal Reversi",
-      "technologies": [
-        "Java",
-        "Swing",
-        "Git",
-        "JUnit"
-      ],
+      "technologies": ["Java", "Swing", "Git", "JUnit"],
       "startDate": "2023-11",
       "endDate": "2023-12",
       "dateLabel": "Nov - Dec 2023",

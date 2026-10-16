@@ -471,3 +471,45 @@ Status: **owner-approved change, specified.** Owner choice: Blur-in words, over 
 - `frontend-design` (motion and the quality floor: reduced motion and accessibility). `ponytail` was active.
 - I checked `animate`. The values were already fixed by the owner, so I did not run it.
 
+---
+
+# Step 2 update: Owner variant picks (2026-10-16)
+
+Status: **owner-approved changes, specified.** Picked by the owner in the Variant Lab demo. Mid-task correction: the hero hover is Soft circle only; the -6° tilt is dropped.
+
+## What I did
+- **`docs/design-spec.md`:**
+  - §1.5: two shadows now, the dot ring and `--shadow-card-hover`.
+  - §6.1: hero hover is the soft circle plus Accent icon, with no tilt.
+  - §6.3: the technology Lift.
+  - §6.4: the CSS height animation, the settle timing, and the scroll correction and rail update after it.
+  - §6.5: the project card Hover lift, plus rules that keep the card from reading as a link.
+  - §7: the tilt row is replaced by rows for card height, soft circle, technology lift and card lift. The tilt sub-bullet in rule 5 is now a link-row note (the `:focus-within` guard is kept). "Other rules" now says the only hover movements are the two lifts.
+  - §8 (hover on non-interactive elements), §9.1 (new contrast rows), §9.2, §10 (hero links row), §12 (one line), §15 (one-line update).
+- **`docs/decisions.md`:** four dated approved entries. The hero entry supersedes the old "Hero links" tilt and "no box" text; the old entry is not rewritten.
+
+## Decisions I made
+- **Hover lives on the `<li>`, movement on its contents** (technology wrapper, project `<article>`), so the hover area stays still and the edge doesn't flicker.
+- **Project card easing:** the owner set 180ms. I set the transform to `cubic-bezier(0.2, 0, 0, 1)` and the border and shadow to ease, to match the technology lift.
+- **Settle timing:** a 320ms timer plus one `requestAnimationFrame`, not `transitionend`. `transitionend` doesn't fire when nothing transitions. One shared timer, reset on each `toggle`. When the animation doesn't apply, the work runs on the next frame.
+- **Highlights spacing** is `padding-top`, not `margin-top`, so no margin leaks outside the `overflow: clip` box.
+- **Timeline connectors** must be CSS-sized, so they track the height animation.
+- **Focus:** hero links get the ring only on `:focus-visible`, with no circle.
+
+## Contrast (hand-calculated, WCAG 2.x, rounded down)
+- Circle over Paper is about `#EFE0DC`. Accent icon on it: 4.3:1. Accent deep: 5.6:1. Both pass 3:1 non-text. The circle against Paper is about 1.16:1 and decorative.
+- Accent technology name on Paper: 4.9:1. Passes 4.5:1 for 15px/600.
+
+## Files changed
+- `docs/design-spec.md`
+- `docs/decisions.md`
+- `docs/phase-notes/phase-2-design.md` (this entry)
+
+## Open questions
+1. **Resolved:** the stale §13 row "Hero tilt on hover" is removed (coordinator approved).
+2. **Resolved:** §1.1 now has the missing line break and says there are two shadows, the open-dot ring and the project card hover shadow, matching §1.5 (coordinator approved).
+3. **Frontend should verify** in a real browser: the closing card's end has no jump, and the clicked summary ends in view after the 320ms settle.
+
+## Skills used
+- `frontend-design` (restraint, motion that answers an action, the quality floor). `ponytail` was active.
+

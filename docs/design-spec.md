@@ -32,7 +32,8 @@ There is one light palette and no dark mode. `color-scheme: light`.
 | `--color-accent-deep` | `#A02D24` | Pressed (`:active`) link text. This is its only use. |
 | `--color-rule` | `#DAD6D0` | Card borders, timeline line, footer top border. Decorative only. |
 
-- **Open-dot ring:** Accent at 18% opacity, `color-mix(in srgb, var(--color-accent) 18%, transparent)`. It is decorative.- **No other colors.** There are no gradients and no shadows except that ring.
+- **Open-dot ring:** Accent at 18% opacity, `color-mix(in srgb, var(--color-accent) 18%, transparent)`. It is decorative.
+- **No other colors.** There are no gradients. There are two shadows: the open-dot ring and the project card hover shadow (§1.5).
 - **Company logos** are the only full-color artwork on the page.
 
 ### 1.2 Typography
@@ -90,7 +91,14 @@ Named uses:
 
 ### 1.5 Shadows
 
-None. The open timeline dot's 5px ring (§1.1) is the only shadow-like effect, made with `box-shadow: 0 0 0 5px <ring color>`.
+There are two, and no others:
+
+| Token | Value | Use |
+|---|---|---|
+| (none, inline) | `0 0 0 5px color-mix(in srgb, var(--color-accent) 18%, transparent)` | The open timeline dot's ring (§1.1, §6.4) |
+| `--shadow-card-hover` | `0 8px 24px -12px color-mix(in srgb, var(--color-charcoal) 35%, transparent)` | Project card on hover only (§6.5). Cards have no shadow at rest. |
+
+Both are decorative. This supersedes the §1.1 sentence "no shadows except that ring" (owner decision, 2026-10-16).
 
 ### 1.6 Breakpoints
 
@@ -274,17 +282,19 @@ There are five links in one matching style, in this order:
   - This lines up the first icon's glyph box with the left edge of the greeting and tagline above it.
   - Every target stays a full 44px, and the focus ring may extend into the page padding. That is fine, because the page padding is at least 16px.
 - **Each link:**
-  - a 44 x 44px box, `inline-flex`, centered both ways, holding the **24px** icon;
-  - **no background, border, fill or box** around the icon (a boxed version was tried and dropped);
+  - a 44 x 44px box, `inline-flex`, centered both ways, holding the **24px** icon, with `border-radius: 50%`;
+  - **at rest, no background, border, fill or box** around the icon (a boxed version was tried and dropped);
   - **no underline** (`text-decoration: none`).
 - **Label:** it stays in the DOM, visually hidden with the standard sr-only pattern (`position: absolute`, 1 x 1px, clipped, `white-space: nowrap`, `overflow: hidden`). The link keeps its accessible name.
-- **Hover:** the icon turns Accent, and the **whole link tilts**: `transform: rotate(-6deg)` over 160ms with `cubic-bezier(0.2, 0, 0, 1)`. The color changes over the same 160ms.
-  - The rotation is about the link's center (the default `transform-origin`), so the icon pivots in place.
-  - It is transform-only, so neither layout nor the neighboring links move.
-  - Wrap the tilt in `@media (hover: hover)`. Touch browsers can leave a "sticky" hover after a tap, which would leave an icon tilted. The color change may stay unconditional.
-- **Pressed (`:active`):** the icon turns Accent deep. The tilt stays while the pointer is down.
-- **Focus:** the standard ring (§8): 2px Charcoal, 2px offset, 4px radius, drawn around the 44px box. **Keyboard `:focus-visible` does not tilt.** The ring is the focus cue; tilting would rotate the ring with the link and blur a clear signal.
-- **Reduced motion:** under `prefers-reduced-motion: reduce`, there is no rotation (`transform: none`). Hover is the color change only.
+- **Hover: Soft circle** (owner choice, 2026-10-16). This replaces the earlier -6° tilt; **there is no tilt and no movement of any kind.**
+  - The link gets the background `color-mix(in srgb, var(--color-accent) 10%, transparent)`, a 44px circle (about `#EFE0DC` over Paper).
+  - The icon turns Accent.
+  - Timing: the color takes 160ms with `cubic-bezier(0.2, 0, 0, 1)`; the background takes 160ms ease.
+  - Wrap the hover rules (circle and color) in `@media (hover: hover)`. Touch browsers can leave a "sticky" hover after a tap, which would leave a circle behind.
+  - The circle is fully inside the 44px box. With the row's -10px pull, the first circle reaches 10px into the page padding (at least 16px), which is fine.
+- **Pressed (`:active`):** the icon turns Accent deep. The circle stays while the pointer is down.
+- **Focus:** the standard ring (§8): 2px Charcoal, 2px offset, 4px radius, drawn around the 44px box. Keyboard `:focus-visible` gets the ring only, with no circle; the ring is the focus cue.
+- **Reduced motion:** nothing changes. The hover has no movement, so the circle, the color change and their 160ms fades all stay.
 - **No tooltip.** Do not add a `title` attribute or a custom tooltip.
   - `title` doesn't show on touch screens and isn't announced reliably.
   - The five glyphs are widely recognized, and screen readers get the hidden labels.
@@ -314,7 +324,15 @@ See §4.2. The section has `aria-labelledby` pointing at its h2.
 
 - **Anatomy:** a list item in a centered column: a 36 x 36px logo above the name, with a 10px gap. The name is 15px/600 Charcoal and centered.
 - **Logos:** monochrome Charcoal (`fill: currentColor`), `aria-hidden`. The visible name carries the meaning.
-- **Interaction:** none. No hover, no link, no box.
+- **Not interactive:** it stays a plain, non-focusable list item. No link, no box, no `tabindex`, `cursor: default`, so there is no keyboard state.
+- **Hover: Lift** (owner choice, 2026-10-16), only under `@media (hover: hover)`:
+  - The item rises `translateY(-4px)` over 180ms with `cubic-bezier(0.2, 0, 0, 1)`.
+  - The name turns Accent over 180ms ease. The logo stays Charcoal.
+  - **Detect the hover on the `<li>` but move its contents** (one inner wrapper around the logo and the name). The hover area then stays still, so a pointer at the item's bottom edge doesn't flicker the hover on and off.
+  - Transform only, so the grid doesn't shift.
+- **Reduced motion:** no movement; only the name color changes.
+- **Contrast:** Accent on Paper is 4.9:1, which passes the 4.5:1 needed for 15px/600 text (not large text).
+- **Tradeoff:** a hover response on a non-interactive item can suggest it does something. The default cursor and the lack of any focus stop keep it from reading as a control.
 - **Logo source:** Simple Icons, pinned to a version (v16.35.0 has been checked). Inline the SVG; no CDN at runtime and no icon font.
 
 | Name | Icon |
@@ -405,12 +423,34 @@ See §4.2. The section has `aria-labelledby` pointing at its h2.
 - **One card open at a time:** every `<details>` shares `name="experience"`. The browser closes the others when one opens.
   - Fallback: in browsers without exclusive-accordion support, several cards can be open at once. That is acceptable.
 - **On load:** the first card in sorted order (the current or most recent role; Scout today) has `open`. Frontend sets this from the sort result, not from a hardcoded company.
+- **Expanding the content: Animated height** (owner choice, 2026-10-16). CSS only, on native `<details name="experience">`; no Radix, no `framer-motion`, no JS height measuring.
+  - All of this sits inside `@media (prefers-reduced-motion: no-preference)`:
+    ```css
+    :root { interpolate-size: allow-keywords; }
+    details::details-content {
+      block-size: 0;
+      overflow: clip;
+      transition: block-size 320ms cubic-bezier(0.2, 0, 0, 1),
+                  content-visibility 320ms allow-discrete;
+    }
+    details[open]::details-content { block-size: auto; }
+    ```
+  - Opening and closing both animate, including the card the browser closes when another opens.
+  - **Keep the 16px space above the highlights inside the clipped box.** Make it the list's `padding-top`, not `margin-top`. `overflow: clip` does not stop margin collapsing, so a margin could leak outside the clip and jump at the end of the close.
+  - **Fallback:** browsers without `::details-content` or `interpolate-size` snap open and closed (native behavior). Acceptable.
+  - **Reduced motion:** none of the rules above apply, so cards snap. The chevron and dot are instant too (§7).
+  - **Timeline line:** the connectors must be CSS sized from the entry (for example `height: calc(100% + gap)`), so they follow the height every frame. No JS measuring.
+- **Settle timing** (for the scroll correction and the rail update). The card above now closes over 320ms, so layout keeps changing after `toggle` fires.
+  - **The animation runs** when all three match: `prefers-reduced-motion: no-preference`, `CSS.supports("selector(::details-content)")` and `CSS.supports("interpolate-size", "allow-keywords")`. Then the work waits **320ms, then one `requestAnimationFrame`**.
+  - **Otherwise** it runs on the next frame after `toggle`.
+  - Use one shared timer. A new `toggle` clears the pending one, so a quick second click only runs the work once, after the last change.
+  - Why a timer and not `transitionend`: `transitionend` never fires when nothing transitions (fallback browsers, reduced motion, or a transition interrupted by another click), so it would need the timer as a backup anyway. The timer alone covers every case.
 - **Scroll correction:** when a card opens and a card above it closes, the content above shrinks and the summary just clicked can move out of view.
-  - On `toggle`, if the newly opened card's summary is now above the viewport top, scroll it into view (`block: "start"`, respecting `scroll-padding-top: 24px`).
+  - On the opening card's `toggle` (`newState === "open"`), after the settle timing above: if its summary is above the viewport top, scroll it into view (`block: "start"`, respecting `scroll-padding-top: 24px`).
   - Scrolling is smooth only under `prefers-reduced-motion: no-preference`; otherwise it is instant.
+  - Running it after the close finishes means the summary ends in view at its final position. Scrolling earlier would aim at a position that keeps moving for 320ms.
   - The preview does not do this (§13).
-- **Expanding the content** is not animated; it uses native `<details>` behavior. Only the chevron and the dot animate.
-- **Rail update:** every `toggle` event also triggers the rail's active-section update (§6.6).
+- **Rail update:** every `toggle` event also triggers the rail's active-section update (§6.6), after the same settle timing. Scroll events during the transition update the rail as usual.
 - **Scroll reveal:** see §7.
 
 ### 6.5 Project card
@@ -428,7 +468,19 @@ See §4.2. The section has `aria-labelledby` pointing at its h2.
 
 **Rules:**
 - The card itself is not clickable; only the link is.
-- No hover state on the card.
+- **Hover: Hover lift** (owner choice, 2026-10-16), only under `@media (hover: hover)`:
+  - The border goes from Rule to Pebble.
+  - The card moves `translateY(-3px)` and gets `--shadow-card-hover` (§1.5).
+  - Timing: 180ms. The transform uses `cubic-bezier(0.2, 0, 0, 1)`; `border-color` and `box-shadow` use ease (Design's choice of curve; the owner set the duration).
+  - **Detect the hover on the `<li>` and move the `<article>`,** so the hover area stays still and the bottom edge doesn't flicker.
+  - Transform only for movement, so the list doesn't shift.
+- **Reduced motion:** the border and shadow change stay (180ms ease); there is no movement.
+- **Keeping it from reading as a link.** A hover cue on a non-clickable card can suggest the whole card is clickable. These rules reduce that without making it a link:
+  - The card keeps `cursor: default`. Only the GitHub link shows the pointer.
+  - No stretched link, no `::after` overlay, no `onclick` and no `tabindex` on the card.
+  - The project name stays Charcoal with no underline, and does not change on card hover.
+  - The GitHub link keeps its underline at rest and its own hover (Accent, 2px underline), so it is the only part that responds like a link.
+  - The card does not lift on `:focus-within`. Keyboard users see the link's focus ring only.
 - All three cards are identical. Heights differ only because the text differs.
 - There is no image slot.
 
@@ -492,7 +544,10 @@ There are two ambient motions (the hero load and the timeline reveal), plus stat
 | Rail marker slide | The current section changes | transform | 200ms, `cubic-bezier(0.2, 0, 0, 1)` | Jumps instantly |
 | Chevron rotate | A card opens or closes | transform | 200ms, `cubic-bezier(0.2, 0, 0, 1)` | Instant |
 | Open-dot color and ring | A card opens or closes | background-color, box-shadow | 200ms, ease | Instant |
-| Hero link tilt | pointer hover on a hero link | transform `rotate(-6deg)` on the link; icon color | 160ms, `cubic-bezier(0.2, 0, 0, 1)` | No rotation; color change only |
+| Card height | A timeline card opens or closes | `::details-content` block-size (to and from `auto`), content-visibility (discrete) | 320ms, `cubic-bezier(0.2, 0, 0, 1)` | Not declared; snaps (native) |
+| Hero link soft circle | pointer hover on a hero link (`hover: hover`) | background (10% Accent circle); icon color | Color 160ms, `cubic-bezier(0.2, 0, 0, 1)`; background 160ms, ease | Kept in full (no movement) |
+| Technology lift | pointer hover on a technology item (`hover: hover`) | transform `translateY(-4px)` on the item's contents; name color | Transform 180ms, `cubic-bezier(0.2, 0, 0, 1)`; color 180ms, ease | No movement; name color only |
+| Project card lift | pointer hover on a project card (`hover: hover`) | transform `translateY(-3px)` on the article; border-color; box-shadow | Transform 180ms, `cubic-bezier(0.2, 0, 0, 1)`; border and shadow 180ms, ease | No movement; border and shadow kept |
 | Labeled link hover | hover | color, text-decoration-thickness | 120ms, ease | Kept (color only, no movement) |
 | Summary and rail hover | hover | color | 120ms, ease | Kept |
 | Anchor jumps | nav or footer click | scroll | browser smooth scroll | `scroll-behavior: auto` |
@@ -526,7 +581,7 @@ There are two ambient motions (the hero load and the timeline reveal), plus stat
      - `filter: blur()` is heavier than opacity and transform. Chromium composites it; Safari and Firefox may repaint the words each frame. The cost is bounded: 15 short words, one play, at most about 1.3s.
      - Per-word spans add markup and need the hidden-copy pattern above. Find-in-page may match the hidden copy as well as the visible words, and crawlers see the text twice. Both are minor.
      - Text is not fully readable until about 1.3s. The greeting (the name) is fully in by about 790ms.
-   - **Hero link tilt.** The fade runs on the link row container, opacity only. The tilt is a `transform` on each link (§6.1), a different element and property, so the two never override each other, and hover works during the fade. If focus enters the row before the fade ends (`.row:focus-within`), set `animation: none` on the row, so a keyboard user never focuses an invisible link.
+   - **Hero link row.** The fade runs on the link row container, opacity only. If focus enters the row before the fade ends (`.row:focus-within`), set `animation: none` on the row, so a keyboard user never focuses an invisible link.
    - **Timeline reveal.** The two never play on the same element. The hero plays on load; the reveal applies only to entries below the viewport at load (rule 2) and plays on scroll. They share the same curve, `cubic-bezier(0.22, 1, 0.36, 1)`, so they read as one family.
    - **Check:** Frontend confirms in Lighthouse that the LCP element is still the photo on mobile and desktop and that CLS is 0.
 6. Without JS, every entry is visible.
@@ -534,11 +589,14 @@ There are two ambient motions (the hero load and the timeline reveal), plus stat
 **Other rules:**
 - Smooth scrolling (`scroll-behavior: smooth` on `html`) applies only under `prefers-reduced-motion: no-preference`.
 - `scroll-padding-top: 24px`.
-- **The hero link tilt is the only hover movement on the site.**
-  - It is transform-only, so it causes no layout shift and doesn't move neighboring links.
-  - Under `prefers-reduced-motion: reduce`, set `transform: none`. The color change remains.
-  - Keyboard `:focus-visible` gets the ring only, with no tilt.
-- No other load, scroll or hover animations. The hero load (rule 5) is the only load animation. The photo, project cards and technology items have no motion.
+- **Hover movement: only the technology lift (§6.3) and the project card lift (§6.5).** The hero links have no tilt and no movement (§6.1).
+  - Both lifts are transform-only and move the element's contents, not the hovered `<li>`, so nothing shifts and the hover doesn't flicker.
+  - Both sit under `@media (hover: hover)`.
+  - Under `prefers-reduced-motion: reduce`, set `transform: none`. Their color, border and shadow changes remain.
+  - Neither element is focusable, so neither has a keyboard state.
+- **The only movement on expand is the card height** (§6.4), plus the chevron and dot. It applies only under `prefers-reduced-motion: no-preference`.
+- No other load, scroll or hover animations. The hero load (rule 5) is the only load animation. The photo has no motion.
+- **Tradeoff (accepted by the owner):** hover responses on the technology items and the project cards add hover feedback in two more places, and both are non-interactive. §6.3 and §6.5 list what keeps them from reading as controls.
 
 ---
 
@@ -547,6 +605,7 @@ There are two ambient motions (the hero load and the timeline reveal), plus stat
 - **Focus:** every focusable element shows a 2px Charcoal outline with a 2px offset and 4px rounded corners on `:focus-visible`. This includes links, summaries, and (at 1200px and up) the skip link and rail links. Never remove the outline without replacing it.
 - **Summary focus:** the outline is drawn on the `<summary>`, inside the card padding. Use `outline-offset: 4px` so the ring clears the logo and the text.
 - **Hover is never the only cue.** Links are always underlined, with three exceptions: nav links (identified by their position in the nav), the name link, and the icon-only hero links (identified by their icon glyphs, in a row directly under the tagline). Summaries always show the chevron.
+- **Hover on non-interactive elements** (technology items, project cards) is feedback only, not an affordance. They keep `cursor: default`, get no focus stop, and their hover is under `@media (hover: hover)` (§6.3, §6.5).
 - **Disabled states:** none exist.
 
 ---
@@ -563,7 +622,11 @@ I calculated the ratios by hand with the WCAG 2.x formula and rounded them down.
 | Charcoal | White | 16.1:1 | 4.5 | Card text, skip link |
 | Pebble | Paper | 6.3:1 | 4.5 | About heading, inactive nav, footer |
 | Pebble | White | 7.1:1 | 4.5 | Dates, titles, tech lists in cards |
-| Accent | Paper | 4.9:1 | 4.5 | Hovered link text on the page |
+| Accent | Paper | 4.9:1 | 4.5 | Hovered link text on the page; hovered technology name (15px/600) |
+| Accent icon | 10% Accent circle over Paper (about `#EFE0DC`) | 4.3:1 | 3 (non-text) | Hovered hero icon |
+| Accent deep icon | 10% Accent circle over Paper | 5.6:1 | 3 (non-text) | Pressed hero icon |
+| 10% Accent circle | Paper | about 1.16:1 | none (decorative) | Hover feedback; the icon color change is the meaningful cue |
+| Pebble border, card-hover shadow | Paper / White | n/a | none (decorative) | Project card hover |
 | Accent | White | 5.5:1 | 4.5 | Hovered summary and link text inside cards |
 | Accent deep | Paper / White | 6.5:1 / 7.2:1 | 4.5 | Pressed link text |
 | Accent underline | Paper / White | 4.9:1 / 5.5:1 | 3 (non-text) | Link identification |
@@ -579,10 +642,10 @@ I calculated the ratios by hand with the WCAG 2.x formula and rounded them down.
   - Each is exactly 44 x 44px, with 8px between targets.
   - Each keeps its accessible name through the visually hidden label (§6.1).
   - Visible focus is the standard ring around the 44px box.
-  - Hover and pressed states change only the icon color.
+  - Hover adds the 10% Accent circle and turns the icon Accent; pressed turns it Accent deep. Nothing moves.
   - There is no tooltip.
   - The icons are `aria-hidden`, so the name is announced once, not twice.
-- **Icon contrast:** Charcoal icons are 14.5:1 on Paper; Accent icons on hover are 4.9:1. Both exceed the 3:1 needed for meaningful graphics, which matters here because in the hero row the icon is the only visible cue.
+- **Icon contrast:** Charcoal icons are 14.5:1 on Paper; Accent icons on the hover circle are 4.3:1 (4.9:1 on bare Paper). Both exceed the 3:1 needed for meaningful graphics, which matters here because in the hero row the icon is the only visible cue.
 - **Alignment offset:** the hero row's -10px pull does not shrink any target. The focus ring may draw into the page padding (at least 16px), and it stays fully visible.
 - The summaries are far larger.
 - The nav links (20px text, 29px line) need 8px vertical padding to reach 44px (§13).
@@ -616,7 +679,7 @@ I calculated the ratios by hand with the WCAG 2.x formula and rounded them down.
 | Skip link | None | None | On focus |
 | Rail scroll script | Not running | Not running | Running |
 | Hero | Photo 4:3 on top, text below | Text with 280px photo at 4:5 | Same as tablet |
-| Hero links | Icon-only: one row of 44px targets, 24px icons, 8px gap, pulled left 10px; tilt on hover only where the device supports hover | Same | Same |
+| Hero links | Icon-only: one row of 44px targets, 24px icons, 8px gap, pulled left 10px; soft circle on hover only where the device supports hover | Same | Same |
 | Repo and project links | Icon + label | Icon + label | Icon + label |
 | Greeting / tagline | 36 / 21px | 48 / 24px | 48 / 24px |
 | Technologies | Rows of 3, 4 and 3 (5 + 5 from 600px) | 5 columns | 5 columns |
@@ -664,6 +727,7 @@ These are notes, not code.
   - the timeline reveal;
   - the accordion scroll correction.
   - The hero load animation is CSS only and adds no client JS (§7 rule 5).
+  - The card height animation and all hover effects are CSS only. The accordion scroll correction and the rail update wait for the 320ms settle timing (§6.4).
 - **Icons:** all inline SVG, with no CDN at runtime and no icon font.
   - **Link icons:** five Tabler outline glyphs, copied into the repo (§6.1).
   - **Technologies logos:** solid monochrome Simple Icons from a pinned version, plus the Lucide `database` icon for SQL (§6.3).
@@ -678,7 +742,6 @@ These are notes, not code.
 | Preview | Spec | Why |
 |---|---|---|
 | Lucide-style link glyphs with preview optical scales | Tabler outline glyphs; the scales are starting values that Frontend re-tunes by eye at 24px | Lucide no longer ships brand icons, and Tabler's shapes differ |
-| Hero tilt on hover (the preview's exact touch and focus handling not checked) | Tilt only under `(hover: hover)`, never on `:focus-visible`, never under reduced motion | Avoids icons stuck tilted after a tap on touch screens, and keeps the focus ring steady |
 | Nav links with too little vertical padding for 44px | 8px padding on 20px text (45px tall), with the 32px marker centered | 44px hit areas |
 | Photo `<img>` in the preview | Same crop values, plus `sizes` set for the 1.6 scale, with a pre-cropped file allowed | Keeps the zoomed image sharp; a pre-crop sends fewer bytes |
 | Company name as an h3 inside `<summary>` | Plain text in the summary | Headings inside summaries are announced unreliably by screen readers |
@@ -733,6 +796,8 @@ Scouted on 2026-10-16 with the read-only 21st tools. **This section changes noth
 | Footer (§6.8) | None | [Minimal Two-Column Footer](https://21st.dev/@ln-dev7/components/footer-17). It is a brand block with a link list. The spec footer is one line of copyright and a "Back to top" link. |
 
 **Update (2026-10-16):** §7 rule 5 now has a hero load animation, so the Hero layout row's "nothing animates on load" reason no longer applies. The pick stays "None": the animation is built in plain CSS from §7 rule 5, with no 21st component and no `framer-motion`.
+
+**Update (2026-10-16, owner variant picks):** the hero links now have a soft hover circle, technology items lift, project cards lift, and timeline cards animate their height (§6.1, §6.3, §6.4, §6.5). The hero tilt is dropped. The rejection reasons above that cite "no box", "the -6° tilt", "no interaction", "not animated" and "no card hover" no longer apply, but every pick stays "None": all four are plain CSS, with no Radix and no `framer-motion`.
 
 **Components the agent brief lists that the spec no longer has.** `docs/decisions.md` (Phase 2) removed these, so I did not scout them:
 - Featured and compact experience variants: one card style for all (§6.4).

@@ -55,7 +55,6 @@ const experience = z
     startDate: yearMonth,
     endDate: yearMonth.nullable(), // null = current role ("Present")
     dateLabel: z.string().optional(), // override; otherwise derived from dates
-    featured: z.boolean().default(false),
     highlights: z.array(z.string().min(1)).min(1),
     links: z.array(link).optional(),
   })

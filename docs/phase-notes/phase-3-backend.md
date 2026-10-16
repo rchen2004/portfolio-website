@@ -65,10 +65,27 @@ Status: done (2026-10-16). Branch: `phase-3-scaffold`. Not committed, not deploy
 9. Optional: in GitHub branch protection for `main`, require the `CI / check` job.
 
 ## Open questions
-1. **`featured` is still in the schema, data and helpers.** The Phase 2 checkpoint approved removing it, along with `featuredExperience` and `compactExperience` and their checks in `resume.check.ts`. It wasn't in this task, so I left it. When should it be removed: before Phase 4 Experience, or as a separate task now?
+1. **Resolved (2026-10-16): `featured` removed; see the follow-up below.** ~~`featured` is still in the schema, data and helpers.~~ The Phase 2 checkpoint approved removing it, along with `featuredExperience` and `compactExperience` and their checks in `resume.check.ts`. It wasn't in this task, so I left it. When should it be removed: before Phase 4 Experience, or as a separate task now?
 2. **`AGENTS.md` and `experimental.agentFeedback`.** With the flag on, every `next dev` run rewrites `AGENTS.md`. Next's own text says to commit it to keep the tree clean. Should the rewritten `AGENTS.md` be committed, or should the flag be turned off? Turning it off is a one-line change in `next.config.ts`, which I own, but the owner enabled it on purpose.
-3. **`@types/node` is `^20`** while the runtime is Node 24. Nothing fails now. Bumping it to `^24` would type Node 24 APIs correctly. Approve the bump?
+3. **Resolved (2026-10-16): bumped to `^24` (24.19.2); see the follow-up below.** ~~`@types/node` is `^20`~~ while the runtime is Node 24. Nothing fails now. Bumping it to `^24` would type Node 24 APIs correctly. Approve the bump?
 
 ## Skills used
 - `ponytail` (active): kept to the smallest change; no new dependencies and no config files beyond `.nvmrc`.
 - `vercel:*`: checked. I didn't use `vercel:deploy`, `vercel:status` or `vercel:env`, because the brief says not to touch Vercel and there is no CLI.
+
+## Follow-up (2026-10-16): `featured` removed, `@types/node` bumped
+Owner-approved. Not committed.
+- **`featured` removed** (spec §6.4 and §11 #6; decisions.md "`featured` removed"):
+  - Deleted the field from `data/schema.ts` and from Babel Street and Verisk in `data/resume.json`.
+  - Deleted the `featuredExperience` and `compactExperience` helpers in `src/lib/resume.ts`, along with their checks and imports in `src/lib/resume.check.ts`. `sortByDate` stays: Frontend uses it to order all experiences by date.
+  - The experience object is a `strictObject`, so if someone adds `featured` back to `resume.json`, the build now fails with an unrecognized-key error.
+  - The parsed `resume.json` is identical to the original once the two `featured` keys are removed. Both `util.isDeepStrictEqual` and a `JSON.stringify` comparison are true, so key order is unchanged. No other content changed.
+  - Grep (excluding `node_modules`, `.next`, `.git` and `docs/`): `src/app/` has no references. The only remaining mentions are in `.claude/agents/portfolio-backend.md` and `.claude/agents/portfolio-design.md`. Those are agent config files that I neither own nor may edit, so I left them unchanged.
+- **`@types/node` bumped to `^24`.** `npm i -D @types/node@^24` installed **24.19.2** and saved the range as `^24.19.2`. I changed the range to `^24` in `package.json` and in the lockfile root so it matches the approved range and the repo's major-only style. Lockfile changes:
+  - the `@types/node` entry: 20.19.43 → 24.19.2;
+  - its own dependency `undici-types`: 6.21.0 → 7.24.6. This is required by `@types/node` 24 and can't be avoided.
+  - Nothing else changed. `npm ci --dry-run` exits 0.
+- **AGENTS.md:** I didn't run `next dev`, and `AGENTS.md` is unchanged.
+- **Verification (Node 24.21.0, clean `.next`):** typecheck, lint, format:check, check:data and build all pass. `/` and `/_not-found` are static.
+- **Files changed:** `data/resume.json`, `data/schema.ts`, `src/lib/resume.ts`, `src/lib/resume.check.ts`, `package.json`, `package-lock.json`, this file.
+- **Open question:** `docs/decisions.md` (the "`featured` removed" entry) still says "still present as of 2026-10-16", and the `.claude/agents/*` files still describe featured and compact cards. Whoever owns those files should update them.

@@ -70,8 +70,3 @@ export function sortByDate<
       b.startDate.localeCompare(a.startDate),
   );
 }
-
-export const featuredExperience = (): Experience[] =>
-  sortByDate(resume.experience.filter((e) => e.featured));
-export const compactExperience = (): Experience[] =>
-  sortByDate(resume.experience.filter((e) => !e.featured));

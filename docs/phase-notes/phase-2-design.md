@@ -596,3 +596,30 @@ Done at the owner's request on branch `phase-3-scaffold`, after Phase 2 was merg
 ## Skills used
 - `frontend-design` (loaded; not exercised, docs only). `ponytail` was active.
 
+Follow-up (coordinator-approved): spec §0 now points to the renamed Phase 2 heading, and the Phase 1 `dateLabel` entry is marked resolved and kept (spec §11). Open questions 1 and 2 above are closed.
+
+---
+
+# plan.md update (2026-10-16)
+
+At the owner's request ("update plan.md so it matches decisions.md and the spec"). Every change cites `decisions.md` or a spec section.
+
+## What I did
+- Added the top note: "Updated 2026-10-16 to match decisions.md; decisions.md wins on conflict."
+- §1: Identity gains the "must not read as backend-only" line ("Overall feel"); Next step now names the hero icon links and no Contact section.
+- §3 and §4: Tailwind v4 `@theme` in `src/app/globals.css`, no `tailwind.config.ts` (spec §0); repo tree updated; the resume is reached by the hero Resume link (spec §6.1).
+- Phase 0: dark mode decided, assets gathered, no project screenshots. Phase 1: `featured` and project images noted as dropped; checkpoint approved 2026-10-15. Phase 2: component list updated; checkpoint approved 2026-10-16.
+- Phase 3: the four Phase 3 decisions only (the `src/app/` move, tokens in `@theme`, Prettier plus the Tailwind plugin, Vercel project `rchen2004`).
+- Phase 4: Hero, About, Technologies, Experience, Projects, Footer (spec §3).
+- Phase 5: dark mode and motion marked specified in Phase 2; project detail pages "not approved; I decide before Phase 5".
+- §6: Featured experiences marked superseded; tagline updated to "challenging".
+
+## Files changed
+- `plan.md`
+- `docs/phase-notes/phase-2-design.md` (this entry)
+
+## Open questions
+1. Which phase builds the motion? Phase 5 is kept. But the hero load, hover lifts and timeline height animation belong to Phase 4 components, and no doc assigns them a phase.
+2. §3 still says "proposed, confirm in Phase 0". No decision confirms the stack, so I left it.
+3. "Blog" stays undecided in Phase 0. No doc covers it.
+

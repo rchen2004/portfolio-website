@@ -1,9 +1,10 @@
 ---
 name: portfolio-frontend
 description: Frontend engineer for the portfolio site. Use for scaffolding the Next.js app, building page sections and components from the design spec, accessibility, and performance work.
-tools: Read, Write, Edit, Bash, Glob, Grep, Skill
+tools: Read, Write, Edit, Bash, Glob, Grep, Skill, mcp__21st, mcp__plugin_21st_21st
 skills:
   - frontend-design:frontend-design
+  - 21st:21st-ui
 ---
 
 You are the frontend engineer for a personal portfolio site built with Next.js (App Router), TypeScript, and Tailwind CSS, deployed on Vercel as a static site.

@@ -683,3 +683,31 @@ All six questions were answered by the owner and are recorded in `docs/decisions
 **Still assumed, not separately confirmed:** company logos are decorative (`alt=""`), because the name sits beside them (§6.4). Tell Design if the owner wants alt text instead.
 
 The tagline in `resume.json` now ends "...loves a challenging problem." The spec never quotes the tagline, so nothing needed changing.
+
+---
+
+## 15. 21st component references (proposed, pending owner approval)
+
+Scouted on 2026-10-16 with the read-only 21st tools. **This section changes nothing above.** §0 to §14 stay the source of truth, and nothing here is approved until the owner says so.
+
+**Result: no 21st component is proposed for any part of the spec.** Every component here is small, already fully specified, and built on native HTML (`<details name>`, plain links, a CSS grid). Each candidate I found would add decoration or motion the spec rejects, or would need so much stripped and rewritten that adapting it is more work than building from §6. Frontend builds every component from the spec, with no new dependencies.
+
+| Spec component | Pick | Closest candidate checked, and why it was rejected |
+|---|---|---|
+| Rail nav (§6.6) | None | [Table of Contents](https://21st.dev/@mohammadshehadeh/components/toc) (mohammadshehadeh). Code checked: no npm dependencies, only shadcn's `cn` helper (`clsx` + `tailwind-merge`). Its smooth scroll respects reduced motion and it sets `aria-current`. But its active-section rule (first heading below a 56px offset, throttled to 200ms) is not the spec's 35% line with the bottom-of-page rule, it has no `toggle` hook and no `matchMedia` gate, its marker is a per-link border rather than the sliding 3 x 32px bar, and its label is a mono, all-caps, 10px eyebrow. Keeping it would mean rewriting almost all of it. |
+| Hero layout (§4.1, §5) | None | [Hero Block](https://21st.dev/@moumensoliman/components/hero-block-shadcnui) and [Portfolio Hero](https://21st.dev/@waleedkibhen/components/portfolio-hero). Both animate on load (staggered or blur-in text, an animated avatar, a scroll cue). §7 rule 5 says nothing in the hero animates on load, and the photo crop is specific to this photo. |
+| Hero links (§6.1) | None | [Social Media](https://21st.dev/@ravikatiyar162/components/social-media) and [Social Icons](https://21st.dev/@jatin-yadav05/components/social-icons). They add hover backgrounds, revealed labels or tooltips. §6.1 forbids a box around the icons and any tooltip, and requires Tabler outline glyphs with the -6° tilt. |
+| Technology item (§6.3) | None | [Integration Logos Grid](https://21st.dev/@ziegfiroyt/components/feature135) and [Pixel Logo Grid](https://21st.dev/@smammar/components/pixel-logo-grid). These are "trusted by" logo clouds with hover effects (grayscale, canvas shimmer in brand colors). §6.3 has no interaction and uses Charcoal logos, and the 3/4/3 mobile grid is specific to this list. |
+| Timeline accordion card (§6.4) | None | [Experience Timeline](https://21st.dev/@shadcnui-blocks/components/timeline-02) (shadcnui-blocks). It is a static list with tech badges and is not collapsible. The spec needs native `<details name="experience">` with one card open, the dot that matches the open card, per-entry connectors and scroll correction. The accordion candidates ([Accordion](https://21st.dev/@micka_design/components/accordion), [Interactive Accordion](https://21st.dev/@jatin-yadav05/components/interactive-accordion)) pull in Radix and `framer-motion` and animate height. §6.4 says expansion is not animated. |
+| Project card (§6.5) | None | [Project Card](https://21st.dev/@ravikatiyar162/components/project-card). It is built around an image with a hover zoom. The spec has no images and no card hover. |
+| Skip link (§6.7) | None | Not searched for as a component. It is a single styled link. |
+| Footer (§6.8) | None | [Minimal Two-Column Footer](https://21st.dev/@ln-dev7/components/footer-17). It is a brand block with a link list. The spec footer is one line of copyright and a "Back to top" link. |
+
+**Components the agent brief lists that the spec no longer has.** `docs/decisions.md` (Phase 2) removed these, so I did not scout them:
+- Featured and compact experience variants: one card style for all (§6.4).
+- Skill tag: replaced by the technology item (§6.3).
+- Contact links row and "View Resume" button: there is no Contact section. Resume is one of the five icon-only hero links (§6.1).
+
+**Logos:** `search_logo` (svgl) was checked, but it is not proposed. The spec pins Simple Icons v16.35.0 for Technologies and Tabler for link icons (§6.1, §6.3). A query for "java" returned no results.
+
+**Dependencies added by these proposals:** none.

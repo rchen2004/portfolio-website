@@ -406,16 +406,31 @@ I updated `docs/design-spec.md` with the owner's answers to the six open questio
 ## Open questions
 - None.
 
+---
+
+# Add-on: 21st scouting (2026-10-16)
+
+Status: **proposals only, pending owner approval.** Read-only. No change to the spec's direction.
+
+## What I did
+- Re-read `plan.md`, `docs/decisions.md`, `data/resume.json`, `docs/design-spec.md` and this file.
+- Searched 21st for every component in the spec: rail nav, hero, hero links, technology item, timeline accordion card, project card, skip link and footer. I retrieved one candidate's code (the Table of Contents) to check its dependencies and its reduced-motion handling.
+- Added §15 "21st component references (proposed, pending owner approval)" to `docs/design-spec.md`. No other section changed.
+
+## Decisions I made
+- **No pick for any component.** Every candidate either adds motion or decoration the spec rejects (load animation in the hero, hover effects, tooltips, height animation, image-led cards), or would need most of its logic rewritten (the TOC's active-section rule and marker). Building from §6 is smaller and needs no new dependencies.
+- **Not scouted:** featured and compact experience variants, skill tag, contact row, "View Resume" button. `decisions.md` removed all of them.
+- **Logos:** no svgl logos. The spec already pins Simple Icons and Tabler.
+
 ## Files changed
-- `docs/design-spec.md`
-- `docs/phase-notes/phase-2-design.md`
+- `docs/design-spec.md` (§15 added)
+- `docs/phase-notes/phase-2-design.md` (this entry)
 
 ## Open questions
-- None.
+1. Does the owner accept "none" across the board? If a 21st reference is wanted anyway, the Table of Contents (mohammadshehadeh) for the rail is the only one close enough, and only as a reference.
+2. None other. Housekeeping: the previous entry ("no nav below 1200px") ended with the "Files changed / Open questions" block repeated three times; it is now collapsed into one.
 
-## Files changed
-- `docs/design-spec.md`
-- `docs/phase-notes/phase-2-design.md`
+## Skills and tools used
+- `frontend-design` (restraint: no pick is better than added noise). `ponytail` was active.
+- 21st tools: `mcp__21st__search`, `mcp__21st__get_inspiration`, `mcp__21st__get_component` (one retrieval, id 18113; one free retrieval left today), `mcp__21st__search_logo`.
 
-## Open questions
-- None.

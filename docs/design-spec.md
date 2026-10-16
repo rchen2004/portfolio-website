@@ -20,21 +20,24 @@ Status: **draft for owner approval** (2026-10-15). Owner: Design. Frontend build
 
 ### 1.1 Color
 
-There is one light palette and no dark mode. `color-scheme: light`.
+There are two palettes, light and dark, with the same token names (owner decision, 2026-10-16; supersedes "one light palette, no dark mode"). The visitor switches with the theme toggle (§6.9). Light is the `@theme` default; dark redefines the same tokens under `html[data-theme="dark"]`.
 
-| Token | Hex | Role |
-|---|---|---|
-| `--color-paper` | `#F4F3F0` | Page background |
-| `--color-white` | `#FFFFFF` | Card surface (timeline cards, project cards) |
-| `--color-charcoal` | `#24201D` | Primary text, headings, icons and logos, timeline dots, focus ring |
-| `--color-pebble` | `#5E5751` | Secondary text: titles, dates, tech lists, About heading, footer, inactive nav links, chevron, bullet markers |
-| `--color-accent` | `#C0362C` | Link underlines, link and summary hover text, rail marker, open timeline dot and its ring |
-| `--color-accent-deep` | `#A02D24` | Pressed (`:active`) link text. This is its only use. |
-| `--color-rule` | `#DAD6D0` | Card borders, timeline line, footer top border. Decorative only. |
+| Token | Light | Dark | Role |
+|---|---|---|---|
+| `--color-paper` | `#F4F3F0` | `#1A1816` | Page background |
+| `--color-white` | `#FFFFFF` | `#24211E` | Card surface (timeline cards, project cards, skip link). The name stays `white` in dark so no component changes. |
+| `--color-charcoal` | `#24201D` | `#EDEAE6` | Primary text, headings, icons and logos, timeline dots, focus ring |
+| `--color-pebble` | `#5E5751` | `#A8A09A` | Secondary text: titles, dates, tech lists, About heading, footer, inactive nav links, chevron, bullet markers |
+| `--color-accent` | `#C0362C` | `#E56B60` | Link underlines, link and summary hover text, rail marker, open timeline dot and its ring, hover circle |
+| `--color-accent-deep` | `#A02D24` | `#F2958C` | Pressed (`:active`) link text and icons. This is its only use. In dark it is lighter than Accent, so pressed still reads as "more". |
+| `--color-rule` | `#DAD6D0` | `#3A3531` | Card borders, timeline line, footer top border. Decorative only. |
 
-- **Open-dot ring:** Accent at 18% opacity, `color-mix(in srgb, var(--color-accent) 18%, transparent)`. It is decorative.
+- **`color-scheme`:** `light` on `html`, `dark` on `html[data-theme="dark"]`, so scrollbars and any native controls follow the theme.
+- **Open-dot ring:** Accent at 18% opacity, `color-mix(in srgb, var(--color-accent) 18%, transparent)`. It is decorative. It is written against the token, so it follows the theme with no extra rule (dark: about `#3F2723` over Paper).
+- **Hover circle** (hero links, theme toggle): `color-mix(in srgb, var(--color-accent) 10%, transparent)`, also token-based (light: about `#EFE0DC`; dark: about `#2E201D` over Paper).
 - **No other colors.** There are no gradients. There are two shadows: the open-dot ring and the project card hover shadow (§1.5).
-- **Company logos** are the only full-color artwork on the page.
+- **Company logos** are the only full-color artwork on the page. In dark they are shown **unchanged**: no `filter`, `invert`, opacity or blend mode, which would distort the brand colors. Their own light JPG backgrounds read as small tiles inside the 1px Rule box. The photo is unchanged too.
+- **Technologies logos** use `currentColor` (Charcoal), so they turn light in dark with no extra rule.
 
 ### 1.2 Typography
 
@@ -72,7 +75,7 @@ Named uses:
 |---|---|
 | Page side padding | 16px, or the safe-area inset if that is larger |
 | Gap between sections in main | 72px |
-| Main padding | 32px top (56px at 1200px and up), 80px bottom |
+| Main padding | 60px top below 1200px (56px at 1200px and up), 80px bottom. Below 1200px the exact value is `calc(max(16px, env(safe-area-inset-top)) + 44px)` (§2). |
 | Rail-to-content column gap | 60px |
 | Card padding | 28px (24px under 720px) |
 | Gap between timeline items | 24px (20px under 720px) |
@@ -100,6 +103,8 @@ There are two, and no others:
 
 Both are decorative. This supersedes the §1.1 sentence "no shadows except that ring" (owner decision, 2026-10-16).
 
+**Dark:** the ring needs no change (it follows Accent). `--shadow-card-hover` is redefined under `html[data-theme="dark"]` with black in place of Charcoal, because Charcoal is light in dark, and at 75% instead of 35% so it still shows on the dark Paper (owner choice): `0 8px 24px -12px color-mix(in srgb, #000 75%, transparent)`. Light stays at 35% Charcoal.
+
 ### 1.6 Breakpoints
 
 These replace Tailwind's defaults, so only three exist.
@@ -116,7 +121,15 @@ Naming: "mobile" means under 720px, "tablet" means 720 to 1199px, and "desktop" 
 
 ## 2. Layout grid
 
-- **Below 1200px:** one column, centered, max 1000px wide, with 16px side padding. There is no nav: main comes first, with 32px top padding, and opens on the hero. Main is max 880px.
+- **Below 1200px:** one column, centered, max 1000px wide, with 16px side padding. There is no nav: main comes first and opens on the hero. Main is max 880px.
+  - **Main top padding is `calc(max(16px, env(safe-area-inset-top)) + 44px)`, which is 60px** without a top inset (§1.3). It clears a band for the theme toggle in the top-right corner (§6.9), so the toggle never overlaps the hero.
+  - **Theme toggle corner: the browser window's top-right corner** (owner choice), not the page column. The toggle is `position: absolute` against the page itself, the initial containing block, so no ancestor of it may be positioned (neither the page container nor `<main>`). It scrolls away; it is not fixed or sticky.
+    - `top: calc(max(16px, env(safe-area-inset-top)) - 11px)` (5px without an inset).
+    - `right: calc(max(16px, env(safe-area-inset-right)) - 11px)` (5px without an inset).
+    - The 11px is (44 − 22) / 2, so the 22px glyph sits 16px (or the safe-area inset) from the top and right edges of the page, the same margin as the page padding. With a classic scrollbar, the right edge is the scrollbar's inner edge.
+    - **No alignment with the photo is implied.** Main is capped at 880px inside the 1000px column, so from about 912px wide the photo's right edge moves in from the window edge (at 1120px, the photo is about 172px in while the glyph is 16px in, plus the scrollbar). Below about 912px the photo's edge and the glyph's edge are both 16px in.
+    - Clearance: the 44px box ends at 49px; the hero starts at 60px, an 11px gap. The formula keeps the gap at 11px when there is a safe-area inset.
+- **1200px and up:** main top padding stays 56px. The toggle sits in the rail instead (§6.6, §6.9).
 - **1200px and up:** a two-column grid, `220px minmax(0, 1fr)`, with a 60px gap, max 1180px wide and centered. The rail is in column 1 and main in column 2, capped at 880px.
 - **Alignment:** everything is left-aligned except the technology items (centered in their cells).
 - **Line length:** at 17px, an 880px column runs about 95 characters. Long body text is capped so it stays readable:
@@ -130,6 +143,8 @@ Naming: "mobile" means under 720px, "tablet" means 720 to 1199px, and "desktop" 
 **Order:** Hero, About, Technologies, Experience, Projects, Footer.
 
 **Nav (1200px and up only):** About, Technologies, Experience, Projects. The hero is reached through the "Ryan Chen" name link. Below 1200px there is no nav; visitors scroll, and the footer's "Back to top" returns them to the hero.
+
+**Theme toggle (§6.9):** at 1200px and up, in the rail on the name's row, at the right. Below 1200px, in the top-right corner of the browser window, above the hero (§2). It is not part of the nav list.
 
 **Full name below 1200px:** the greeting uses the first name only. "Ryan Chen" then appears only in the footer and the page `<title>` (accepted by the owner).
 
@@ -147,8 +162,8 @@ The hero greeting is the page's only h1.
 
 **Above the fold:**
 - **Desktop (1440 x 900):** the rail, the full hero (greeting, tagline, all five links, the photo at 280 x 350) and the About section. The Technologies heading starts near the bottom edge.
-- **Tablet (768 x 1024):** with no header, the full hero, About and all or most of Technologies.
-- **Mobile (390 x 844):** with no header, the page starts 32px from the top: the photo (4:3), the greeting, the tagline and the row of five icon links. About starts at or just below the fold.
+- **Tablet (768 x 1024):** with no header, the theme toggle in the top-right corner, then the full hero from 60px, About and most of Technologies.
+- **Mobile (390 x 844):** with no header, the theme toggle in the top-right corner, then the page content starts 60px from the top: the photo (4:3), the greeting, the tagline and the row of five icon links. About starts just below the fold (28px lower than before the toggle).
 
 **What a recruiter gets in 30 seconds:**
 1. Name and role: the greeting and tagline.
@@ -531,6 +546,46 @@ See §4.6.
 - **Year:** rendered at build time. It updates on the next deploy, which is acceptable for a static site.
 - **"Back to top":** links to `#top`. It uses the underline style from §6.1 at 14px, with a 44px minimum height.
 
+### 6.9 Theme toggle
+
+Owner decision, 2026-10-16. One button that switches between light and dark. There is no "System" option (the owner turned it down).
+
+**Element:**
+- A real `<button type="button">` with `aria-pressed="true"` in dark and `"false"` in light.
+- **Accessible name:** a visually hidden label "Dark mode" inside the button (the sr-only pattern from §6.1). No `aria-label`, per the naming rule in §6.1. Screen readers announce "Dark mode, toggle button, pressed / not pressed".
+- No `title` and no tooltip (§6.1).
+
+**Look:**
+- A 44 x 44px box, `inline-flex`, centered both ways, `border-radius: 50%`. At rest: no background, border or box.
+- **Icon:** Tabler outline (v3.49.0, MIT, inlined like §6.1). **`moon` in light** (it switches to dark) and **`sun` in dark**. 22px box, 24 viewBox, and the same stroke rules as §6.1 link icons: `currentColor`, 2px with `vector-effect: non-scaling-stroke`, round caps and joins, a direct flex child of the button, `flex: none`, `aria-hidden="true"`, `focusable="false"`. Optical scale starts at 1.0 for both; Frontend tunes by eye so neither looks heavier.
+- **Icon swap without JS state:** render both SVGs and show one with CSS, keyed on `html[data-theme="dark"]`. The server HTML is then the same for both themes, so there is no hydration mismatch and the right icon shows from the first paint.
+- **Color:** Charcoal at rest.
+- **Hover** (under `@media (hover: hover)`): the soft circle (10% Accent, §1.1) and an Accent icon, the same timing as the hero links (color 160ms `cubic-bezier(0.2, 0, 0, 1)`, background 160ms ease).
+- **Pressed (`:active`):** Accent deep icon; the circle stays while the pointer is down.
+- **Focus:** the standard ring (§8) around the 44px box. `:focus-visible` gets the ring only, no circle.
+
+**Placement:**
+- **1200px and up:** inside the rail `<nav>`, on the same row as "Ryan Chen", at the right. The row is a flex row with `justify-content: space-between` and `align-items: center`; the name link keeps its 44px minimum height, so the row is 44px. The toggle sticks with the rail.
+- **Below 1200px:** the top-right corner of the browser window, `position: absolute` against the page (no positioned ancestor), scrolling away with the page. The offsets, safe-area insets and the 60px main top padding that keeps it clear of the hero are in §2.
+  - **Mobile:** the photo is first and full width. It starts at 60px, below the toggle's box (5 to 49px), so the toggle never sits on the photo.
+  - **Tablet:** the photo is top right, starting at 60px, so the toggle sits above it with at least an 11px gap. Their right edges are not aligned: from about 912px wide the photo sits further in (§2).
+  - The toggle never sits on the photo, so its contrast is always measured against Paper.
+- **Two instances, one at a time.** The rail is `display: none` below 1200px, so the rail toggle can't move to the corner. Render the component twice, in the rail and in the corner. Each is `display: none` outside its range, so only one is ever focusable or in the accessibility tree. One script updates `aria-pressed` on both.
+- **DOM position below 1200px:** the first child of `<main>`, before the hero `<header>`, so it is inside a landmark. Neither `<main>` nor the page container may be positioned, so the toggle is placed against the page edge (§2).
+- **Without JS:** hide both instances (`html:not([data-theme]) .theme-toggle { display: none }`). The inline script (below) always sets `data-theme`, so this only hides a button that could do nothing.
+
+**Behavior:**
+- **State lives on `<html>`:** `data-theme="light"` or `data-theme="dark"`. The dark tokens are scoped to `html[data-theme="dark"]` (§1.1, §12).
+- **Stored choice:** `localStorage` key `theme`, value `"light"` or `"dark"`. A click flips `data-theme`, writes the key and updates `aria-pressed`. If `localStorage` throws (blocked storage), the switch still works for the visit and is not remembered.
+- **First visit: always light** (owner choice). With no stored key, the page is light. The operating-system color setting is not read. Dark applies only after a click; the stored choice then wins on every later visit.
+- **No flash of the wrong theme:** a small inline `<script>` in `<head>` (not deferred, not `next/script` with a lazy strategy) reads the key (inside `try`) and sets `data-theme` to `"dark"` if the key is `"dark"`, otherwise `"light"`, before first paint. It is a few lines, blocking, with no network request. `<html>` gets `suppressHydrationWarning`, because the attribute is added before React hydrates.
+- **`aria-pressed` after hydration:** the toggle renders `aria-pressed="false"` on the server and sets the real value from `document.documentElement.dataset.theme` after mount, so the first client render matches the server.
+- **Color fade on switch:** 240ms, `ease`, on `background-color`, `color`, `border-color`, `text-decoration-color` and `box-shadow` only. `text-decoration-color` is included as a color, so the Accent underlines change with the text rather than snapping ahead of it.
+  - Apply it **only during the switch:** on click, add a class to `<html>` that sets this transition on every element, flip the theme, and remove the class 240ms later (one timer, reset on a quick second click). There is no fade on page load.
+  - While the class is on, it replaces element transitions for those 240ms. That is fine, because nothing else moves during a theme switch.
+  - **Reduced motion:** the class is never added; the switch is instant.
+  - The photo and company logos don't change, so they don't fade.
+
 ---
 
 ## 7. Motion
@@ -550,6 +605,8 @@ There are two ambient motions (the hero load and the timeline reveal), plus stat
 | Project card lift | pointer hover on a project card (`hover: hover`) | transform `translateY(-3px)` on the article; border-color; box-shadow | Transform 180ms, `cubic-bezier(0.2, 0, 0, 1)`; border and shadow 180ms, ease | No movement; border and shadow kept |
 | Labeled link hover | hover | color, text-decoration-thickness | 120ms, ease | Kept (color only, no movement) |
 | Summary and rail hover | hover | color | 120ms, ease | Kept |
+| Theme toggle hover | pointer hover on the toggle (`hover: hover`) | background (10% Accent circle); icon color | Same as the hero link soft circle | Kept in full (no movement) |
+| Theme color fade | A click on the theme toggle; only during the switch (§6.9) | background-color, color, border-color, text-decoration-color, box-shadow | 240ms, ease; the class is removed after 240ms | Never applied; the switch is instant |
 | Anchor jumps | nav or footer click | scroll | browser smooth scroll | `scroll-behavior: auto` |
 
 **Rules for the timeline reveal** (these protect content and Lighthouse):
@@ -602,7 +659,10 @@ There are two ambient motions (the hero load and the timeline reveal), plus stat
 
 ## 8. Hover and focus rules
 
-- **Focus:** every focusable element shows a 2px Charcoal outline with a 2px offset and 4px rounded corners on `:focus-visible`. This includes links, summaries, and (at 1200px and up) the skip link and rail links. Never remove the outline without replacing it.
+- **Focus:** every focusable element shows a 2px Charcoal outline with a 2px offset and 4px rounded corners on `:focus-visible`. This includes links, summaries, the theme toggle, and (at 1200px and up) the skip link and rail links. Never remove the outline without replacing it.
+  - **In dark the ring is light** (`#EDEAE6`), because it uses the Charcoal token: 14.7:1 on Paper and 13.3:1 on cards. No separate dark focus color is needed.
+  - The corner toggle's ring reaches 4px past its box, so it ends 1px inside the viewport edge without an inset. It stays fully visible.
+- **Theme toggle hover:** the same soft circle and Accent icon as the hero links (§6.9), under `@media (hover: hover)`.
 - **Summary focus:** the outline is drawn on the `<summary>`, inside the card padding. Use `outline-offset: 4px` so the ring clears the logo and the text.
 - **Hover is never the only cue.** Links are always underlined, with three exceptions: nav links (identified by their position in the nav), the name link, and the icon-only hero links (identified by their icon glyphs, in a row directly under the tagline). Summaries always show the chevron.
 - **Hover on non-interactive elements** (technology items, project cards) is feedback only, not an affordance. They keep `cursor: default`, get no focus stop, and their hover is under `@media (hover: hover)` (§6.3, §6.5).
@@ -633,11 +693,42 @@ I calculated the ratios by hand with the WCAG 2.x formula and rounded them down.
 | Accent rail marker | Paper | 4.9:1 | 3 (non-text) | Current section |
 | Pebble chevron | White | 7.1:1 | 3 (non-text) | Open or closed state |
 | Charcoal focus ring | Paper / White | 14.5:1 / 16.1:1 | 3 (non-text) | Focus |
-| Charcoal dot / Accent open dot | Paper | 14.5:1 / 4.9:1 | none (decorative) | The open state is also shown by the chevron and the native expanded state || Rule | Paper / White | about 1.3:1 | none (decorative) | Card edges and the timeline line. Each card is also identified by its chevron and its content. |
+| Charcoal dot / Accent open dot | Paper | 14.5:1 / 4.9:1 | none (decorative) | The open state is also shown by the chevron and the native expanded state |
+| Rule | Paper / White | about 1.3:1 | none (decorative) | Card edges and the timeline line. Each card is also identified by its chevron and its content. |
+
+The light theme toggle uses the hero-link pairs above: Charcoal icon on Paper 14.5:1, Accent on the circle 4.3:1, Accent deep on the circle 5.6:1.
+
+**Dark theme.** Same method, hand-calculated and rounded down. The owner's demo figures are 0.1 higher in places (14.8, 6.9, 5.6, 8.0, 13.4); that is rounding, and every pair passes either way. Frontend confirms with a checker.
+
+| Foreground | Background | Ratio | Needed | Use |
+|---|---|---|---|---|
+| Charcoal `#EDEAE6` | Paper `#1A1816` | 14.7:1 | 4.5 | Body text, headings, hero links, toggle icon, tech names and logos, current nav link |
+| Charcoal | White `#24211E` | 13.3:1 | 4.5 | Card text, skip link |
+| Pebble `#A8A09A` | Paper | 6.8:1 | 4.5 | About heading, inactive nav, footer |
+| Pebble | White | 6.2:1 | 4.5 | Dates, titles, tech lists in cards |
+| Accent `#E56B60` | Paper | 5.5:1 | 4.5 | Hovered link text on the page; hovered technology name |
+| Accent | White | 5.0:1 | 4.5 | Hovered summary and link text inside cards |
+| Accent deep `#F2958C` | Paper / White | 7.9:1 / 7.2:1 | 4.5 | Pressed link text |
+| Accent icon | 10% Accent circle over Paper (about `#2E201D`) | 4.9:1 | 3 (non-text) | Hovered hero icon and toggle icon |
+| Accent deep icon | 10% Accent circle over Paper | 7.0:1 | 3 (non-text) | Pressed hero icon and toggle icon |
+| 10% Accent circle | Paper | about 1.13:1 | none (decorative) | Hover feedback; the icon color is the cue |
+| Accent underline | Paper / White | 5.5:1 / 5.0:1 | 3 (non-text) | Link identification |
+| Accent rail marker | Paper | 5.5:1 | 3 (non-text) | Current section |
+| Pebble chevron | White | 6.2:1 | 3 (non-text) | Open or closed state |
+| Charcoal focus ring | Paper / White | 14.7:1 / 13.3:1 | 3 (non-text) | Focus |
+| Charcoal dot / Accent open dot | Paper | 14.7:1 / 5.5:1 | none (decorative) | As in light |
+| 18% Accent ring (about `#3F2723`) | Paper | about 1.29:1 | none (decorative) | Open dot ring; visible as a dark red halo |
+| Rule `#3A3531` | Paper / White | about 1.46:1 / 1.32:1 | none (decorative) | Card edges, timeline line |
+| White card | Paper | about 1.1:1 | none (decorative) | Same step as light (White on Paper is also about 1.1:1); the Rule border defines the card |
+
+**Failures:** none. The lowest text pair is Accent on White, 5.0:1. Nothing needed a fix.
+
+**Not ratio-checked:** the company logo JPGs and the photo are artwork and stay unchanged (§1.1). Their light tiles are bright against dark Paper, but they are decorative (`alt=""`) and the company name beside them carries the meaning.
 
 ### 9.2 Hit areas
 
-- Every interactive element is at least **44 x 44px**: hero links, repo and GitHub links, the rail's name and section links, the footer link and the skip link.
+- Every interactive element is at least **44 x 44px**: hero links, repo and GitHub links, the rail's name and section links, the theme toggle, the footer link and the skip link.
+- **Theme toggle:** exactly 44 x 44px at every width, with a 22px icon. Its name is the hidden label "Dark mode" and its state is `aria-pressed` (§6.9). In the rail it shares a row with the name link, which keeps its own 44px height, so the two targets don't overlap.
 - **Icon-only hero links (every width):**
   - Each is exactly 44 x 44px, with 8px between targets.
   - Each keeps its accessible name through the visually hidden label (§6.1).
@@ -667,7 +758,11 @@ I calculated the ratios by hand with the WCAG 2.x formula and rounded them down.
 - **Language:** `<html lang="en">`.
 - **New-tab links** announce it with visually hidden text (§6.1).
 - **Landmarks below 1200px:** there is no nav landmark, only `<main>` and `<footer>`. Screen-reader users move through the sections by their h2 headings.
-- **Keyboard order:** (at 1200px and up) skip link, name, rail links; then, at every width, hero links, summaries (with Scout's repo links when its card is open), project GitHub links, back to top.
+- **Keyboard order:**
+  - **1200px and up:** skip link, name, theme toggle, rail links; then hero links, summaries (with Scout's repo links when its card is open), project GitHub links, back to top.
+  - **Below 1200px:** theme toggle (first, matching its top-right place above the hero), then hero links, summaries, project GitHub links, back to top.
+  - Only one toggle instance is ever rendered visible, so it is one tab stop (§6.9).
+- **Theme toggle naming:** a `<button>` named by its visually hidden text "Dark mode", with `aria-pressed`. No `aria-label`. Below 1200px it sits inside `<main>`, so it is not outside every landmark.
 
 ---
 
@@ -675,7 +770,9 @@ I calculated the ratios by hand with the WCAG 2.x formula and rounded them down.
 
 | Area | Mobile (under 720px) | Tablet (720 to 1199px) | Desktop (1200px and up) |
 |---|---|---|---|
-| Nav | None. Opens on the hero, main has 32px top padding | None (same as mobile) | Sticky 220px rail: name 24px/600, links 20px, 32px marker |
+| Nav | None. Opens on the hero, main has 60px top padding (plus any top safe-area inset beyond 16px) | None (same as mobile) | Sticky 220px rail: name 24px/600, links 20px, 32px marker |
+| Theme toggle | 44px button, absolute in the window's top-right corner (5px offsets, safe-area aware), scrolls away; first tab stop | Same as mobile, above the photo | In the rail, right end of the name row; sticky with the rail |
+| Color modes | Light and dark | Same | Same |
 | Skip link | None | None | On focus |
 | Rail scroll script | Not running | Not running | Running |
 | Hero | Photo 4:3 on top, text below | Text with 280px photo at 4:5 | Same as tablet |
@@ -725,8 +822,15 @@ These are notes, not code.
 - **The only client JS:**
   - the rail's active-section logic;
   - the timeline reveal;
-  - the accordion scroll correction.
+  - the accordion scroll correction;
+  - the theme: a blocking inline `<head>` script of a few lines that sets `data-theme` before paint, plus the toggle's click handler (flip the attribute, write `localStorage`, update `aria-pressed`, add and remove the fade class) (§6.9).
   - The hero load animation is CSS only and adds no client JS (§7 rule 5).
+- **Theme and static rendering:** the page stays fully static. The server HTML has no `data-theme`; the inline script adds it before paint and before hydration, so `<html>` gets `suppressHydrationWarning`. The toggle's icons swap in CSS and its `aria-pressed` is set after mount, so nothing else mismatches. If a Content Security Policy is added later, the inline script needs a hash or nonce.
+- **Tailwind v4 dark tokens** (Frontend owns `globals.css`; described, not edited, here):
+  - Keep the light values in `@theme` as today. Use plain `@theme`, not `@theme inline`, for the colors and `--shadow-card-hover`, so utilities like `bg-paper` read `var(--color-paper)` at runtime.
+  - Add one plain CSS block, `html[data-theme="dark"] { --color-paper: #1A1816; ... --shadow-card-hover: ...; color-scheme: dark; }`, with the seven colors from §1.1 and the shadow from §1.5. Add `color-scheme: light` on `html`.
+  - Components need no `dark:` utilities, because the tokens swap. If Frontend wants a variant for the icon swap, `@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));` is enough.
+  - The `color-mix()` values (hover circle, open-dot ring) reference the tokens, so they follow automatically.
   - The card height animation and all hover effects are CSS only. The accordion scroll correction and the rail update wait for the 320ms settle timing (§6.4).
 - **Icons:** all inline SVG, with no CDN at runtime and no icon font.
   - **Link icons:** five Tabler outline glyphs, copied into the repo (§6.1).
@@ -798,6 +902,8 @@ Scouted on 2026-10-16 with the read-only 21st tools. **This section changes noth
 **Update (2026-10-16):** §7 rule 5 now has a hero load animation, so the Hero layout row's "nothing animates on load" reason no longer applies. The pick stays "None": the animation is built in plain CSS from §7 rule 5, with no 21st component and no `framer-motion`.
 
 **Update (2026-10-16, owner variant picks):** the hero links now have a soft hover circle, technology items lift, project cards lift, and timeline cards animate their height (§6.1, §6.3, §6.4, §6.5). The hero tilt is dropped. The rejection reasons above that cite "no box", "the -6° tilt", "no interaction", "not animated" and "no card hover" no longer apply, but every pick stays "None": all four are plain CSS, with no Radix and no `framer-motion`.
+
+**Update (2026-10-16, dark mode):** theme toggle (§6.9): pick "None". The candidates checked by metadata ([Theme Toggle](https://21st.dev/@luv-jeri_c92deb60/components/theme-toggle) with a morphing icon and page-reveal animation; [Theme Switch](https://21st.dev/@zweiundeins/components/theme-switch) with the light/dark/auto picker the owner rejected) add motion or options §6.9 doesn't have; the toggle is one button built from §6.9.
 
 **Components the agent brief lists that the spec no longer has.** `docs/decisions.md` (Phase 2) removed these, so I did not scout them:
 - Featured and compact experience variants: one card style for all (§6.4).

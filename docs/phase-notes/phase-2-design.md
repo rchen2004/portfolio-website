@@ -513,3 +513,59 @@ Status: **owner-approved changes, specified.** Picked by the owner in the Varian
 ## Skills used
 - `frontend-design` (restraint, motion that answers an action, the quality floor). `ponytail` was active.
 
+---
+
+# Step 2 update: Dark mode and theme toggle (2026-10-16)
+
+Status: **owner-approved change, specified.** Reverses "Color modes: one palette, light only".
+
+## What I did
+- **`docs/design-spec.md`:**
+  - §1.1: light and dark palettes side by side, `color-scheme` per theme, and how the hover circle, open-dot ring, Technologies logos, company logos and photo look in dark.
+  - §1.5: the dark card hover shadow (black, 35%).
+  - §2 and §3: the corner placement below 1200px, its offsets and the 60px main top padding; the toggle's place in the rail at 1200px and up.
+  - §6.9 (new): the theme toggle component, its placement, storage, first-visit default, the no-flash script, hydration and the color fade.
+  - §7: theme toggle hover and theme color fade rows.
+  - §8: the toggle's focus and hover, and the light focus ring in dark.
+  - §9.1: a dark contrast table (and the two merged rows in the light table split back apart). §9.2: the toggle hit area. §9.4: the keyboard order per range and the toggle's naming.
+  - §10: theme toggle and color modes rows; main padding updated. §12: the theme script in the client JS list, static rendering and hydration, and the Tailwind v4 approach. §15: one note, pick "None".
+- **`docs/decisions.md`:** one dated approved entry. The light-only entry is left as it was.
+- Ran one 21st search for theme toggles (metadata only, no retrieval).
+
+## Decisions I made
+- **Clearing the hero below 1200px:** main's top padding goes from 32 to 60px (`max(16px, safe-top) + 44px`). The toggle box sits 5 to 49px from the top, so it never sits on the photo (mobile) and sits right above it (tablet), with an 11px gap.
+- **Offsets:** `top` and `right` = `max(16px, safe-area inset) − 11px`, so the 22px glyph sits 16px (or the inset) from the top and right edges of the window.
+- **Window corner (owner choice):** the toggle is absolute against the page, with no positioned ancestor, so it sits in the browser window's top-right corner at every width below 1200px.
+- **Two instances,** one per range, each `display: none` outside it, because the rail is `display: none` below 1200px. One tab stop at a time.
+- **Below 1200px the toggle is the first child of `<main>`**, so it is first in tab order (it is visually first) and inside a landmark.
+- **Icons swap in CSS** on `data-theme`; `aria-pressed` is set after mount. No hydration mismatch beyond `<html>`, which gets `suppressHydrationWarning`.
+- **Fade properties:** I added `text-decoration-color` to the owner's four, so Accent underlines don't snap ahead of the text.
+- **No JS:** the toggle is hidden (`html:not([data-theme])`), and the page renders light.
+- **First visit is always light (owner choice);** the head script reads only the stored `theme` key, and the system color setting is never read.
+- **Company logos and photo:** unchanged in dark, no filters.
+
+## Contrast (hand-calculated, WCAG 2.x, rounded down)
+- On Paper: Charcoal 14.7, Pebble 6.8, Accent 5.5, Accent deep 7.9. On cards: 13.3, 6.2, 5.0, 7.2. The owner's demo numbers are 0.1 higher in places; that is rounding.
+- Accent icon on the 10% circle (about `#2E201D`): 4.9:1; Accent deep 7.0:1. Focus ring 14.7 / 13.3:1.
+- Decorative: circle 1.13:1, open-dot ring 1.29:1, Rule 1.46 / 1.32:1.
+- **No failures, no fixes needed.**
+
+## Files changed
+- `docs/design-spec.md`
+- `docs/decisions.md`
+- `docs/phase-notes/phase-2-design.md` (this entry)
+
+## Conflicts flagged
+- §1.3's "Main padding: 32px top" is now stale below 1200px. §2 states that it supersedes it, because I was asked to leave §1.3 unchanged. It should become "60px top below 1200px (56px at 1200px and up)" if the coordinator approves the one-cell edit.
+- `plan.md` Phase 5 lists dark mode, which this decision brings back. No conflict now.
+
+## Open questions
+1. **Resolved (owner): always start light.** The head script reads only `localStorage` `theme`; the system color setting is not followed. Spec §6.9 updated.
+2. **Resolved (owner): the browser window's top-right corner**, not the page column. Same safe-area offsets (glyph 16px from the top and right). Spec §2, §3, §6.9 and §10 updated. Correction: my earlier claim that the glyph lines up with the photo's right edge was wrong. Main is capped at 880px, so from about 912px wide the photo sits further in (coordinator measured 172px in at 1120px). The spec no longer claims alignment.
+3. **Resolved (owner): stronger dark shadow,** 75% black (`0 8px 24px -12px color-mix(in srgb, #000 75%, transparent)`), as in the demo. Light stays 35% Charcoal. Spec §1.5 updated.
+4. **Resolved (owner): yes.** §1.3 now reads "60px top below 1200px (56px at 1200px and up)". The §1.3 conflict above is closed.
+
+## Skills used
+- `frontend-design` (the quality floor: contrast, focus, reduced motion). `ponytail` was active.
+- 21st: `mcp__21st__search` (metadata only).
+

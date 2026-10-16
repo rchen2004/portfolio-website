@@ -569,3 +569,30 @@ Status: **owner-approved change, specified.** Reverses "Color modes: one palette
 - `frontend-design` (the quality floor: contrast, focus, reduced motion). `ponytail` was active.
 - 21st: `mcp__21st__search` (metadata only).
 
+---
+
+# decisions.md cleanup (2026-10-16)
+
+Done at the owner's request on branch `phase-3-scaffold`, after Phase 2 was merged (PR #2, `76c7058`).
+
+## What I did
+- **`docs/decisions.md`:**
+  - Phase 2 heading now "(2026-10-15 to 2026-10-16)"; added "Phase 2 checkpoint: Approved by owner (2026-10-16)" and a "`featured` removed" entry (spec §6.4, §11 #6).
+  - Marked contradicted entries in place with one style, `*Superseded (2026-10-16): see "<entry>".*`: Phase 0 Featured experiences; Phase 1 `featured` and Images; Phase 2 Hero content, Compact experiences, Skills (nav link), About (open question), Hero links (tilt, hover box, 18px vs 24px), Company logos (PNG), Color modes (light only).
+  - Updated factual status lines: Overall feel and Direction (direction chosen, preview approved), Hero photo and Experience (files supplied), Assets supplied (committed in `8d8010f`, verified in `public/`).
+  - Added "Phase 3 Decisions (in progress)" with the owner's four answers: `src/app/` move, Prettier plus `prettier-plugin-tailwindcss`, Vercel project `rchen2004`, no git history rewrite for the phone.
+- **`docs/design-spec.md`:** status line only: approved by the owner on 2026-10-16, later changes through `decisions.md`.
+
+## Files changed
+- `docs/decisions.md`
+- `docs/design-spec.md` (status line)
+- `docs/phase-notes/phase-2-design.md` (this entry)
+
+## Open questions
+1. Spec §0 still points to "Phase 2 Decisions (in progress)", a heading that no longer exists. A one-word fix if the owner approves.
+2. Phase 1 `dateLabel`: "Removing it is still open." Spec §11 says keep it. Should decisions.md record it as kept?
+3. `featured` is still in `data/schema.ts` and `resume.json` (Backend).
+
+## Skills used
+- `frontend-design` (loaded; not exercised, docs only). `ponytail` was active.
+

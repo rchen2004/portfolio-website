@@ -1,11 +1,11 @@
 # Design Spec: Direction D
 
-Status: **draft for owner approval** (2026-10-15). Owner: Design. Frontend builds from this file.
+Status: **approved by the owner** (2026-10-16, Phase 2 checkpoint). Later changes go through `docs/decisions.md`. Owner: Design. Frontend builds from this file.
 
 ## 0. Sources and precedence
 
 - **Look and feel:** `docs/design-preview.html`, approved by the owner as the visual reference. Where this spec and the preview disagree, **this spec wins**. Section 13 lists the places where I changed the preview on purpose.
-- **Decisions:** `docs/decisions.md`, "Phase 2 Decisions (in progress)". It supersedes `plan.md` and `docs/design-directions.md` (Round 2 and its addendum) wherever they conflict.
+- **Decisions:** `docs/decisions.md`, "Phase 2 Decisions (2026-10-15 to 2026-10-16)". It supersedes `plan.md` and `docs/design-directions.md` (Round 2 and its addendum) wherever they conflict.
 - **Not part of the spec:**
   - the preview's banner note;
   - its CDN logo-loading script (Simple Icons v13 from jsDelivr);

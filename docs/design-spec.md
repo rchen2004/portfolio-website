@@ -161,6 +161,7 @@ The hero greeting is the page's only h1.
   2. Then the text block: the greeting, the tagline and the link row, with 20px gaps.
 - **Tablet and desktop (720px and up):** a two-column grid, `minmax(0, 1fr) 280px`, with a 40px gap, aligned to the top. Text on the left; the photo on the right at 4:5 (280 x 350).
 - **Link row:** see §6.1.
+- **Load motion:** the greeting and tagline blur in word by word, then the link row fades in. The photo stays static. See §7 rule 5.
 
 ### 4.2 About
 
@@ -482,10 +483,11 @@ See §4.6.
 
 ## 7. Motion
 
-There is one ambient motion (the timeline reveal), plus state changes and small hover feedback.
+There are two ambient motions (the hero load and the timeline reveal), plus state changes and small hover feedback.
 
 | Motion | Trigger | Properties | Duration and easing | Reduced motion |
 |---|---|---|---|---|
+| Hero load | Page load; plays once | Greeting and tagline words: opacity 0 to 1, `filter: blur(10px)` to none, translateY 4px to 0. Link row: opacity 0 to 1. Photo: none | Words: 700ms, `cubic-bezier(0.22, 1, 0.36, 1)`, delay = word index × 45ms (index runs on from the greeting into the tagline). Link row: 500ms, ease, 700ms delay | Not declared; everything is static at its resting state |
 | Timeline reveal | A timeline entry that was below the viewport at load scrolls 15% into view; it plays once per entry | opacity 0 to 1, translateY 12px to 0 | 320ms, `cubic-bezier(0.22, 1, 0.36, 1)` | Never applied; cards are always visible |
 | Rail marker slide | The current section changes | transform | 200ms, `cubic-bezier(0.2, 0, 0, 1)` | Jumps instantly |
 | Chevron rotate | A card opens or closes | transform | 200ms, `cubic-bezier(0.2, 0, 0, 1)` | Instant |
@@ -500,7 +502,33 @@ There is one ambient motion (the timeline reveal), plus state changes and small 
 2. On load, and only if `prefers-reduced-motion: no-preference` matches, a script adds the hidden starting state to entries whose top is below the viewport. Entries already in view never animate.
 3. An IntersectionObserver (threshold 0.15) reveals each entry once and then stops observing it.
 4. Only `opacity` and `transform` animate, so there is no layout shift.
-5. Nothing in the hero animates on load, so LCP is unaffected. The hero link tilt runs only on hover.
+5. **Hero load animation: Blur-in words** (owner choice, 2026-10-16). This supersedes the earlier rule "nothing in the hero animates on load". It is CSS only, plays once on load, and needs no JS.
+   - **Final values** (the owner's demo values, kept unchanged because they are what the owner approved):
+     - Each word of the greeting (h1) and of the tagline animates from `opacity: 0; filter: blur(10px); transform: translateY(4px)` to its resting state.
+     - 700ms, `cubic-bezier(0.22, 1, 0.36, 1)`, delay = word index × 45ms.
+     - The index runs on from the greeting into the tagline. With today's text: greeting words 0 to 2, tagline words 3 to 14. The last word starts at 630ms and ends at about 1330ms.
+     - The hero link row fades in, opacity only, 500ms ease, 700ms delay (done at 1200ms).
+     - The photo does not animate. It is the LCP element.
+   - **Resting CSS is the final state.** The keyframes declare only the `from` state, and the animation uses `animation-fill-mode: backwards` with one iteration. After it ends, no `filter`, `transform` or `opacity` is left on the words, so the text renders crisp. Do not use `forwards` or `both`, and do not add `will-change`.
+   - **Only under `prefers-reduced-motion: no-preference`.** Every `animation` declaration sits inside that media query. Under `reduce`, or in a browser without CSS animations, the hero is fully visible from the first paint. Without JS it still plays, because it is CSS only, and the content is never hidden at rest.
+   - **No CLS.** Only `opacity`, `filter` and `transform` animate, none of which affect layout. The blur halo paints outside the word boxes but does not move anything; no hero ancestor may set `overflow: hidden` (only the photo frame does).
+   - **Word spans, built from `resume.json`.** The hero component splits `basics.greeting` and `basics.tagline` at build time (a server component, splitting on whitespace). Nothing is hardcoded.
+     - Each word is an `inline-block` span. Punctuation stays with its word ("Hello,", "I'm", "problem.").
+     - The spaces between words are plain text nodes between the spans, not inside them, so lines still break at spaces.
+     - `display: inline-block` applies at every motion setting, not only inside the media query, so line breaks are identical with and without reduced motion.
+     - Each span gets its index as an inline custom property (`style="--i: 4"`), and the delay is `calc(var(--i) * 45ms)`. The tagline's first index is the greeting's word count.
+     - Frontend checks that the split greeting and tagline wrap exactly like the unsplit text (with `text-wrap: balance`) at 320, 390, 720 and 1200px.
+   - **Accessible text stays one string.** In both the h1 and the tagline `<p>`:
+     - one visually hidden copy of the full string (the sr-only pattern from §6.1, plus `user-select: none` so a copy of the hero is not doubled);
+     - then one `aria-hidden="true"` wrapper holding the word spans.
+     - The h1's accessible name is then "Hello, I'm Ryan." read once, and the tagline is read as one sentence. Both strings come from `resume.json`, so the copy and the spans cannot drift apart. No `aria-label`.
+   - **Tradeoffs (raised by Design, accepted by the owner):**
+     - `filter: blur()` is heavier than opacity and transform. Chromium composites it; Safari and Firefox may repaint the words each frame. The cost is bounded: 15 short words, one play, at most about 1.3s.
+     - Per-word spans add markup and need the hidden-copy pattern above. Find-in-page may match the hidden copy as well as the visible words, and crawlers see the text twice. Both are minor.
+     - Text is not fully readable until about 1.3s. The greeting (the name) is fully in by about 790ms.
+   - **Hero link tilt.** The fade runs on the link row container, opacity only. The tilt is a `transform` on each link (§6.1), a different element and property, so the two never override each other, and hover works during the fade. If focus enters the row before the fade ends (`.row:focus-within`), set `animation: none` on the row, so a keyboard user never focuses an invisible link.
+   - **Timeline reveal.** The two never play on the same element. The hero plays on load; the reveal applies only to entries below the viewport at load (rule 2) and plays on scroll. They share the same curve, `cubic-bezier(0.22, 1, 0.36, 1)`, so they read as one family.
+   - **Check:** Frontend confirms in Lighthouse that the LCP element is still the photo on mobile and desktop and that CLS is 0.
 6. Without JS, every entry is visible.
 
 **Other rules:**
@@ -510,7 +538,7 @@ There is one ambient motion (the timeline reveal), plus state changes and small 
   - It is transform-only, so it causes no layout shift and doesn't move neighboring links.
   - Under `prefers-reduced-motion: reduce`, set `transform: none`. The color change remains.
   - Keyboard `:focus-visible` gets the ring only, with no tilt.
-- No other load, scroll or hover animations. Project cards, technology items and the rest of the hero have no motion.
+- No other load, scroll or hover animations. The hero load (rule 5) is the only load animation. The photo, project cards and technology items have no motion.
 
 ---
 
@@ -635,6 +663,7 @@ These are notes, not code.
   - the rail's active-section logic;
   - the timeline reveal;
   - the accordion scroll correction.
+  - The hero load animation is CSS only and adds no client JS (§7 rule 5).
 - **Icons:** all inline SVG, with no CDN at runtime and no icon font.
   - **Link icons:** five Tabler outline glyphs, copied into the repo (§6.1).
   - **Technologies logos:** solid monochrome Simple Icons from a pinned version, plus the Lucide `database` icon for SQL (§6.3).
@@ -702,6 +731,8 @@ Scouted on 2026-10-16 with the read-only 21st tools. **This section changes noth
 | Project card (§6.5) | None | [Project Card](https://21st.dev/@ravikatiyar162/components/project-card). It is built around an image with a hover zoom. The spec has no images and no card hover. |
 | Skip link (§6.7) | None | Not searched for as a component. It is a single styled link. |
 | Footer (§6.8) | None | [Minimal Two-Column Footer](https://21st.dev/@ln-dev7/components/footer-17). It is a brand block with a link list. The spec footer is one line of copyright and a "Back to top" link. |
+
+**Update (2026-10-16):** §7 rule 5 now has a hero load animation, so the Hero layout row's "nothing animates on load" reason no longer applies. The pick stays "None": the animation is built in plain CSS from §7 rule 5, with no 21st component and no `framer-motion`.
 
 **Components the agent brief lists that the spec no longer has.** `docs/decisions.md` (Phase 2) removed these, so I did not scout them:
 - Featured and compact experience variants: one card style for all (§6.4).

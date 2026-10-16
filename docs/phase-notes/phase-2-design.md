@@ -434,3 +434,40 @@ Status: **proposals only, pending owner approval.** Read-only. No change to the 
 - `frontend-design` (restraint: no pick is better than added noise). `ponytail` was active.
 - 21st tools: `mcp__21st__search`, `mcp__21st__get_inspiration`, `mcp__21st__get_component` (one retrieval, id 18113; one free retrieval left today), `mcp__21st__search_logo`.
 
+---
+
+# Step 2 update: Hero load animation (2026-10-16)
+
+Status: **owner-approved change, specified.** Owner choice: Blur-in words, over my gentle fade-up recommendation.
+
+## What I did
+- **`docs/design-spec.md`:**
+  - §7 rule 5 rewritten: Blur-in words, with final values, the resting-state rule, the reduced-motion gate, no CLS, how the words are split, the accessibility pattern, the tradeoffs, and how it fits the hero link tilt and the timeline reveal.
+  - §7 motion table: new "Hero load" row.
+  - §7 "Other rules": the hero load is now the only load animation.
+  - §4.1: a "Load motion" bullet pointing to §7 rule 5.
+  - §12: a one-line note that the animation is CSS only, with no client JS.
+  - §15: a one-line update. The Hero row's old reason no longer applies, and the pick stays "None".
+- **`docs/decisions.md`:** added the approved decision "Hero load animation: Blur-in words (owner choice, approved 2026-10-16)" with the exact values.
+
+## Decisions I made
+- **Values kept exactly as in the demo** (blur 10px, translateY 4px, 700ms, `cubic-bezier(0.22, 1, 0.36, 1)`, 45ms stagger; link row 500ms ease at 700ms). The owner approved what they saw, so I did not tune them. Timing with today's text: 15 words, the greeting is in by about 790ms, and the last word ends at about 1330ms.
+- **Accessibility:** a visually hidden copy of each full string, plus an `aria-hidden` wrapper holding the word spans. Both are generated at build time from `basics.greeting` and `basics.tagline`. The hidden copy gets `user-select: none`, so copying the hero does not double the text.
+- **Safety:** `from`-only keyframes with `animation-fill-mode: backwards` and no `will-change`, so no filter lingers on the text after the animation. `inline-block` applies at every motion setting, so line breaks don't change with the preference. The stagger index is an inline `--i` custom property.
+- **Link row:** the fade is on the row container (opacity only), separate from the per-link tilt transform. `:focus-within` cancels the fade, so a keyboard user never focuses an invisible link.
+- **Timeline reveal:** unchanged. It never runs on the hero, and it shares the same curve.
+
+## Files changed
+- `docs/design-spec.md` (§4.1, §7, §12, §15)
+- `docs/decisions.md` (one entry, added at the owner's request)
+- `docs/phase-notes/phase-2-design.md` (this entry)
+
+## Open questions
+1. **Resolved:** the §7 intro line now reads "There are two ambient motions (the hero load and the timeline reveal), plus state changes and small hover feedback." The coordinator approved the change.
+2. **`basics.greeting` does not exist yet** in `resume.json` or `data/schema.ts` (spec §11 #1). The split depends on it. Backend needs to add it.
+3. **Verify at build:** Lighthouse still reports the photo as the LCP element, CLS is 0, and the split text wraps exactly like the unsplit text.
+
+## Skills used
+- `frontend-design` (motion and the quality floor: reduced motion and accessibility). `ponytail` was active.
+- I checked `animate`. The values were already fixed by the owner, so I did not run it.
+

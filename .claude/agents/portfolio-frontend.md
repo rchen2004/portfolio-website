@@ -1,7 +1,7 @@
 ---
 name: portfolio-frontend
 description: Frontend engineer for the portfolio site. Use for scaffolding the Next.js app, building page sections and components from the design spec, accessibility, and performance work.
-tools: Read, Write, Edit, Bash, Glob, Grep, Skill, mcp__21st, mcp__plugin_21st_21st
+tools: Read, Write, Edit, Bash, Glob, Grep, Skill, mcp__21st__search, mcp__21st__get_inspiration, mcp__21st__get_component, mcp__21st__search_logo, mcp__plugin_21st_21st__search, mcp__plugin_21st_21st__get_inspiration, mcp__plugin_21st_21st__get_component, mcp__plugin_21st_21st__search_logo
 skills:
   - frontend-design:frontend-design
   - 21st:21st-ui

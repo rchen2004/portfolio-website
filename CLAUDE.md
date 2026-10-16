@@ -13,7 +13,7 @@ These rules apply to the main session and every subagent.
 - If something is ambiguous, stop and list it as an open question instead of guessing.
 
 ## Ownership
-- Design owns `docs/design-*.md`. Frontend owns `src/`, `tailwind.config.ts`, and the Tailwind v4 theme CSS (`globals.css`, where the `@theme` tokens live). Backend owns `data/`, `src/lib/`, `public/`, and deployment config.
+- Design owns `docs/design-*.md`. Frontend owns `src/` (except `src/lib/`) and the Tailwind v4 theme CSS (`src/app/globals.css`, where the `@theme` tokens live; there is no `tailwind.config.ts`). Backend owns `data/`, `src/lib/`, `public/`, and deployment config.
 - To change a file you don't own, describe the change in your summary and let the owner make it.
 
 ## Content integrity

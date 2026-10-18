@@ -399,12 +399,11 @@ Unmarked slugs are Simple Icons.
 - Every card uses this one style. There is no featured or compact variant.
 
 **Summary (collapsed view):**
-- **Header row:** a flex row, centered vertically, that wraps.
+- **Header row:** a flex row, centered vertically, that wraps, with `gap: 2px 16px` (2px between wrapped lines, 16px between items).
   - On the left: the company logo box (40 x 40, 8px radius, 14px gap), then the company name (21px/600; 18px under 720px).
-  - On the right, pushed over with `margin-left: auto`: the dates in meta style (Pebble 15px), from `dateLabel`.
-  - Last: the chevron.
+  - On the right: one non-wrapping group, pushed over with `margin-left: auto`, holding the dates in meta style (Pebble 15px), from `dateLabel`, then the chevron 20px after the dates.
 - **Second line:** the title in meta style, 2px below. It is indented 54px at 720px and up so it lines up under the company name; no indent below 720px.
-- **Wrapping:** if the header row wraps on narrow screens, the dates drop under the company name. The chevron stays at the end of the row.
+- **Wrapping:** if the header row wraps on narrow screens, the dates and chevron drop together to the next line, under the company name and right-aligned. The chevron always stays at the end of the row.
 - **Chevron:**
   - A 9 x 9px corner drawn with 2px Pebble right and bottom borders.
   - Closed: rotated 45° and nudged up 3px, so it points down.
@@ -417,7 +416,7 @@ Unmarked slugs are Simple Icons.
 
 **Expanded content:**
 - **Highlights:** a list 16px below the summary, with a 20px bullet indent and 8px between items. Text is 17px/1.6 (16px under 720px). Bullet markers are Pebble. Indented 54px at 720px and up; no indent below.
-- **Scout's repo links:** 12px below the highlights, a wrapping row with a 20px gap. They use the labeled link style (§6.1, "Repo and project links") with the 18px outline `brand-github` icon (§6.1 link icons), labels from `links[].label`, and a new tab. Same 54px indent.
+- **Scout's repo links:** 12px below the highlights, a wrapping row with `gap: 0 20px` (20px between links; no extra space between wrapped lines, since the 44px link height already separates them). They use the labeled link style (§6.1, "Repo and project links") with the 18px outline `brand-github` icon (§6.1 link icons), labels from `links[].label`, and a new tab. Same 54px indent.
 
 **Company logo (box):**
 - 40 x 40, 8px radius, a **1px Rule border**, `object-fit: contain`. The files are the owner-supplied **100 x 100 JPGs in `public/`** (§11).
@@ -426,16 +425,15 @@ Unmarked slugs are Simple Icons.
 
 **Timeline dot:**
 - 12px circle, Charcoal, positioned in the list's left padding.
-- Its center lines up with the logo's center: 48px from the card top at 720px and up (28px padding + 20px), 44px below 720px.
-- Positioned at `left: -48px` and `top: 42px` (mobile: `-36px` and `38px`).
-- **Open card's dot:** Accent fill plus a 5px soft ring (§1.1). Fill and ring change over 200ms. Use `.entry:has(> details[open]) .dot` or an equivalent class.
+- Its center lines up with the logo's center: 49px from the card's outer top edge at 720px and up (1px border + 28px padding + 20px), 45px below 720px (1px + 24px + 20px).
+- Positioned at `left: -48px` and `top: 43px` (mobile: `-36px` and `39px`).- **Open card's dot:** Accent fill plus a 5px soft ring (§1.1). Fill and ring change over 200ms. Use `.entry:has(> details[open]) .dot` or an equivalent class.
 - **Only the open card's dot is Accent.** All other dots stay Charcoal.
 - **Opening is click-only.** Scrolling never opens, closes or highlights a card. The only scroll-driven behavior on the timeline is the one-time reveal (§7).
 
 **Timeline line:**
 - 2px wide, Rule color, decorative. It runs through the dot centers (x = 6px inside the list padding, so it is centered on the dot).
 - It must run **from the first dot to the last dot exactly**, whichever cards are open.
-- Draw it as a connector on each entry except the last: from that entry's dot center down to the next entry's dot center (the entry's height + the gap + 48px, or 44px on mobile).
+- Draw it as a connector on each entry except the last: from that entry's dot center down to the next entry's dot center. It starts at `top: 49px` (45px on mobile) with `height: calc(100% + 24px)` (the entry's height + the list gap; `+ 20px` on mobile).
 - The preview's single line with a fixed `bottom: 48px` overshoots past the last dot when the last card is open (§13).
 
 **Behavior:**
@@ -449,11 +447,13 @@ Unmarked slugs are Simple Icons.
     details::details-content {
       block-size: 0;
       overflow: clip;
+      overflow-clip-margin: 4px;
       transition: block-size 320ms cubic-bezier(0.2, 0, 0, 1),
                   content-visibility 320ms allow-discrete;
     }
     details[open]::details-content { block-size: auto; }
     ```
+  - **`overflow-clip-margin: 4px`** keeps the repo links' focus ring (2px offset + 2px width) visible at the content box edges. During the 320ms animation up to 4px of content can show past the clip edge; that stays inside the 24/28px card padding, so it is accepted.
   - Opening and closing both animate, including the card the browser closes when another opens.
   - **Keep the 16px space above the highlights inside the clipped box.** Make it the list's `padding-top`, not `margin-top`. `overflow: clip` does not stop margin collapsing, so a margin could leak outside the clip and jump at the end of the close.
   - **Fallback:** browsers without `::details-content` or `interpolate-size` snap open and closed (native behavior). Acceptable.

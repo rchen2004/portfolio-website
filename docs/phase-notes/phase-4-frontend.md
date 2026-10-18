@@ -168,3 +168,125 @@ Skills used: `frontend-design` (preloaded). No 21st components (spec §15 picks 
 
 #### Open question
 - **The cup reads light.** Its strokes are thin and it is narrower than its neighbors (26px wide), so next to the solid Python and TypeScript marks it looks smaller and fainter, even more than the OpenJDK Duke did. An optical scale-up would make it bigger but not heavier. A heavier Java mark would need a different icon. Owner's call; I made no change.
+
+## Step 5: Experience
+
+Agent: Frontend. Branch `phase-4-sections`. Date 2026-10-18. Not committed.
+
+### What I did
+- **`src/components/Experience.tsx` (new, server component, §4.4, §6.4, §9.3):** `<section id="experience" aria-labelledby="experience-heading">`, the h2 "Experience" (the only hardcoded text), then `<ol class="timeline">` of `sortByDate(resume.experience)` (Scout, Babel Street, Verisk, Ventus Health). Each `<li class="entry">` holds an `aria-hidden` dot span and `<details name="experience">`. Index 0 of the sort result gets `open`, so no company name is used.
+  - Summary: no headings, only spans (summary allows phrasing content). It has a flex row that wraps: the logo (next/image 40 x 40, `alt=""`, 8px radius, 1px Rule border, `object-fit: contain`) and the company (21px/600, 18px under 720px) with a 14px gap, then the dates (`displayDate`, meta style) and the chevron, pushed right with `margin-left: auto`. Under it is the title in meta style, 2px below, with a 54px indent from 720px. The company turns Accent on summary hover (120ms ease). The native marker is hidden and the cursor is a pointer.
+  - Chevron: a 9 x 9px span with 2px Pebble right and bottom borders. Closed it is `rotate(45deg) translateY(-3px)`, and open (`group-open`) it is `rotate(-135deg) translateY(-1px)`. The transition is 200ms `cubic-bezier(0.2,0,0,1)`, under `motion-safe` only.
+  - Highlights: `padding-top: 16px` (not margin), a 20px bullet indent, 8px gaps, 17px/1.6 (16px under 720px) and Pebble markers, with a 54px indent from 720px.
+  - Scout's repo links: 12px below, a wrapping row with a 20px column gap. Each uses the new `labeled-link` utility with the 18px Tabler `brand-github` icon (shared 0.92 scale) as a direct flex child, the label from `links[].label`, a hidden " (opens in a new tab)" hint, `target="_blank"` and `rel="noopener"`.
+  - Card: White, 1px Rule border, 12px radius, 28px padding (24px under 720px). Every card uses this style.
+  - With no logo, the indent drops to 0 (fallback only; all four companies have logos).
+- **`src/components/TimelineScript.tsx` (new, client, renders nothing):**
+  - Reveal: only under `prefers-reduced-motion: no-preference`. Entries whose top is below the viewport at mount get `reveal-pending`. An IntersectionObserver (0.15) swaps that class for `reveal-shown` once, then stops observing the entry.
+  - Scroll correction: a capture-phase `toggle` listener on the list remembers the card that opened. The browser's `close` toggle on the card it shuts does not overwrite that; closing the remembered card clears it. One shared timer and frame are cleared on every toggle. When the animation runs (no-preference, `::details-content` and `interpolate-size` supported), the work waits 320ms then one rAF; otherwise it waits one rAF. If the opened summary's top is above 0, it runs `scrollIntoView({ block: "start" })`, which honors `scroll-padding-top`. The behavior is `smooth` under no-preference, `auto` otherwise.
+  - The settle function has a comment marking where step 8's rail update goes.
+- **`src/app/globals.css`:**
+  - **`labeled-link` utility (§6.1):** inline-flex, 8px gap, at least 44px tall, 15px/600 Charcoal, 1px Accent underline at a 4px offset. Hover (under `hover: hover`) gives Accent and a 2px underline over 120ms ease; pressed gives Accent deep. It has a 4px radius for the focus ring. Projects and the footer can reuse it.
+  - **Timeline block:**
+    - The dot is 12px Charcoal at -36/38 (-48/42 from 720px). It turns Accent with the 5px 18% ring via `.entry:has(> details[open]) > .dot`, and transitions over 200ms ease under no-preference only.
+    - Connector: `.entry:not(:last-child)::before`, 2px Rule. It starts at `top: 44px` (48 from 720px) with `height: calc(100% + 20px)` (24 from 720px), centered on the dot.
+    - Summary focus offset: 4px. This is unlayered, so it overrides the global 2px.
+    - Animated height: under no-preference, `:root { interpolate-size }`, plus `::details-content` with `block-size` 0 to auto over 320ms, `content-visibility` allow-discrete and `overflow: clip`.
+    - Reveal classes: under no-preference, 12px and opacity 0, over 320ms `cubic-bezier(0.22,1,0.36,1)`.
+  - **Theme fade:** `html.theme-fade` now also covers `*::before` and `*::after`, so the connectors fade with the theme.
+- **`src/app/page.tsx`:** `<Experience />` after `<Technologies />`.
+
+### Decisions I made
+- **Header row gaps from the preview:** 2px row gap, 16px column gap, and the chevron 4px past the dates' gap (20px from the dates). The spec gives no values; these match the approved preview.
+- **Dates and chevron wrap together.** In the first build, the chevron wrapped alone onto its own line at 390 (Scout and Babel Street). Now the two sit in one non-wrapping group with `margin-left: auto`. When the row wraps, they drop to the next line together, right-aligned, and the chevron stays at the end of the row (§6.4). See `clip-320.png` and `clip-390.png`.
+- **Repo link row gap:** 20px between links, 0 between wrapped lines, as in the preview. The links are 44px tall, so wrapped rows don't touch. See open question 2.
+- **`overflow-clip-margin: 4px` on `::details-content`:** without it, the clip cut the focus ring of the repo links (2px offset + 2px width) at the content box edges, most visibly on mobile, where the links start at x = 0. Side effect: up to 4px of content past the clip edge can show during the 320ms height animation. See `exp-focus-link-light-390.png`.
+- `{" "}` text nodes between the summary parts. They are not rendered in flex layout, but they keep words apart in the accessible name.
+
+### Measurements (headless Chrome, `next start`, light and dark; static shots under reduced motion)
+- **Order and default:** Scout, Babel Street, Verisk Analytics Inc., Ventus Health. Open on load: `[true, false, false, false]`.
+- **Accessible names** (AX tree, role DisclosureTriangleGrouped): "Scout Sep 2025 - Present Senior Developer" (expanded), "Babel Street Jan - Jun 2026 Software Engineer Co-op", "Verisk Analytics Inc. Jan - Jun 2025 Junior Software Developer Co-op", "Ventus Health Jun - Sep 2024 Project Manager Assistant". The only heading in the section is the h2.
+- **Styles at every width (320/390/768/1200/1440), both themes:**
+  - List padding 36px with 20px gaps under 720px, and 48px with 24px gaps from 720px.
+  - Card padding 24px / 28px, 12px radius, 1px border. White and Rule are `#FFFFFF` and `#DAD6D0` in light, `#24211E` and `#3A3531` in dark.
+  - Logo: 40 x 40, 8px radius, 1px Rule border, `contain`, `alt=""`. It sits 14px from the company.
+  - Company 18px / 21px, 600, line-height 1.3. Dates 15px Pebble.
+  - Chevron: 9 x 9px, 2px Pebble borders.
+  - Title: 15px Pebble, 2px below the row, indented 0px under 720px and 54px from 720px.
+  - Highlights: `padding-top` 16px, 20px bullet indent, 8px gap, 16px/25.6px (under 720px) and 17px/27.2px (from 720px), Pebble markers.
+  - Repo links: 15px/600, 44px tall, 1px Accent underline at a 4px offset, `_blank` and `noopener`, 18px icon, 12px below the highlights, 20px column gap.
+  - No horizontal scroll at any width.
+- **Wrapping:** at 320 and 390, Scout's dates and chevron drop to a second line, right-aligned, with the chevron last. At 320, "Verisk Analytics Inc." wraps to two lines. From 768, everything is on one row.
+- **Dot center vs logo center:** the x-axis does not apply (the dot is in the gutter). On the y-axis, the dot center is **1px above** the logo center at every width. The spec's 42px / 38px puts the center at 48px / 44px from the card's top edge, and the logo's center is at 1px border + 28px / 24px padding + 20px = 49px / 45px. At 320, Verisk's two-line name makes the summary row 46.8px tall, so its logo center is 4.4px below the dot. See open question 1.
+- **Connector, Scout open (default):** the first connector starts exactly at the first dot center, each connector ends exactly at the next dot center, and the last ends exactly at Ventus's dot. Start error 0, end error 0, joins `[0,0,0]`, x error 0, and the last entry has no connector. This holds at all 5 widths in both themes, under reduced motion and with motion (390 and 1440).
+- **Connector, other cards open:**
+  - Ventus (the last card): with motion at 390, the line runs 1442.05 to 1914.55 and the last dot is at 1914.55; at 1440, it runs 1082.44 to 1519.69. Errors 0, joins 0.
+  - Babel Street: the line runs 1070.44 to 2053.06 and the last dot is at 2053.06, in both themes.
+- **Connector mid-animation (~150ms into opening Babel Street):** card heights are `[131, 645, 122, 122]` against the settled `[122, 667, 122, 122]`. The line still runs exactly from the first dot to the last, with joins `[0,0,0]`. It follows the height every frame.
+- **One open at a time** (sequence of clicks):
+  - Ventus: `[F,F,F,T]`.
+  - Verisk: `[F,F,T,F]`.
+  - Scout: `[T,F,F,F]`.
+  - Scout again: all closed.
+  - Only the open card's dot is Accent (`#C0362C` light, `#E56B60` dark, with the 18% ring); the others are Charcoal.
+- **Height animation vs snap** (Babel Street, read synchronously after `click()`, after two frames, and after 600ms):
+  - Reduced motion: 121.75, then 667.13, 667.13 and 667.13. It snaps. The dot and chevron transition durations are 0s.
+  - With motion: 121.75, then 121.75, 121.75 and 667.13. It animates. The dot transition is 0.2s, and the chevron transition is 0.2s on transform.
+- **Scroll correction:**
+  - With the page as it is now, the page ends at Experience. When Scout closes, the browser's max-scroll clamp keeps Ventus in view (1440: Ventus top 728 → 657; 390: 652 → 534). The correction never needs to run.
+  - To test it, I added 2000px of bottom padding to main in the test page, as a stand-in for Projects and Footer. Ventus's summary started 28px from the top with Scout open above, then I opened Ventus:
+    - **Chrome with scroll anchoring** (1440): the summary stays at 28px the whole time. Anchoring compensates, and no correction is needed.
+    - **Scroll anchoring off** (`overflow-anchor: none`, as in Safari):
+      - 1440, motion: the summary is at -138 at 100ms and -194 at 330ms. The correction runs at about 330ms and scrolls smoothly; the summary is at -38 at 400ms and **24px** from 600ms on.
+      - 390, motion: -290, then -409, then -224, then **24px** (final).
+      - 390, reduced motion: **24px** by 100ms, which is the instant path. 24px is the `scroll-padding-top`.
+- **Reveal:**
+  - 1440 x 900, motion: all 4 entries are below the fold at load (tops 1034 to 1696). All get `reveal-pending` (opacity 0). After scrolling, all are `reveal-shown`, opacity 1, transform none.
+  - 1440 x 2600 (all in view at load): no classes, opacity 1. They never animate.
+  - Reduced motion: no classes, opacity 1.
+  - JS disabled: no classes, opacity 1.
+- **Hover:**
+  - Verisk's summary: the company turns `#C0362C` and the cursor is a pointer.
+  - NUMAC link: text and icon turn `#C0362C`, and the underline goes to 2px.
+- **Focus (keyboard Tab, 390):** the first summary reached is Scout. `:focus-visible` gives a 2px solid `#24201D` ring at a 4px offset with a 4px radius, clear of the logo and text. The NUMAC link's ring is fully visible inside the clipped content (`exp-focus-link-light-390.png`, 2x).
+- **Theme fade:** with `theme-fade` on, the connector `::before` transitions `background-color, color, border-color, text-decoration-color, box-shadow`.
+- **Screenshots** (scratchpad `shots/`):
+  - `exp-{light,dark}-{320,390,768,1200,1440}.png` (full page, reduced motion);
+  - `exp-open2-{light,dark}-1440.png` (Babel Street open, Scout closed; section crop);
+  - `exp-hover-light-1440.png` (Verisk summary hovered; viewport);
+  - `exp-focus-light-390.png` (keyboard focus on Scout's summary);
+  - `exp-focus-link-light-390.png` (keyboard focus on a repo link, 2x);
+  - `exp-mid-anim-1440.png` (about 150ms into opening Babel Street; Scout closing);
+  - `clip-{320,390,768}.png` (section crops of the wrap behavior).
+
+### Checks
+- `npm run typecheck`: pass
+- `npm run lint`: pass
+- `npm run format:check`: pass
+- `npm run check:data`: pass
+- `npm run build`: pass (`/` static)
+
+`next start` only; the server was stopped afterwards. `AGENTS.md` is untouched.
+
+### Files changed
+- `src/components/Experience.tsx` (new)
+- `src/components/TimelineScript.tsx` (new)
+- `src/app/globals.css`
+- `src/app/page.tsx`
+
+Skills used: `frontend-design` (preloaded). No 21st components (spec §15 picks none for the timeline). No new dependencies.
+
+### Open questions
+1. **The dot is 1px above the logo center.** §6.4's `top: 42px` (38px mobile) assumes the logo center is 48px (44px) below the card top, but the card's 1px border puts it at 49px (45px). I kept the spec values; the approved preview has the same 1px. To center exactly, both the dot (`top: 43px` / `39px`) and the connector (`top: 49px` / `45px`) would move 1px. Design's call. (At 320, Verisk's two-line name moves its logo a further 4.4px down; a fixed `top` can't follow that.)
+2. **Repo link row gap.** §6.4 says "a wrapping row with a 20px gap". I used 20px between links and 0 between wrapped lines (the preview's `gap: 0 20px`). With a literal `gap: 20px`, wrapped lines at 320 and 390 would have 20px between 44px targets. Confirm 0 or 20 for the row gap.
+3. **The clip margin side effect.** `overflow-clip-margin: 4px` keeps keyboard focus rings visible inside the clipped `::details-content`. During the 320ms animation, it lets up to 4px of content show past the clip edge (inside the card padding). I couldn't see it in the frame captures. Keep it, or accept clipped rings at the content edges?
+
+### QA fix (2026-10-18, Design's step 5 must-fix)
+- **`src/app/globals.css`:** the dot moved to `top: 43px` (39px under 720px) and the connector to `top: 49px` (45px under 720px). The connector heights are unchanged. Design answered all three open questions: keep `gap: 0 20px`, `overflow-clip-margin: 4px` and the header gaps.
+- **Dot center vs logo center:** 0px at 320, 390, 768, 1200 and 1440 in both themes. The one exception is Verisk at 320, where the two-line name puts the logo 3.39px below the dot.
+- **Line:** it still runs exactly from the first dot to the last, with start, end and join errors all 0, in these cases:
+  - Scout open, all 5 widths, both themes;
+  - Ventus open, with motion, at 390 (1443.05 to 1915.55) and 1440 (1083.44 to 1520.69);
+  - Babel Street open, both themes.
+- **New screenshot:** `exp-links-dark-2x.png` (Scout's repo links in dark at 2x). The underline is Accent `#E56B60` on the `#24211E` card, which is 5.0:1 (§9.1).
+- **Checks:** typecheck, lint, format:check, check:data and build all pass. `next start` only; the server is stopped. `AGENTS.md` is untouched.

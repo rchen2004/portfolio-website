@@ -1,4 +1,5 @@
 import { About } from "@/src/components/About";
+import { Experience } from "@/src/components/Experience";
 import { Hero } from "@/src/components/Hero";
 import { Technologies } from "@/src/components/Technologies";
 import { ThemeToggle } from "@/src/components/ThemeToggle";
@@ -17,6 +18,7 @@ export default function Home() {
         <Hero />
         <About />
         <Technologies />
+        <Experience />
       </main>
     </div>
   );

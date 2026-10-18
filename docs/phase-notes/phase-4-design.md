@@ -273,3 +273,53 @@ Not checked: real hover on touch devices, Safari and Firefox.
 **Step 4 passes QA after the CSS fix, with Java pending Frontend's swap to `java-plain` and the logo hover color pending Frontend.**
 
 Skills used: `frontend-design` (preloaded). No 21st lookups.
+
+---
+
+## Step 5 QA (2026-10-18): Experience
+
+Read-only review. Sources: `exp-{light,dark}-{320,390,768,1200,1440}.png` (light 320/390/768 checked through `clip-*` crops), `exp-open2-*`, `exp-hover-light-1440`, `exp-focus-light-390`, `exp-focus-link-light-390`, `exp-mid-anim-1440`, `clip-{320,390,768}`; `Experience.tsx`, `TimelineScript.tsx`, the `globals.css` timeline block and `labeled-link`; Frontend's step 5 measurements. No file changed except this one. Skills used: `frontend-design` (preloaded). No 21st lookups (§15 picks none).
+
+| Item | Result | Evidence |
+|---|---|---|
+| Order, Scout open from the sort result (§4.4, §6.4) | Pass | `Experience.tsx:9,28`; `[T,F,F,F]` |
+| Card, logo, 54px indent from 720px only | Pass | measurements; 390 vs 768 crops |
+| Dates right, wrap under the name; chevron down/up, 200ms | Pass | `clip-320/390`; `exp-open2-*` |
+| One open; 320ms height; no jump on close; reduced motion snaps | Pass | `exp-mid-anim-1440`; snap numbers |
+| Dots 12px, centered on the logo | **Fail (1px)** | dot center 48/44 vs logo center 49/45 |
+| Only the open dot Accent with ring; line first dot to last, any card open | Pass | joins 0 at all widths, mid-animation too |
+| Repo links: labeled, 18px, Accent underline, 2px on hover (§6.1) | Pass | `labeled-link`; hover measured |
+| Scroll correction | Pass | anchoring-off test, 24px final |
+| Reveal; reduced motion and no JS show all | Pass | measurements |
+| Summary ring 4px offset; company Accent on hover | Pass | `exp-focus-light-390`, `exp-hover-light-1440` |
+| No headings in summary; names read once (§9.3) | Pass | AX names |
+| Tokens, contrast, 320px no scroll | Pass | shots |
+
+### Must-fix for Frontend
+1. Dot `top: 43px` (39px under 720px); connector `top: 49px` (45px under 720px). Heights unchanged.
+
+### Rulings
+1. **Dot offset:** move it (must-fix 1). §6.4's stated rule is "center lines up with the logo's center"; 42/38 is an arithmetic slip that left out the 1px border. Verisk at 320 (two-line name, 4.4px lower) is accepted: a fixed `top` can't follow it and it occurs at one width only.
+2. **Repo link row gap:** keep `gap: 0 20px`. The 44px targets already separate wrapped lines (`clip-320`); a 20px row gap would loosen the list beyond the 12px above it.
+3. **`overflow-clip-margin: 4px`:** keep. The 4px stays inside the 24/28px card padding, never reaches the border, and isn't visible in `exp-mid-anim-1440`. Visible focus rings win.
+4. **Frontend's choices:** accepted. Dates and chevron as one wrapping group meet "the chevron stays at the end of the row". Row gap 2px, column gap 16px, chevron 20px from the dates match the preview. `labeled-link` matches §6.1 and is the one style for Projects and the footer link.
+
+### Spec clarifications (proposed; not edited)
+- §6.4 dot: `top: 43px` / `39px`, center 49px / 45px (1px border + padding + 20px); §6.4 line: connector starts at 49px / 45px.
+- §6.4 header row: `gap: 2px 16px`; dates and chevron form one non-wrapping group with `margin-left: auto`, chevron 20px after the dates; on wrap both drop to the next line, right-aligned.
+- §6.4 repo links: "`gap: 0 20px`" instead of "a 20px gap".
+- §6.4 CSS block: add `overflow-clip-margin: 4px` with the reason.
+These restate the built values, so the owner only needs to OK the wording; the dot value restores the spec's own intent.
+
+Not checked: the dark repo-link underline at 2x (downscaled shots read pale; send a crop), Safari and Firefox (`::details-content` fallback), real touch devices.
+
+**Step 5 passes QA after must-fix 1.**
+
+### Follow-up (2026-10-18): open items closed
+- **Must-fix 1 (dot):** closed. Frontend set 43/39px with the connector at 49/45px and re-measured a 0px offset at every width. The one exception is Verisk at 320px, where the name wraps; that was accepted in ruling 1.
+- **Spec clarifications:** the owner approved all four (relayed by the coordinator). They are applied in §6.4: the dot and connector values, the header row `gap: 2px 16px` with the dates and chevron grouped, the repo links `gap: 0 20px`, and `overflow-clip-margin: 4px` with its reason in the CSS block. No other section repeats these values; §10 was checked. There is one `decisions.md` entry, "Timeline clarifications from step 5 QA".
+- **Dark repo-link underline:** closed. The coordinator checked it at 2x: Accent `#E56B60` on White `#24211E`, 5.0:1, and it reads clearly.
+
+Files changed: `docs/design-spec.md` (§6.4), `docs/decisions.md` (one Phase 4 entry), this file. Not committed.
+
+**Step 5 passes QA.**

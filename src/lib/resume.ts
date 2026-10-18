@@ -20,6 +20,9 @@ function parseResume(data: unknown) {
 
 export const resume = parseResume(raw);
 
+/** Served from public/resume.pdf, a separately exported file (not generated from resume.json). */
+export const RESUME_PDF = "/resume.pdf";
+
 const MONTHS = [
   "Jan",
   "Feb",

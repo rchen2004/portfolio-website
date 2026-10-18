@@ -18,7 +18,7 @@
   - Scout: NUMAC `https://github.com/Scout-NU/numac`, 3 Stones mobile app `https://github.com/Scout-NU/3-Stones-App`, 3 Stones web `https://github.com/Scout-NU/3-stones`.
   - CodeStack `https://github.com/rchen2004/CodeStack`, Fakebook Crawler `https://github.com/rchen2004/FakebookCrawler`, Hexagonal Reversi `https://github.com/rchen2004/Reversi`.
 - **Images:** Optional screenshot image on each project, plus a headshot in `basics`. Image files not supplied yet. *Superseded (2026-10-16): see "Project images" and "Assets supplied" (Phase 2).*
-- **Phone:** Must not appear on the site. Remove it from `resume.json` and the schema.
+- **Phone:** Must not appear on the site. Remove it from `resume.json` and the schema. *Updated (2026-10-18): `/resume.pdf` is an exception; see "Resume PDF keeps the phone" (Phase 4).*
 - **`dateLabel`:** Kept for now as an optional override. Removing it is still open. *Superseded (2026-10-16): resolved, kept; see spec §11 ("`dateLabel`: keep it. Cards display it.").*
 - **Strictness:** Unknown keys fail the build at every level of the schema.
 - **Phase 1 checkpoint:** Approved by owner (2026-10-15).
@@ -30,7 +30,7 @@
 - **Hero content:** The greeting "Hello, I'm Ryan." followed by the tagline (`basics.tagline`). Below them sit links to email, LinkedIn, GitHub, Instagram (`https://www.instagram.com/ryan.chen2`) and the resume PDF. Whether they appear as buttons or icons is a design choice. *Superseded (2026-10-16): link order and style, see "Hero links" and "Hero link hover".*
 - **No Contact section:** The hero is the only place the contact links appear; repeating them in a Contact section would be redundant. This supersedes `plan.md` Phase 4 item 7. There is no Contact nav link.
 - **Compact experiences:** Scout and Ventus Health still get a card/box and show all their highlights, just lighter than the featured ones. *Superseded (2026-10-16): see "Experience" and "`featured` removed".*
-- **Skills:** Labeled "Technologies" on the site, with no nav link of its own. Show only a curated set of prominent languages/frameworks, each with its logo. Tools are not shown. The list, in order: Java, Python, TypeScript, C++, HTML, CSS, SQL, React.js, Tailwind, Next.js. *Superseded (2026-10-16): the nav link, see "Section order and nav".*
+- **Skills:** Labeled "Technologies" on the site, with no nav link of its own. Show only a curated set of prominent languages/frameworks, each with its logo. Tools are not shown. The list, in order: Java, Python, TypeScript, C++, HTML, CSS, SQL, React.js, Tailwind, Next.js. *Superseded (2026-10-16): the nav link, see "Section order and nav".* *Superseded (2026-10-18): the skills data, see "Skills list removed" (Phase 4).*
 - **Direction:** Direction D "Fog and Bridge" with Arrangement 1 (greeting + tagline in hero; separate About and Technologies). The visual preview the owner asked for was made and approved: see "Visual reference".
 - **Greeting:** "Hello, I'm Ryan." First name only, by owner's choice.
 - **Photo alt text:** "Ryan at the Golden Gate Bridge" (approved). The owner visited San Francisco once and doesn't live there; the design must not imply the owner is SF-based.
@@ -46,7 +46,7 @@
 - **Footer:** "© <year> Ryan Chen" plus a "Back to top" link.
 - **Section order and nav:** Hero, About, Technologies, Experience, Projects, Footer. The nav reads About, Technologies, Experience, Projects. Technologies comes before Experience as an intro ("what I use, then what I've done") and now has a nav link, superseding the earlier "no nav link".
 - **GPA and Dean's List:** Not shown anywhere on the site (intended).
-- **Unused data:** Keep `education` and the full `skills` lists in `resume.json` even though they aren't rendered. The curated Technologies list is added alongside them.
+- **Unused data:** Keep `education` and the full `skills` lists in `resume.json` even though they aren't rendered. The curated Technologies list is added alongside them. *Superseded (2026-10-18): the `skills` part, see "Skills list removed" (Phase 4). `education` still stays, unrendered.*
 - **About text:** `basics.summary` stays as is (typo "namefo-matching" fixed back to "name-matching").
 - **Technologies on mobile:** 10 items laid out as rows of 3, 4, 3, not 3 + 3 + 3 + 1.
 - **Company logos:** Supplied as PNG, at least 80 × 80px. *Superseded (2026-10-16): see "Assets supplied" (100 × 100 JPG).*
@@ -75,3 +75,22 @@
 - **Phone in git history (2026-10-16):** The phone number in old git history is left as is, with no history rewrite. This closes the Phase 1 open question.
 - **Tooling defaults (2026-10-16):** npm (the existing lockfile), GitHub Actions for CI (type-check, lint, format check, `check:data`, build), and Node 24 pinned in `engines` and `.nvmrc`.
 - **Deploys (2026-10-16):** `main` is the production branch. Every other branch and PR gets a preview URL, and previews stay behind Vercel login. The custom domain waits until Phase 7.
+
+# Phase 4 Decisions (in progress)
+
+- **Java icon (2026-10-18):** Technologies uses the Simple Icons `openjdk` logo for Java. Simple Icons v16.35.0 has no `java` icon (Design checked: 404). The visible name stays "Java". Spec §6.3, §13 and §15.
+- **Resume PDF keeps the phone (2026-10-18, owner choice):** `/resume.pdf` keeps the phone number. This is the one exception to the Phase 1 "Phone" rule: the phone is not shown on any page or in `resume.json`, only inside the downloadable PDF.
+- **Theme toggle built with the Hero (2026-10-18):** The theme toggle (spec §6.9) and its blocking `<head>` script are built in the Hero task, not as a separate task. The rail nav (§6.6) and the skip link (§6.7) are built after the Footer, as the final task.
+- **Phase 4 build order (2026-10-18):** Each step is reviewed before the next.
+  1. Backend data (pending the owner's diff review).
+  2. Hero, with the page shell and the theme toggle.
+  3. About.
+  4. Technologies.
+  5. Experience.
+  6. Projects.
+  7. Footer.
+  8. Rail nav and skip link.
+
+  Motion (spec §7) is built with each component in Phase 4, not as a Phase 5 enhancement. This supersedes `plan.md` Phase 4's page-order list and Phase 5's "Subtle motion: specified in Phase 2" (`plan.md` updated to match). `plan.md` Phase 5's dark mode line also now says the toggle is built in Phase 4 (2026-10-18).
+- **Skills list removed (2026-10-18, owner choice):** The `skills` object (languages, frameworks, tools) is removed from `resume.json` and the schema (Backend). Owner: "since we dont use the skills section, we can just remove that and purely have technologies... just the highlighted is fine." The curated `technologies` list is the only skills data on the site. The full list lives only in the resume PDF. There is no expandable "show all skills" control. This supersedes the `skills` part of "Unused data" and the data part of "Skills" (Phase 2). `education` still stays, unrendered. Spec §11 and §14.
+- **Theme toggle placement until the rail exists (2026-10-18, temporary build-order note):** From step 2 until step 8, the corner toggle (spec §6.9's below-1200px placement) shows at every width, including 1200px and up. In step 8 it moves into the rail at 1200px and up, as spec §6.9 says. Spec §6.9's final behavior is unchanged; this note expires when step 8 is approved.

@@ -101,7 +101,7 @@ There are two, and no others:
 | (none, inline) | `0 0 0 5px color-mix(in srgb, var(--color-accent) 18%, transparent)` | The open timeline dot's ring (§1.1, §6.4) |
 | `--shadow-card-hover` | `0 8px 24px -12px color-mix(in srgb, var(--color-charcoal) 35%, transparent)` | Project card on hover only (§6.5). Cards have no shadow at rest. |
 
-Both are decorative. This supersedes the §1.1 sentence "no shadows except that ring" (owner decision, 2026-10-16).
+Both are decorative. The project card hover shadow was added by owner decision (2026-10-16), replacing the earlier "no shadows except that ring" rule; §1.1 now lists both shadows.
 
 **Dark:** the ring needs no change (it follows Accent). `--shadow-card-hover` is redefined under `html[data-theme="dark"]` with black in place of Charcoal, because Charcoal is light in dark, and at 75% instead of 35% so it still shows on the dark Paper (owner choice): `0 8px 24px -12px color-mix(in srgb, #000 75%, transparent)`. Light stays at 35% Charcoal.
 
@@ -352,7 +352,7 @@ See §4.2. The section has `aria-labelledby` pointing at its h2.
 
 | Name | Icon |
 |---|---|
-| Java | Simple Icons `java` |
+| Java | Simple Icons `openjdk` |
 | Python | `python` |
 | TypeScript | `typescript` |
 | C++ | `cplusplus` |
@@ -364,7 +364,7 @@ See §4.2. The section has `aria-labelledby` pointing at its h2.
 | Next.js | `nextdotjs` |
 
 **Build notes:**
-- **Java:** the preview used `openjdk` because its v13 had no `java`. The real build uses `java`.
+- **Java:** use `openjdk`, as the preview did. Simple Icons v16.35.0 has no `java` icon (checked: 404). Owner decision, 2026-10-18. The visible name stays "Java".
 - **HTML and CSS:** they should look similar but need not match (owner decision). Check them side by side during the build. If they look too different, use Devicon's `css3` shield, recolored to Charcoal.
 - **SQL:** Lucide is a stroke icon. Render it at 36px with a stroke width of 2 so its visual weight is close to the filled logos.
 
@@ -802,14 +802,13 @@ Backend owns `data/` and proposes the schema; the owner approves. The field name
 | 8 | Remove `projects[].image` | Delete it from the schema | No project images is decided. Rec.: remove. |
 | 9 | Resume PDF path | Today it is the fixed path `/resume.pdf`, and `public/resume.pdf` exists | Rec.: keep it as a constant in `src/lib/`. No data field is needed. |
 
-**Data that will no longer be rendered: `education` and the full `skills` lists**
+**Data that will no longer be rendered: `education` (and the full `skills` lists, now removed)**
 
 The site will no longer show GPA (3.6/4.0), Dean's List, the degree name or the 39-item skills list. The owner confirmed that this is intended. The About text keeps Northeastern and the December 2026 graduation.
 
-- **Decided: both stay in `resume.json`, unrendered.** Keep `education` and the full `skills` object (languages, frameworks, tools) as they are. The curated `technologies` list (#3) is **added alongside** `skills`. It does not replace it.
-- **Possible future use:** Backend may use them for SEO structured data in Phase 6 (schema.org `Person`: `alumniOf` from `education`, `knowsAbout` from `skills`).
+- **Decided: `education` stays in `resume.json`, unrendered. `skills` is removed (owner decision, 2026-10-18; see "Skills list removed" in `docs/decisions.md`).** The curated `technologies` list (#3) is the only skills data. The full list lives only in the resume PDF, and there is no "show all skills" control.
+- **Possible future use:** Backend may use the data for SEO structured data in Phase 6 (schema.org `Person`: `alumniOf` from `education`, `knowsAbout` from `technologies`).
 - **The resume PDF does not use `resume.json`.** `public/resume.pdf` is a separately exported file (`plan.md` §4). The JSON and the PDF don't affect each other.
-- **Drift risk:** `skills` and `technologies` overlap. If the owner renames a technology (for example "React.js"), both lists need the edit. Backend could add a build-time check that every `technologies[].name` also appears somewhere in `skills`. That is optional; it is Backend's call.
 - **`dateLabel`:** keep it. Cards display it.
 - **`profiles`, `email` and `links`:** keep them. They are all rendered.
 
@@ -855,7 +854,7 @@ These are notes, not code.
 | No skip link | Skip link at 1200px and up only | Five rail links come before the content on desktop. Below 1200px there is no nav to skip. |
 | Rail script runs at every width | Gated by `matchMedia("(min-width: 1200px)")` | No scroll work when the rail is hidden |
 | No scroll correction when the exclusive accordion closes a card above | Scroll the opened summary into view if it moves off screen | Otherwise a click can push the content out of view |
-| Simple Icons v13 from a CDN, `openjdk` and `css3` | Pinned v16.35.0, inlined, `java` and `css` (Devicon `css3` as the fallback) | Performance; the correct Java logo |
+| Simple Icons v13 from a CDN, `openjdk` and `css3` | Pinned v16.35.0, inlined, `openjdk` and `css` (Devicon `css3` as the fallback) | Performance. `openjdk` is kept because v16.35.0 has no `java` icon (owner decision, 2026-10-18). |
 | `.btn` styles and `.edu` styles | Removed | No button and no Education section |
 | Highlight lines about 85 characters | Kept | Matches the approved preview. It slightly exceeds the 80-character guideline; I am flagging it rather than changing it. |
 
@@ -868,7 +867,7 @@ All six questions were answered by the owner and are recorded in `docs/decisions
 | # | Question | Answer | Where applied |
 |---|---|---|---|
 | 1 | Is losing GPA and Dean's List from the site intended? | Yes | §11 |
-| 2 | Keep or remove `education` and `skills`? | Keep both, unrendered. `technologies` is added alongside them. | §11 |
+| 2 | Keep or remove `education` and `skills`? | Keep both, unrendered. `technologies` is added alongside them. *Superseded (2026-10-18): `skills` is removed; `education` stays.* | §11 |
 | 3 | Shorten `basics.summary`? | No, it stays as is | §4.2 (no change) |
 | 4 | Technologies layout on mobile | Rows of 3, 4 and 3 | §4.3 |
 | 5 | Company logo format | Originally PNG at least 80 x 80px. Now supplied as 100 x 100 JPGs. | §11 #4, §6.4 |
@@ -891,17 +890,17 @@ Scouted on 2026-10-16 with the read-only 21st tools. **This section changes noth
 | Spec component | Pick | Closest candidate checked, and why it was rejected |
 |---|---|---|
 | Rail nav (§6.6) | None | [Table of Contents](https://21st.dev/@mohammadshehadeh/components/toc) (mohammadshehadeh). Code checked: no npm dependencies, only shadcn's `cn` helper (`clsx` + `tailwind-merge`). Its smooth scroll respects reduced motion and it sets `aria-current`. But its active-section rule (first heading below a 56px offset, throttled to 200ms) is not the spec's 35% line with the bottom-of-page rule, it has no `toggle` hook and no `matchMedia` gate, its marker is a per-link border rather than the sliding 3 x 32px bar, and its label is a mono, all-caps, 10px eyebrow. Keeping it would mean rewriting almost all of it. |
-| Hero layout (§4.1, §5) | None | [Hero Block](https://21st.dev/@moumensoliman/components/hero-block-shadcnui) and [Portfolio Hero](https://21st.dev/@waleedkibhen/components/portfolio-hero). Both animate on load (staggered or blur-in text, an animated avatar, a scroll cue). §7 rule 5 says nothing in the hero animates on load, and the photo crop is specific to this photo. |
-| Hero links (§6.1) | None | [Social Media](https://21st.dev/@ravikatiyar162/components/social-media) and [Social Icons](https://21st.dev/@jatin-yadav05/components/social-icons). They add hover backgrounds, revealed labels or tooltips. §6.1 forbids a box around the icons and any tooltip, and requires Tabler outline glyphs with the -6° tilt. |
-| Technology item (§6.3) | None | [Integration Logos Grid](https://21st.dev/@ziegfiroyt/components/feature135) and [Pixel Logo Grid](https://21st.dev/@smammar/components/pixel-logo-grid). These are "trusted by" logo clouds with hover effects (grayscale, canvas shimmer in brand colors). §6.3 has no interaction and uses Charcoal logos, and the 3/4/3 mobile grid is specific to this list. |
-| Timeline accordion card (§6.4) | None | [Experience Timeline](https://21st.dev/@shadcnui-blocks/components/timeline-02) (shadcnui-blocks). It is a static list with tech badges and is not collapsible. The spec needs native `<details name="experience">` with one card open, the dot that matches the open card, per-entry connectors and scroll correction. The accordion candidates ([Accordion](https://21st.dev/@micka_design/components/accordion), [Interactive Accordion](https://21st.dev/@jatin-yadav05/components/interactive-accordion)) pull in Radix and `framer-motion` and animate height. §6.4 says expansion is not animated. |
-| Project card (§6.5) | None | [Project Card](https://21st.dev/@ravikatiyar162/components/project-card). It is built around an image with a hover zoom. The spec has no images and no card hover. |
+| Hero layout (§4.1, §5) | None | [Hero Block](https://21st.dev/@moumensoliman/components/hero-block-shadcnui) and [Portfolio Hero](https://21st.dev/@waleedkibhen/components/portfolio-hero). Both bring their own load animation (an animated avatar, a scroll cue), and the photo crop is specific to this photo. The hero's one load animation is the owner's Blur-in words, built in plain CSS (§7 rule 5). *History: when scouted, §7 rule 5 had no hero load animation; see the first update below.* |
+| Hero links (§6.1) | None | [Social Media](https://21st.dev/@ravikatiyar162/components/social-media) and [Social Icons](https://21st.dev/@jatin-yadav05/components/social-icons). They add revealed labels or tooltips. §6.1 has no tooltip, uses Tabler outline glyphs, and its soft-circle hover is a few lines of CSS. *History: when scouted, §6.1 had no hover box and a -6° tilt; both changed, see the updates below.* |
+| Technology item (§6.3) | None | [Integration Logos Grid](https://21st.dev/@ziegfiroyt/components/feature135) and [Pixel Logo Grid](https://21st.dev/@smammar/components/pixel-logo-grid). These are "trusted by" logo clouds with brand-color hover effects (grayscale, canvas shimmer). §6.3 uses Charcoal logos, a plain-CSS Lift hover, and a 3/4/3 mobile grid specific to this list. *History: when scouted, §6.3 had no hover; see the updates below.* |
+| Timeline accordion card (§6.4) | None | [Experience Timeline](https://21st.dev/@shadcnui-blocks/components/timeline-02) (shadcnui-blocks). It is a static list with tech badges and is not collapsible. The spec needs native `<details name="experience">` with one card open, the dot that matches the open card, per-entry connectors and scroll correction. The accordion candidates ([Accordion](https://21st.dev/@micka_design/components/accordion), [Interactive Accordion](https://21st.dev/@jatin-yadav05/components/interactive-accordion)) pull in Radix and `framer-motion`; §6.4 animates height in plain CSS on native `<details>`, so neither is needed. *History: when scouted, §6.4 had no height animation; see the updates below.* |
+| Project card (§6.5) | None | [Project Card](https://21st.dev/@ravikatiyar162/components/project-card). It is built around an image with a hover zoom. The spec has no images, and its Hover lift (border, -3px, shadow) is plain CSS. *History: when scouted, §6.5 had no card hover; see the updates below.* |
 | Skip link (§6.7) | None | Not searched for as a component. It is a single styled link. |
 | Footer (§6.8) | None | [Minimal Two-Column Footer](https://21st.dev/@ln-dev7/components/footer-17). It is a brand block with a link list. The spec footer is one line of copyright and a "Back to top" link. |
 
 **Update (2026-10-16):** §7 rule 5 now has a hero load animation, so the Hero layout row's "nothing animates on load" reason no longer applies. The pick stays "None": the animation is built in plain CSS from §7 rule 5, with no 21st component and no `framer-motion`.
 
-**Update (2026-10-16, owner variant picks):** the hero links now have a soft hover circle, technology items lift, project cards lift, and timeline cards animate their height (§6.1, §6.3, §6.4, §6.5). The hero tilt is dropped. The rejection reasons above that cite "no box", "the -6° tilt", "no interaction", "not animated" and "no card hover" no longer apply, but every pick stays "None": all four are plain CSS, with no Radix and no `framer-motion`.
+**Update (2026-10-16, owner variant picks):** the hero links now have a soft hover circle, technology items lift, project cards lift, and timeline cards animate their height (§6.1, §6.3, §6.4, §6.5). The hero tilt is dropped. The original rejection reasons that cited "no box", "the -6° tilt", "no interaction", "not animated" and "no card hover" no longer apply (the table above now gives the current reasons and marks the old ones as history), but every pick stays "None": all four are plain CSS, with no Radix and no `framer-motion`.
 
 **Update (2026-10-16, dark mode):** theme toggle (§6.9): pick "None". The candidates checked by metadata ([Theme Toggle](https://21st.dev/@luv-jeri_c92deb60/components/theme-toggle) with a morphing icon and page-reveal animation; [Theme Switch](https://21st.dev/@zweiundeins/components/theme-switch) with the light/dark/auto picker the owner rejected) add motion or options §6.9 doesn't have; the toggle is one button built from §6.9.
 
@@ -910,6 +909,6 @@ Scouted on 2026-10-16 with the read-only 21st tools. **This section changes noth
 - Skill tag: replaced by the technology item (§6.3).
 - Contact links row and "View Resume" button: there is no Contact section. Resume is one of the five icon-only hero links (§6.1).
 
-**Logos:** `search_logo` (svgl) was checked, but it is not proposed. The spec pins Simple Icons v16.35.0 for Technologies and Tabler for link icons (§6.1, §6.3). A query for "java" returned no results.
+**Logos:** `search_logo` (svgl) was checked, but it is not proposed. The spec pins Simple Icons v16.35.0 for Technologies and Tabler for link icons (§6.1, §6.3). A query for "java" returned no results. Simple Icons v16.35.0 has no `java` either, so Technologies uses `openjdk` (§6.3, owner decision 2026-10-18).
 
 **Dependencies added by these proposals:** none.

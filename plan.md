@@ -118,13 +118,17 @@ Each phase ends with a **review checkpoint**. Nothing moves forward until I appr
 
 ### Phase 4 — Core Sections
 **Lead:** Frontend
-Build sections one at a time, each reviewed before the next, in page order (spec §3):
-1. Hero (greeting, tagline, photo, icon links)
-2. About (short personal blurb)
-3. Technologies
-4. Experience
-5. Projects
-6. Footer
+Build one step at a time, each reviewed before the next, in this order (see `docs/decisions.md`, "Phase 4 build order"):
+1. Backend data (pending my diff review)
+2. Hero (greeting, tagline, photo, icon links), with the page shell and the theme toggle and its head script (spec §6.9)
+3. About (short personal blurb)
+4. Technologies
+5. Experience
+6. Projects
+7. Footer
+8. Rail nav and skip link (spec §6.6, §6.7)
+
+Motion (spec §7) is built with each component in this phase, not later.
 
 There are no Skills, Education or Contact sections (see `docs/decisions.md`).
 
@@ -132,9 +136,9 @@ There are no Skills, Education or Contact sections (see `docs/decisions.md`).
 
 ### Phase 5 — Enhancements (only what `docs/decisions.md` approves)
 **Leads:** Frontend and Backend
-- Dark mode: approved and specified in Phase 2 (spec §1.1, §6.9).
+- Dark mode: approved and specified in Phase 2 (spec §1.1, §6.9) and built in Phase 4 with the Hero (step 2).
 - Project detail pages: not approved; I decide before Phase 5.
-- Subtle motion (respecting `prefers-reduced-motion`): specified in Phase 2 (spec §7).
+- Subtle motion (respecting `prefers-reduced-motion`): specified in Phase 2 (spec §7) and built in Phase 4 with each component.
 
 **Checkpoint:** Each enhancement reviewed individually.
 

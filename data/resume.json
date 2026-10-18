@@ -89,7 +89,7 @@
       "highlights": [
         "Shipped a Region-of-Origin classifier answering an enterprise customer's top accuracy complaint, validated on 600 multi-regional names, by building its SDK endpoint, CLI, ranked top-k predictions, and license gating",
         "Fixed 4 customer-reported name-matching defects, including a cross-script false 100% match and a numeric leet-speak crash, by tracing normalization logic in the Java engine and adding regression tests",
-        "Produced multilingual person-name dictionaries of roughly 100K records in 13 languages by building Python pipelines that parse the Wikidata dump, merge OFAC-translated lists, filter by script, and deduplicate entries",
+        "Produced 13 multilingual person-name dictionaries (~100K records) covering 20+ languages by building Python pipelines that parse the Wikidata dump, merge OFAC-translated lists, filter by script, and deduplicate entries",
         "Migrated 5 repositories to Java 25, including both search plugins, by updating builds, Docker images, and Jenkins CI/CD, surfacing Solr and OpenSearch Security Manager blockers that shaped the team's runtime roadmap",
         "Corrected HTTP status codes on dynamic-config REST endpoints from 500 to 400/422 by remapping exception handling and adding integration tests, then back-ported to 5 Elasticsearch and OpenSearch release branches",
         "Placed 2nd of 8+ teams at a company hackathon by building the OFAC sanctions-screening tool for an LLM-agent vendor-vetting workflow with entity relationship graphing and risk scoring"

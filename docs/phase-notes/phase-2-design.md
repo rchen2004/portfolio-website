@@ -569,3 +569,57 @@ Status: **owner-approved change, specified.** Reverses "Color modes: one palette
 - `frontend-design` (the quality floor: contrast, focus, reduced motion). `ponytail` was active.
 - 21st: `mcp__21st__search` (metadata only).
 
+---
+
+# decisions.md cleanup (2026-10-16)
+
+Done at the owner's request on branch `phase-3-scaffold`, after Phase 2 was merged (PR #2, `76c7058`).
+
+## What I did
+- **`docs/decisions.md`:**
+  - Phase 2 heading now "(2026-10-15 to 2026-10-16)"; added "Phase 2 checkpoint: Approved by owner (2026-10-16)" and a "`featured` removed" entry (spec §6.4, §11 #6).
+  - Marked contradicted entries in place with one style, `*Superseded (2026-10-16): see "<entry>".*`: Phase 0 Featured experiences; Phase 1 `featured` and Images; Phase 2 Hero content, Compact experiences, Skills (nav link), About (open question), Hero links (tilt, hover box, 18px vs 24px), Company logos (PNG), Color modes (light only).
+  - Updated factual status lines: Overall feel and Direction (direction chosen, preview approved), Hero photo and Experience (files supplied), Assets supplied (committed in `8d8010f`, verified in `public/`).
+  - Added "Phase 3 Decisions (in progress)" with the owner's four answers: `src/app/` move, Prettier plus `prettier-plugin-tailwindcss`, Vercel project `rchen2004`, no git history rewrite for the phone.
+- **`docs/design-spec.md`:** status line only: approved by the owner on 2026-10-16, later changes through `decisions.md`.
+
+## Files changed
+- `docs/decisions.md`
+- `docs/design-spec.md` (status line)
+- `docs/phase-notes/phase-2-design.md` (this entry)
+
+## Open questions
+1. Spec §0 still points to "Phase 2 Decisions (in progress)", a heading that no longer exists. A one-word fix if the owner approves.
+2. Phase 1 `dateLabel`: "Removing it is still open." Spec §11 says keep it. Should decisions.md record it as kept?
+3. `featured` is still in `data/schema.ts` and `resume.json` (Backend).
+
+## Skills used
+- `frontend-design` (loaded; not exercised, docs only). `ponytail` was active.
+
+Follow-up (coordinator-approved): spec §0 now points to the renamed Phase 2 heading, and the Phase 1 `dateLabel` entry is marked resolved and kept (spec §11). Open questions 1 and 2 above are closed.
+
+---
+
+# plan.md update (2026-10-16)
+
+At the owner's request ("update plan.md so it matches decisions.md and the spec"). Every change cites `decisions.md` or a spec section.
+
+## What I did
+- Added the top note: "Updated 2026-10-16 to match decisions.md; decisions.md wins on conflict."
+- §1: Identity gains the "must not read as backend-only" line ("Overall feel"); Next step now names the hero icon links and no Contact section.
+- §3 and §4: Tailwind v4 `@theme` in `src/app/globals.css`, no `tailwind.config.ts` (spec §0); repo tree updated; the resume is reached by the hero Resume link (spec §6.1).
+- Phase 0: dark mode decided, assets gathered, no project screenshots. Phase 1: `featured` and project images noted as dropped; checkpoint approved 2026-10-15. Phase 2: component list updated; checkpoint approved 2026-10-16.
+- Phase 3: the four Phase 3 decisions only (the `src/app/` move, tokens in `@theme`, Prettier plus the Tailwind plugin, Vercel project `rchen2004`).
+- Phase 4: Hero, About, Technologies, Experience, Projects, Footer (spec §3).
+- Phase 5: dark mode and motion marked specified in Phase 2; project detail pages "not approved; I decide before Phase 5".
+- §6: Featured experiences marked superseded; tagline updated to "challenging".
+
+## Files changed
+- `plan.md`
+- `docs/phase-notes/phase-2-design.md` (this entry)
+
+## Open questions
+1. Which phase builds the motion? Phase 5 is kept. But the hero load, hover lifts and timeline height animation belong to Phase 4 components, and no doc assigns them a phase.
+2. §3 still says "proposed, confirm in Phase 0". No decision confirms the stack, so I left it.
+3. "Blog" stays undecided in Phase 0. No doc covers it.
+

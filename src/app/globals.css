@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+/* Design tokens: docs/design-spec.md §1. Plain @theme (not inline) so utilities read the
+   variables at runtime and the dark block below can swap them. */
+@theme {
+  /* Spec §1.1: "No other colors", so Tailwind's default palette is dropped. */
+  --color-*: initial;
+  --color-paper: #f4f3f0;
+  --color-white: #ffffff;
+  --color-charcoal: #24201d;
+  --color-pebble: #5e5751;
+  --color-accent: #c0362c;
+  --color-accent-deep: #a02d24;
+  --color-rule: #dad6d0;
+
+  --font-sans:
+    var(--font-figtree), system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --radius-card: 12px;
+  --radius-logo: 8px;
+  --radius-focus: 4px;
+  --radius-marker: 2px;
+
+  --shadow-card-hover: 0 8px 24px -12px
+    color-mix(in srgb, var(--color-charcoal) 35%, transparent);
+
+  /* Spec §1.6: only these three breakpoints exist. */
+  --breakpoint-*: initial;
+  --breakpoint-sm: 37.5rem;
+  --breakpoint-md: 45rem;
+  --breakpoint-xl: 75rem;
+}
+
+html {
+  color-scheme: light;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --color-paper: #1a1816;
+  --color-white: #24211e;
+  --color-charcoal: #edeae6;
+  --color-pebble: #a8a09a;
+  --color-accent: #e56b60;
+  --color-accent-deep: #f2958c;
+  --color-rule: #3a3531;
+  --shadow-card-hover: 0 8px 24px -12px
+    color-mix(in srgb, #000 75%, transparent);
+}
+
+/* Body size on body, not html, so rem (spacing, breakpoints) stays at the browser default. */
+body {
+  background-color: var(--color-paper);
+  color: var(--color-charcoal);
+  font-size: 1rem;
+}
+
+@media (min-width: 45rem) {
+  body {
+    font-size: 1.0625rem;
+  }
+}

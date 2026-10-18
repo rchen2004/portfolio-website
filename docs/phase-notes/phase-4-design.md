@@ -354,3 +354,44 @@ Read-only review. Sources: `proj-light-{320,390}`, `proj-dark-{320,768}`, `proj-
 - §7 "Other rules": "set `transform: none`, or declare the transform only under `prefers-reduced-motion: no-preference`."
 
 Not checked: the remaining full-page shots (`proj-light-{768,1200,1440}`, `proj-dark-{390,1200,1440}`) were not opened (the hover shots cover 1440); real touch devices; Safari and Firefox.
+
+---
+
+## Step 7 QA (2026-10-18): Footer
+
+Read-only review. Sources: `footer-light-{320,768,1440}`, `footer-dark-{320,1200,1440}`, `footer-hover-light-1440`, `footer-focus-light-390`; `Footer.tsx`; Frontend's step 7 notes. No file changed except this one. Skills used: `frontend-design` (preloaded). No 21st lookups (§15 picks none for the footer).
+
+| Item | Result | Evidence |
+|---|---|---|
+| Real `<footer>` after and outside `<main>`, one contentinfo (§4.6, §9.4) | Pass | measurements; `page.tsx` |
+| In main's column: 880px cap, `xl:col-start-2`, edges equal main's (§4.6, §2) | Pass | measurements; 1200/1440 shots |
+| Copyright left, link right; name from `basics.name`, year build-time and static (§6.8) | Pass | `Footer.tsx:6-17`; prerender manifest |
+| 1px Rule top border; 24px top, `max(32px, safe-area)` bottom (§4.6) | Pass | `Footer.tsx:15`; measured |
+| Copyright 14px/1.45, 400, Pebble (§1.2): 6.3:1 / 6.8:1 (§9.1) | Pass | measured `#5E5751` / `#A8A09A` |
+| Link: §6.1 underline style at 14px, 44px tall, `#top` (§6.1, §6.8, §9.2) | Pass | measured 44px; all shots |
+| Hover: Accent text, 2px underline, 120ms | Pass | `footer-hover-light-1440` |
+| Focus ring 2px Charcoal, 2px offset, 4px radius (§8) | Pass | `footer-focus-light-390` |
+| Wrap: 8px row gap (§4.6) | Pass | forced-narrow test; no wrap needed at 320 |
+| Back to top: smooth scroll, instant under reduced motion (§7) | Pass | scroll measurements |
+| 80px from the last card to the border (§1.3 main bottom padding) | Pass | shots |
+| Tokens only, both themes; no 320px scroll | Pass | shots; scrollWidth |
+
+**Must-fix:** none. **Step 7 passes.**
+
+### Rulings
+1. **Link weight and color: keep 600 Charcoal (`labeled-link`).** §6.8 names the §6.1 underline style, and §6.1 defines that style as 15px/600 Charcoal; "at 14px" overrides only the size. §1.2's "Footer" row (400 Pebble) is the copyright text. The preview's 400 Pebble link was inherited by accident, not specified. Charcoal also keeps the one action in the footer distinct from the static text and matches every other text link on the page. Contrast: Charcoal on Paper 14.5:1 / 14.7:1.
+2. **16px column gap: accept.** It matches the preview and the timeline and project header rows (`gap: 2px 16px` pattern), and it only matters if a wrap ever needs a minimum horizontal gap. Add it to the spec (below).
+
+### Spec clarifications (proposed; not edited), one batch for the owner
+From step 6:
+- §6.5 header row: "`align-items: baseline`; on wrap the date drops under the name, left-aligned."
+- §7 "Other rules": "set `transform: none`, or declare the transform only under `prefers-reduced-motion: no-preference`."
+
+From step 7:
+- §1.2 "Footer" row: rename to "Footer text"; add a note "the 'Back to top' link follows §6.1 at 14px: 600, Charcoal."
+- §4.6 "Narrow screens": "a wrapping flex row, `justify-content: space-between`, `align-items: center`, `gap: 8px 16px`; on wrap the link drops under the copyright, left-aligned."
+- §6.8 "Back to top": "the §6.1 labeled-link style without an icon, at 14px (600, Charcoal, 1px Accent underline at 4px offset; hover Accent and 2px)."
+
+All restate the built values; none changes a visual rule.
+
+Not checked: `footer-{light,dark}-390`, `footer-light-1200`, `footer-dark-768` were not opened (neighbouring widths cover them); dark hover and dark focus shots (not supplied); a notched device for the safe-area padding; Safari and Firefox.

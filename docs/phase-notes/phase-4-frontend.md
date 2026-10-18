@@ -342,3 +342,52 @@ Skills used: `frontend-design` (preloaded). No 21st components (spec §15 picks 
 
 ### Open questions
 None blocking. One note for Design: the spec doesn't give the header row's cross-axis alignment; I used the preview's `baseline`.
+
+## Step 7: Footer
+
+Agent: Frontend. Branch `phase-4-sections`. Date 2026-10-18. Not committed.
+
+### What I did
+- **`src/components/Footer.tsx` (new, async server component, §4.6, §6.8):** a `<footer>` rendered after `<main>`, outside it, as a sibling in the page shell. It is the only `<footer>` on the page, so it is the contentinfo landmark. It is a wrapping flex row, `justify-content: space-between`, `align-items: center`, `gap: 8px 16px`. It has `max-width: 880px` (main's cap), a 1px Rule top border, 24px top padding, `max(32px, env(safe-area-inset-bottom))` bottom padding, and 14px/1.45 Pebble text. At 1200px and up it has `xl:col-start-2`.
+  - Left: `<p>© {year} {resume.basics.name}</p>`. The name comes from the loader.
+  - Right: `<a href="#top" class="labeled-link text-[14px]">Back to top</a>`. This is the §6.1 style at 14px: 600 weight, Charcoal, 1px Accent underline at a 4px offset, Accent text and a 2px underline on hover (120ms), Accent deep when pressed, at least 44px tall, and a 4px focus radius. It has no icon. "Back to top" is UI text, not resume content.
+- **`src/app/page.tsx`:** `<Footer />` after `</main>`, inside the grid shell.
+- **Year:** `buildYear()` is a `"use cache"` function with `cacheLife({ revalidate: Infinity, expire: Infinity })`. It returns `new Date().getFullYear()`, and the footer awaits it. This is the "cache the value" pattern from the Next 16 docs (`01-getting-started/08-caching.md`, "Random values and timestamps"). The infinite profile keeps `/` fully static: `initialRevalidateSeconds: false` and `response: "complete"` in the prerender manifest, so there is no ISR. With the `default` profile, the page would revalidate every 15 minutes. The prerendered HTML contains "© 2026 Ryan Chen".
+
+### Decisions I made
+- **Link weight and color:** I reused `labeled-link` as is (600, Charcoal), as the step 5 Design note asks ("the one style for Projects and the footer link"). The preview's footer link inherited the footer's 400 Pebble instead (open question 1).
+- **Column gap 16px**, from the preview's `gap: 8px 16px`. The spec gives only the 8px row gap.
+- **No new CSS.** The `text-[14px]` utility overrides the 15px in `labeled-link`.
+
+### Measurements (headless Chrome, `next start`)
+- **Landmark:** the `<footer>`'s parent is the shell `<div>`. It is not inside `<main>`, it comes after `<main>`, and there is one on the page.
+- **Border and padding (every width, both themes):** 1px solid top border, light `#DAD6D0`, dark `#3A3531`, no bottom border. Padding is 24px top and 32px bottom (no inset in the emulation). Text is 14px/20.3px, weight 400, light `#5E5751`, dark `#A8A09A`. The footer's bottom edge is the end of the document (within 0.5px).
+- **Link:** 14px, 600. At rest it is light `#24201D` and dark `#EDEAE6`, with an Accent underline (light `#C0362C`, dark `#E56B60`), 1px thick at a 4px offset. It is **44px tall** and 72.97px wide, with a 4px radius.
+- **Hover (1440, light):** the text turns `#C0362C` and the underline goes to 2px. The cursor is a pointer.
+- **Focus (390, light, 17 Tabs):** `:focus-visible`, 2px solid `#24201D`, 2px offset, 4px corners.
+- **Wrap at 320:** the two parts **fit on one line** at 320 (a 273px column with a classic scrollbar), so nothing wraps there. The row gap is 8px (computed). With the footer forced to 150px, the link drops under the copyright with **8px** between them, and both are left-aligned.
+- **Column:** below 1200px, the footer's left edge and width equal main's (16px and 273, 343 or 721px). At 1200 and 1440, `grid-column-start` is 2, the left edge equals main's (296px and 402.5px), and the width equals main's (873px and 880px).
+- **Back to top:** a real mouse click at the link's center, from the bottom of the page:
+  - 390 and 1440 with motion: the page scrolls smoothly (at 150ms it is part way, at 2905 and 1648) and ends at `scrollY` 0, with `location.hash` `#top` and `:target` `MAIN#top`.
+  - 1440 with reduced motion: it jumps (`scrollY` is already 0 at 150ms) and ends at the same place.
+- **Horizontal scroll:** none (`scrollWidth` equals `clientWidth` at every width).
+- **Screenshots** (scratchpad `shots/`, page-bottom crops): `footer-{light,dark}-{320,390,768,1200,1440}.png`, `footer-hover-light-1440.png`, `footer-focus-light-390.png` (2x).
+
+### Checks
+- `npm run typecheck`: pass
+- `npm run lint`: pass
+- `npm run format:check`: pass
+- `npm run check:data`: pass
+- `npm run build`: pass (`/` static, with no dynamic-data errors or warnings)
+
+`next start` only; the server was stopped afterwards. `AGENTS.md` is untouched.
+
+### Files changed
+- `src/components/Footer.tsx` (new)
+- `src/app/page.tsx`
+
+Skills used: `frontend-design` (preloaded). No 21st components (§15 picks none for the footer). No new dependencies.
+
+### Open questions
+1. **Link weight and color:** I followed `labeled-link` (600 Charcoal), as Design's step 5 note asks. The preview's footer link was 400 Pebble, the same as the footer text. Design should confirm.
+2. **Wrapping:** with today's name, the footer never wraps at 320 or wider, so the 8px row gap applies only to a longer name or larger text zoom. I checked it with a forced narrow width.

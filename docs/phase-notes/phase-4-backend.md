@@ -54,3 +54,5 @@ The working tree also has changes to `docs/decisions.md`, `docs/design-spec.md` 
 ## Skills used
 - `ponytail` (active): smallest diff, no new dependencies.
 - No `vercel:*` skill fit this task (data only, no deploy).
+
+- **Java icon key renamed (2026-10-18, owner choice):** `technologyIcon` key `openjdk` is now `java` (Devicon Java cup) in `data/schema.ts` and `data/resume.json`; the enum comment now notes `java` and `css` come from Devicon and `database` from Lucide. Frontend must rename the `TECH_ICONS` key in `src/components/icons.tsx`.

@@ -208,7 +208,7 @@ The hero greeting is the page's only h1.
 
   - **Gaps:** 28px between rows and **no column gap**. The cell widths do the spacing; 11 gaps of 16px would squeeze the cells.
   - **Alignment:** each item is centered in its span. Rows 1 and 3 line up with each other, and row 2 sits offset between them in a regular pattern.
-  - **Fit:** at 320px, the narrowest cell (a 3-column span) is about 80px. Row 2 holds the short names (C++, HTML, CSS, SQL), and TypeScript sits in a wider 4-column span, so no name wraps.
+  - **Fit:** at 320px, the narrowest cell (a 3-column span) is 72px (3 of 12 columns of the 288px content width). Row 2 holds the short names (C++, HTML, CSS, SQL), and TypeScript sits in a wider 4-column span, so no name wraps.
   - **Ties to 10 items:** the spans are set by position (`nth-child`), so they only fit a list of exactly 10. If the curated list ever changes length, fall back to a plain 3-column grid until the layout is revisited. Frontend should leave a comment noting this.
 
 ### 4.4 Experience
@@ -284,7 +284,7 @@ There are five links in one matching style, in this order:
   - **The GitHub scale is shared:** 0.92 also applies to the GitHub icon in Scout's repo links and in the project links.
 - **No wrapper:** the `<svg>` is a **direct flex child of the `<a>`**, with no `<span>` or other element around it, and `flex: none`. A wrapper adds inline line-height and pushes the icon off-center, which is the bug the owner spotted.
 - **Hidden from assistive technology:** `aria-hidden="true"` and `focusable="false"`.
-- **No solid logos in links.** Solid brand logos look larger than outline glyphs at the same box size. The solid monochrome Simple Icons belong only to the Technologies component (§6.3).
+- **No solid logos in links.** Solid brand logos look larger than outline glyphs at the same box size. The solid monochrome logos (Simple Icons and Devicon) belong only to the Technologies component (§6.3).
 
 **Source: inline all five SVGs in the repo**, copied from **Tabler Icons** (outline set, `@tabler/icons` v3.49.0, MIT license). The files are `file-text`, `mail`, `brand-linkedin`, `brand-github` and `brand-instagram`, all checked as present.
 - **Why Tabler:** Lucide removed its brand icons, so it can no longer supply LinkedIn, GitHub or Instagram. Tabler still has them, and its outline set uses the same 24px grid, 2px stroke and round caps and joins as Lucide.
@@ -343,31 +343,34 @@ See §4.2. The section has `aria-labelledby` pointing at its h2.
 - **Not interactive:** it stays a plain, non-focusable list item. No link, no box, no `tabindex`, `cursor: default`, so there is no keyboard state.
 - **Hover: Lift** (owner choice, 2026-10-16), only under `@media (hover: hover)`:
   - The item rises `translateY(-4px)` over 180ms with `cubic-bezier(0.2, 0, 0, 1)`.
-  - The name turns Accent over 180ms ease. The logo stays Charcoal.
+  - The logo and the name both turn Accent over 180ms ease (owner decision, 2026-10-18: the whole item goes Accent, as in the demo). Set `color` on the inner wrapper; the logo follows through `currentColor`.
   - **Detect the hover on the `<li>` but move its contents** (one inner wrapper around the logo and the name). The hover area then stays still, so a pointer at the item's bottom edge doesn't flicker the hover on and off.
   - Transform only, so the grid doesn't shift.
-- **Reduced motion:** no movement; only the name color changes.
-- **Contrast:** Accent on Paper is 4.9:1, which passes the 4.5:1 needed for 15px/600 text (not large text).
+- **Reduced motion:** no movement; the logo and name color change stays.
+- **Contrast:** Accent on Paper is 4.9:1 in light and 5.5:1 in dark. That passes the 4.5:1 needed for the 15px/600 name (not large text) and the 3:1 non-text minimum for the logo.
 - **Tradeoff:** a hover response on a non-interactive item can suggest it does something. The default cursor and the lack of any focus stop keep it from reading as a control.
-- **Logo source:** Simple Icons, pinned to a version (v16.35.0 has been checked). Inline the SVG; no CDN at runtime and no icon font.
+- **Logo source:** Simple Icons v16.35.0 for most logos, Devicon v2.16.0 (MIT) for Java and CSS, and Lucide for SQL, each pinned. Inline the SVG; no CDN at runtime and no icon font.
 
 | Name | Icon |
 |---|---|
-| Java | Simple Icons `openjdk` |
+| Java | Devicon `java-plain` (the cup) |
 | Python | `python` |
 | TypeScript | `typescript` |
 | C++ | `cplusplus` |
 | HTML | `html5` |
-| CSS | `css` |
+| CSS | Devicon `css3-plain` (the shield) |
 | SQL | generic database icon, Lucide `database` (decided) |
 | React.js | `react` |
 | Tailwind | `tailwindcss` |
 | Next.js | `nextdotjs` |
 
+Unmarked slugs are Simple Icons.
+
 **Build notes:**
-- **Java:** use `openjdk`, as the preview did. Simple Icons v16.35.0 has no `java` icon (checked: 404). Owner decision, 2026-10-18. The visible name stays "Java".
-- **HTML and CSS:** they should look similar but need not match (owner decision). Check them side by side during the build. If they look too different, use Devicon's `css3` shield, recolored to Charcoal.
-- **SQL:** Lucide is a stroke icon. Render it at 36px with a stroke width of 2 so its visual weight is close to the filled logos.
+- **Java:** Devicon `java-plain`, the coffee cup (owner left the choice to the orchestrator, 2026-10-18). It is filled, widely recognized as Java, and from the same set as the CSS shield. The data key is `java`. The visible name stays "Java".
+- **CSS:** Devicon `css3-plain`, so it pairs with the HTML5 shield (owner decision, 2026-10-18). Simple Icons' `css` tile did not pair with it. The data key stays `css`.
+- **Devicon paths:** both are one path in a 128-unit box (`viewBox="0 0 128 128"`). Remove the source's brand `fill` and use `fill="currentColor"`, like the Simple Icons logos. Render them from the 128-unit box: either give the `<svg>` `viewBox="0 0 128 128"`, or, inside the shared 24-unit `TechIcon`, wrap the path in `<g transform="scale(0.1875)">`. Note the source and version in a code comment.
+- **SQL:** Lucide is a stroke icon. Render it at 36px with stroke width 2 in Lucide's 24-unit grid, which is 3px at 36px. Do not use `non-scaling-stroke` here (unlike the link icons in §6.1), so its visual weight stays close to the filled logos.
 
 ### 6.4 Timeline accordion card
 
@@ -602,7 +605,7 @@ There are two ambient motions (the hero load and the timeline reveal), plus stat
 | Open-dot color and ring | A card opens or closes | background-color, box-shadow | 200ms, ease | Instant |
 | Card height | A timeline card opens or closes | `::details-content` block-size (to and from `auto`), content-visibility (discrete) | 320ms, `cubic-bezier(0.2, 0, 0, 1)` | Not declared; snaps (native) |
 | Hero link soft circle | pointer hover on a hero link (`hover: hover`) | background (10% Accent circle); icon color | Color 160ms, `cubic-bezier(0.2, 0, 0, 1)`; background 160ms, ease | Kept in full (no movement) |
-| Technology lift | pointer hover on a technology item (`hover: hover`) | transform `translateY(-4px)` on the item's contents; name color | Transform 180ms, `cubic-bezier(0.2, 0, 0, 1)`; color 180ms, ease | No movement; name color only |
+| Technology lift | pointer hover on a technology item (`hover: hover`) | transform `translateY(-4px)` on the item's contents; logo and name color | Transform 180ms, `cubic-bezier(0.2, 0, 0, 1)`; color 180ms, ease | No movement; logo and name color only |
 | Project card lift | pointer hover on a project card (`hover: hover`) | transform `translateY(-3px)` on the article; border-color; box-shadow | Transform 180ms, `cubic-bezier(0.2, 0, 0, 1)`; border and shadow 180ms, ease | No movement; border and shadow kept |
 | Labeled link hover | hover | color, text-decoration-thickness | 120ms, ease | Kept (color only, no movement) |
 | Summary and rail hover | hover | color | 120ms, ease | Kept |
@@ -688,6 +691,7 @@ I calculated the ratios by hand with the WCAG 2.x formula and rounded them down.
 | Accent | Paper | 4.9:1 | 4.5 | Hovered link text on the page; hovered technology name (15px/600) |
 | Accent icon | 10% Accent circle over Paper (about `#EFE0DC`) | 4.3:1 | 3 (non-text) | Hovered hero icon |
 | Accent deep icon | 10% Accent circle over Paper | 5.6:1 | 3 (non-text) | Pressed hero icon |
+| Accent logo | Paper | 4.9:1 | 3 (non-text) | Hovered technology logo |
 | 10% Accent circle | Paper | about 1.16:1 | none (decorative) | Hover feedback; the icon color change is the meaningful cue |
 | Pebble border, card-hover shadow | Paper / White | n/a | none (decorative) | Project card hover |
 | Accent | White | 5.5:1 | 4.5 | Hovered summary and link text inside cards |
@@ -714,6 +718,7 @@ The light theme toggle uses the hero-link pairs above: Charcoal icon on Paper 14
 | Accent deep `#F2958C` | Paper / White | 7.9:1 / 7.2:1 | 4.5 | Pressed link text |
 | Accent icon | 10% Accent circle over Paper (about `#2E201D`) | 4.9:1 | 3 (non-text) | Hovered hero icon and toggle icon |
 | Accent deep icon | 10% Accent circle over Paper | 7.0:1 | 3 (non-text) | Pressed hero icon and toggle icon |
+| Accent logo | Paper | 5.5:1 | 3 (non-text) | Hovered technology logo |
 | 10% Accent circle | Paper | about 1.13:1 | none (decorative) | Hover feedback; the icon color is the cue |
 | Accent underline | Paper / White | 5.5:1 / 5.0:1 | 3 (non-text) | Link identification |
 | Accent rail marker | Paper | 5.5:1 | 3 (non-text) | Current section |
@@ -797,7 +802,7 @@ Backend owns `data/` and proposes the schema; the owner approves. The field name
 |---|---|---|---|
 | 1 | Hero greeting | A new string, e.g. `basics.greeting` = "Hello, I'm Ryan." | Required. It must not be hardcoded. |
 | 2 | Instagram profile | Add `{ "network": "Instagram", "url": "https://www.instagram.com/ryan.chen2" }` to `basics.profiles` | Hero order is LinkedIn, GitHub, Instagram. Rec.: render in array order, so put Instagram last. Frontend maps `network` to an icon. |
-| 3 | Curated technologies | A new ordered list, e.g. `technologies: [{ name, icon }]`, where `icon` is a Simple Icons slug or the marker `"database"` for SQL | The 10 entries in the §6.3 order. Validation could reject unknown icon values. |
+| 3 | Curated technologies | A new ordered list, e.g. `technologies: [{ name, icon }]`, where `icon` is a key Frontend maps to a logo (a Simple Icons slug, `java` and `css` for the Devicon logos, or `"database"` for SQL) | The 10 entries in the §6.3 order. Validation could reject unknown icon values. |
 | 4 | Company logo per experience | Optional, e.g. `experience[].logo` = a site-root `src` path | Rec.: `src` only, always decorative, because the name sits beside it. If Backend reuses the existing `image` shape (where `alt` is required), it must allow an empty `alt`. Files go in `public/` (Backend owns it). The owner has supplied **100 x 100 JPGs in `public/`** (more than 2x for the 40px box). Render them with `next/image` at 40 x 40, with a 1px Rule border. |
 | 5 | Photo | Populate the existing `basics.image`: `src` (e.g. `/images/...`) and `alt` "Ryan at the Golden Gate Bridge" | The file comes from the owner. An optional focal point (e.g. `basics.image.position`) is needed only if the face is off-center. |
 | 6 | Remove `featured` | Delete it from `data/schema.ts` and `resume.json` | Nothing renders it. This reverses the Phase 0 and Phase 1 decisions; record it in `decisions.md`. |
@@ -836,7 +841,7 @@ These are notes, not code.
   - The card height animation and all hover effects are CSS only. The accordion scroll correction and the rail update wait for the 320ms settle timing (§6.4).
 - **Icons:** all inline SVG, with no CDN at runtime and no icon font.
   - **Link icons:** five Tabler outline glyphs, copied into the repo (§6.1).
-  - **Technologies logos:** solid monochrome Simple Icons from a pinned version, plus the Lucide `database` icon for SQL (§6.3).
+  - **Technologies logos:** solid monochrome Simple Icons (v16.35.0) and Devicon (v2.16.0, Java and CSS), plus the Lucide `database` icon for SQL (§6.3).
 - **Photo:** `next/image` with `preload` (Next 16's name for `priority`) and `fill`; AVIF and WebP are on by default.
 - **Fonts:** one Figtree file, Latin subset.
 - **Target:** Lighthouse 95+ on all four categories, on mobile and desktop.
@@ -857,7 +862,7 @@ These are notes, not code.
 | No skip link | Skip link at 1200px and up only | Five rail links come before the content on desktop. Below 1200px there is no nav to skip. |
 | Rail script runs at every width | Gated by `matchMedia("(min-width: 1200px)")` | No scroll work when the rail is hidden |
 | No scroll correction when the exclusive accordion closes a card above | Scroll the opened summary into view if it moves off screen | Otherwise a click can push the content out of view |
-| Simple Icons v13 from a CDN, `openjdk` and `css3` | Pinned v16.35.0, inlined, `openjdk` and `css` (Devicon `css3` as the fallback) | Performance. `openjdk` is kept because v16.35.0 has no `java` icon (owner decision, 2026-10-18). |
+| Simple Icons v13 from a CDN, `openjdk` and `css3` | Simple Icons pinned v16.35.0, inlined; Java and CSS from Devicon v2.16.0 (`java-plain`, `css3-plain`), inlined, `currentColor` | Performance. Simple Icons v16.35.0 has no `java`, and the Devicon cup is more recognizable than `openjdk`; the Devicon CSS shield pairs with the HTML5 shield (decisions of 2026-10-18). |
 | `.btn` styles and `.edu` styles | Removed | No button and no Education section |
 | Highlight lines about 85 characters | Kept | Matches the approved preview. It slightly exceeds the 80-character guideline; I am flagging it rather than changing it. |
 
@@ -912,6 +917,6 @@ Scouted on 2026-10-16 with the read-only 21st tools. **This section changes noth
 - Skill tag: replaced by the technology item (§6.3).
 - Contact links row and "View Resume" button: there is no Contact section. Resume is one of the five icon-only hero links (§6.1).
 
-**Logos:** `search_logo` (svgl) was checked, but it is not proposed. The spec pins Simple Icons v16.35.0 for Technologies and Tabler for link icons (§6.1, §6.3). A query for "java" returned no results. Simple Icons v16.35.0 has no `java` either, so Technologies uses `openjdk` (§6.3, owner decision 2026-10-18).
+**Logos:** `search_logo` (svgl) was checked, but it is not proposed. The spec pins Simple Icons v16.35.0 and Devicon v2.16.0 for Technologies and Tabler for link icons (§6.1, §6.3). A query for "java" returned no results. Simple Icons v16.35.0 has no `java` either, so Technologies uses Devicon `java-plain` (§6.3, decision of 2026-10-18).
 
 **Dependencies added by these proposals:** none.

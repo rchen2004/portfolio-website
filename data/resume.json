@@ -39,7 +39,7 @@
   "technologies": [
     {
       "name": "Java",
-      "icon": "openjdk"
+      "icon": "java"
     },
     {
       "name": "Python",

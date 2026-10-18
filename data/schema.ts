@@ -21,9 +21,9 @@ const image = z.strictObject({
   alt: z.string().min(1),
 });
 
-// Simple Icons slugs, plus "database" (Lucide) for SQL. Frontend maps each key to an inlined SVG.
+// Icon keys: Simple Icons slugs, except "java" and "css" (Devicon) and "database" (Lucide, for SQL). Frontend maps each key to an inlined SVG.
 const technologyIcon = z.enum([
-  "openjdk",
+  "java",
   "python",
   "typescript",
   "cplusplus",

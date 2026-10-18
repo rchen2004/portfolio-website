@@ -1,5 +1,6 @@
 import { About } from "@/src/components/About";
 import { Hero } from "@/src/components/Hero";
+import { Technologies } from "@/src/components/Technologies";
 import { ThemeToggle } from "@/src/components/ThemeToggle";
 
 // Spec §2. Neither the shell nor <main> may be positioned: the corner toggle is placed against the page itself.
@@ -15,6 +16,7 @@ export default function Home() {
         <ThemeToggle className="absolute top-[calc(max(16px,env(safe-area-inset-top))-11px)] right-[calc(max(16px,env(safe-area-inset-right))-11px)]" />
         <Hero />
         <About />
+        <Technologies />
       </main>
     </div>
   );

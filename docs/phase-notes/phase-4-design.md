@@ -222,3 +222,54 @@ Read-only review of the uncommitted step 3 build. Sources: `about-{light,dark}-{
 **Must-fix:** none. **Step 3 passes.**
 
 Not checked: reduced motion (About has no motion), real devices, Safari and Firefox.
+
+---
+
+## Step 4 QA (2026-10-18): Technologies
+
+Read-only review. Sources: `tech-{light,dark}-{320,390,600,768,1200,1440}.png`, `tech-hover-{light,dark}-1440.png`, `tech-icons-2x.png`, `Technologies.tsx`, `TechIcon` in `icons.tsx`, Frontend's step 4 measurements. No file changed except this one. Skills used: `frontend-design` (preloaded). No 21st lookups (§15 picks none).
+
+| Item | Result | Evidence |
+|---|---|---|
+| 10 items, data order; logo 36px currentColor; name 15px/600 centered; 10px gap; h2 24px/700 with 24px below (§1.2, §6.3) | Pass | `Technologies.tsx:12,24-26`; measurements |
+| Java shows `openjdk` | Pass | `icons.tsx:101` |
+| HTML and CSS read as a pair | **Fail** | `tech-icons-2x`: CSS is a full tile (84% ink) and pairs with the TypeScript tile, not the HTML shield |
+| SQL weight close to the filled logos | Pass | `tech-icons-2x`: sits between React and C++ |
+| Under 600px 3/4/3, no column gap, 28px rows, no wraps at 320; from 600px 5 + 5, 28/16 gaps (§4.3) | Pass | 320/390/600 shots; measurements |
+| Hover: 4px lift on the inner wrapper, Accent name, Charcoal logo, no edge flicker, pointer only; reduced motion color only (§6.3, §7) | Pass | `tech-hover-*`; measured 4px and 0px |
+| Not focusable, default cursor (§6.3, §8) | Pass | `Technologies.tsx:20-22` |
+| Tokens only; Accent on Paper 4.9 / 5.5 (§9.1); no 320px scroll | Pass | shots |
+
+### Must-fix for Frontend
+
+1. **CSS logo:** use §6.3's fallback, Devicon `css3-plain` (MIT, pinned version), `fill: currentColor`. Keep the data key `css` (no schema or Backend change); swap only the path in `TECH_ICONS` and note the source in a comment. Devicon uses a 128-unit viewBox while `TechIcon` is fixed at `0 0 24 24`, so wrap the path in `<g transform="scale(0.1875)">`. Send a 2x crop of HTML and CSS side by side, both themes.
+
+### Rulings on Frontend's questions
+
+1. **HTML and CSS:** switch (must-fix 1). §6.3 already approves the fallback when they look too different, so no new owner decision; I record the switch and update the §6.3 table row once the crop is confirmed.
+2. **Java:** accept as built, no scale. The mark already fills the 36px height (29 x 36), so scaling would overflow the box without adding ink; its lightness is the line art itself. If the owner wants a heavier, more recognizable mark, the only option is Devicon `java-plain` (the cup). Simple Icons dropped the Java logo under Oracle's brand policy, so that is an owner call that would reverse the 2026-10-18 `openjdk` decision.
+3. **SQL stroke:** §6.3 meant 2 in Lucide's 24-unit grid (3px at 36px), as built. The rule's purpose is weight close to the filled logos; a literal 2px is lighter. No `non-scaling-stroke`.
+4. **General optical scaling:** none. React and Tailwind are wide and short by nature and already span the full 36px width; the names anchor each cell. Re-check by eye after the CSS swap removes the second heavy tile.
+
+### Spec clarifications (proposed; not edited)
+
+- §6.3 SQL note: "stroke width 2 in Lucide's 24-unit grid (3px at 36px); do not use `non-scaling-stroke`".
+- §4.3 Fit: the narrowest cell at 320px is 72px (3 of 12 columns of 288px), not "about 80px". The names still fit.
+- §6.3 table: CSS becomes Devicon `css3-plain` after must-fix 1.
+
+Not checked: real hover on touch devices, Safari and Firefox.
+
+### Follow-up (2026-10-18): logo decisions and spec fixes
+
+- **Java:** Devicon `java-plain` (the cup), v2.16.0, MIT; the owner left the choice to the orchestrator. Data key `java`. Supersedes the `openjdk` entry. This reverses ruling 2 above ("accept as built").
+- **CSS:** Devicon `css3-plain` shield, v2.16.0, MIT; recorded as a decision because the owner asked whether HTML and CSS should match (answer: matching shields). Data key stays `css`.
+- Both checked at the jsDelivr v2.16.0 path: one path each, `viewBox="0 0 128 128"`, with a brand fill to strip for `currentColor`.
+- **Spec edits:** §6.3 (logo source line, table, build notes, SQL stroke note), §4.3 (narrowest cell 72px), §6.1 (solid logos line), §11 #3 (`icon` keys), §12 (Technologies logos), §13 (logo row), §15 (Logos paragraph).
+- `docs/decisions.md`: "Java icon" marked superseded; two new Phase 4 entries.
+- Not mine to change: `data/resume.json` still has `"icon": "openjdk"`; Backend renames it to `java`, and Frontend renames the `TECH_ICONS` key and swaps the path.
+
+- **Technology hover (owner decision):** the logo turns Accent with the name, so the whole item goes Accent. Reduced motion keeps the color change and drops the movement. Spec §6.3 (hover, reduced motion, contrast), §7 (technology lift row) and §9.1 (new "Accent logo" row in both tables: 4.9:1 light, 5.5:1 dark, 3:1 non-text). The "Technology item hover: Lift" decision is marked updated, and there is a new Phase 4 entry. This replaces the step 4 checklist item "the logo stays Charcoal". Frontend: move the hover `color` from the name to the inner wrapper.
+
+**Step 4 passes QA after the CSS fix, with Java pending Frontend's swap to `java-plain` and the logo hover color pending Frontend.**
+
+Skills used: `frontend-design` (preloaded). No 21st lookups.

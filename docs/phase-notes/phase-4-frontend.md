@@ -104,3 +104,67 @@ Skills used: `frontend-design` (preloaded). No 21st components (spec §15 lists 
 
 ### Open questions
 None.
+
+## Step 4: Technologies
+
+Agent: Frontend. Branch `phase-4-sections`. Date 2026-10-18. Not committed.
+
+### What I did
+- **`src/components/Technologies.tsx` (new, server component, §4.3, §6.3, §7):** `<section id="technologies" aria-labelledby="technologies-heading">` with the h2 "Technologies" in the section heading style (24px/700, line-height 1.25, 24px below, `text-wrap: balance`), then a `<ul>` of `resume.technologies` in data order. Only "Technologies" is hardcoded.
+  - Grid: 5 equal columns from 600px (16px column gap, 28px row gap). Under 600px (`max-sm:`): 12 columns, no column gap, each item spans 4, and items 4 to 7 span 3 (`:nth-child(n+4):nth-child(-n+7)`), which gives rows of 3/4/3. A `shortcut:` comment says the spans only fit exactly 10 items and names the plain 3-column fallback.
+  - Item: a plain `<li>` (no link, no tabindex, `cursor: default`), with one inner wrapper holding a 36px logo above the name (10px gap, centered). Name 15px/600, line-height 1.45.
+  - Lift: hover is detected on the `<li>` (`group`), and the wrapper moves `translate: 0 -4px` over 180ms `cubic-bezier(0.2,0,0,1)`. The name turns Accent over 180ms ease. Tailwind v4's hover variants already sit under `@media (hover: hover)`. The movement is `motion-safe:` only, so under reduced motion only the name color changes. The logo keeps Charcoal.
+- **`src/components/icons.tsx`:** a `TECH_ICONS` map typed `Record<TechnologyIcon, ReactNode>` (type from `data/schema.ts`), so a missing or extra key fails typecheck, plus a `TechIcon` component (`fill: currentColor`, `aria-hidden`, `focusable="false"`). Nine Simple Icons v16.35.0 paths copied unchanged from the pinned files, and Lucide `database` (lucide-static v0.460.0) as a stroke group with stroke width 2 in its 24-unit box.
+- **`src/app/page.tsx`:** `<Technologies />` after `<About />`; main's 72px grid gap spaces it.
+
+### Decisions I made
+- Lift uses Tailwind's `translate` property (v4 `-translate-y-1`), not `transform`. Same effect, transform-only, no layout shift; `transition-transform` covers `translate`.
+- SQL stroke: "stroke width 2" read as Lucide's own unit (2 of 24), which renders at 3px at 36px. I did not use `non-scaling-stroke` (that would give 2px and a lighter icon). See open question 3.
+
+### Measurements (headless Chrome, `next start`, light and dark, reduced motion for the static shots)
+- **320:** rows 3/4/3 (Java Python TypeScript / C++ HTML CSS SQL / React.js Tailwind Next.js). Grid columns 12 x 24px; narrowest cell 72px (3-column span), 4-column span 96px. No name wraps; the tightest is TypeScript, 75.05px in a 96px cell (78%). Row gap 28px, column gap 0.
+- **390:** rows 3/4/3; narrowest cell 89.5px; 4-span 119.3px. No wraps. Row gap 28, column gap 0.
+- **600, 768, 1200, 1440:** rows 5/5. Columns 97.8 / 134.4 / 163.2 / 163.2px. Column gap 16px, row gap 28px. No wraps.
+- Every width: logo 36 x 36, logo-to-name gap 10px, name 15px/600/21.75px centered, h2 24px/700/30px with 24px to the list, About to Technologies 72px, all `<li>` tabIndex -1 (not focusable), cursor default, no horizontal scroll.
+- Colors: logo and name Charcoal, `#24201D` light and `#EDEAE6` dark.
+- **Lift:** React.js wrapper moves up exactly 4px on hover in both themes. The name turns `#C0362C` light / `#E56B60` dark; the logo stays Charcoal. With the pointer 2px above the `<li>`'s bottom edge, the item stays hovered after the lift (no flicker). Reduced motion: 0px movement, name still turns Accent.
+- **Logo ink at 36px** (bounding box, coverage of that box): Java 29 x 36, 18%; Python 36 x 36, 62%; TypeScript 36 x 36, 81%; C++ 32 x 36, 56%; HTML 31.5 x 36, 62%; CSS 36 x 36, 84%; SQL 30 x 33, 45%; React 36 x 32, 32%; Tailwind 36 x 21.5, 34%; Next.js 36 x 36, 68%.
+- Screenshots in the shots folder: `tech-{light,dark}-{320,390,600,768,1200,1440}.png` (full page), `tech-hover-{light,dark}-1440.png` (React.js hovered, section crop), `tech-icons-2x.png` (grid at DPR 2).
+
+### Checks
+- `npm run typecheck`: pass
+- `npm run lint`: pass
+- `npm run format:check`: pass
+- `npm run check:data`: pass
+- `npm run build`: pass (`/` static)
+
+### Files changed
+- `src/components/Technologies.tsx` (new)
+- `src/components/icons.tsx`
+- `src/app/page.tsx`
+
+Skills used: `frontend-design` (preloaded). No 21st components (spec §15 picks none for Technologies). No new dependencies.
+
+### Open questions
+1. **HTML and CSS.** They do not read as a pair. HTML is the shield outline with a cut-out "5" (31.5px wide, 62% ink); CSS is a solid rounded tile with "CSS" knocked out (full 36 x 36, 84% ink), so CSS looks bigger and heavier, and it pairs more with the TypeScript tile than with HTML. See `tech-icons-2x.png`. §6.3 allows Devicon's `css3` shield, recolored to Charcoal, as the fallback. Keep `css`, or switch (needs Design and a decision entry)?
+2. **Java looks small and light.** The OpenJDK Duke is a thin line drawing (18% ink, the lowest), so it reads lighter than its neighbors, especially next to Python and TypeScript. Tailwind (21.5px tall) and React (32% ink) are also light, but that is their natural shape. I made no optical scaling, since the spec gives no scale for these logos. Owner's call whether Java needs one.
+3. **SQL stroke width.** Rendered at 3px (Lucide's 2 units scaled to 36px). It sits between React and C++ in weight and reads close to the filled logos. If Design meant a literal 2px line, I would add `vector-effect: non-scaling-stroke`, which makes it lighter.
+
+### QA fix (2026-10-18, Design's step 4 must-fix)
+- **CSS logo** (`src/components/icons.tsx`): switched to the §6.3 fallback, Devicon `css3-plain` from devicon v2.16.0 (MIT), downloaded from jsDelivr into a fresh scratchpad folder. The data key stays `css`. The path is copied unchanged without its `#1572B6` fill, so it inherits `currentColor`, and is wrapped in `<g transform="scale(0.1875)">` to map the 128-unit box exactly onto the 24-unit one. A one-line comment names the source and version, and the block header now says "Simple Icons ... except CSS".
+- **Measurements:** at 36px, HTML's logo is 31.5 x 36 with 62% ink, and CSS is 31 x 35.25 with 64% ink. CSS's computed fill is Charcoal in both themes (`#24201D` / `#EDEAE6`).
+- **Visual check:** `tech-html-css-{light,dark}-2x.png` (390px, where the two sit side by side in row 2) and a new `tech-icons-2x.png`. The two shields now read as a pair: same outline, same size and weight, "5" and "3" cut out in the same style. This closes open question 1.
+- **Checks after the fix:** typecheck, lint, format:check, check:data and build all pass.
+
+### Owner changes (2026-10-18): Java cup and Accent logo on hover
+- **Java logo** (`src/components/icons.tsx`): Backend renamed the data and schema key `openjdk` to `java`, so the `TECH_ICONS` entry is now `java`. The logo is Devicon `java-plain` (the coffee cup), devicon v2.16.0, MIT, from the pinned file in the scratchpad. I copied its one path unchanged, without the `#EA2D2E` fill, so it uses `currentColor`, inside `<g transform="scale(0.1875)">`, the same as the CSS shield. It has a one-line source comment, and the header now says "except Java and CSS". No `openjdk` remains in `src/`.
+- **Hover color** (`src/components/Technologies.tsx`): the logo now turns Accent with the name. The Accent color moved from the name `<span>` to the wrapper, so the logo (`currentColor`) and the name both inherit it. The wrapper's transition is `translate 180ms cubic-bezier(0.2,0,0,1), color 180ms ease`. The movement stays `motion-safe:`, so under reduced motion the color change stays and nothing moves.
+- **Measurements** (React.js hovered, 1440px):
+  - With motion: lift 4px; name and logo both `#C0362C` in light and `#E56B60` in dark; still hovered with the pointer 2px above the `<li>`'s bottom edge.
+  - Reduced motion: lift 0px; name and logo still turn Accent in both themes.
+- **Java cup ink at 36px:** 26 x 34.75, 15% coverage. That is the lowest of the ten. Python is 36 x 36 at 62% and TypeScript is 36 x 36 at 81%; the old OpenJDK Duke was 29 x 36 at 18%.
+- **Screenshots:** `tech-java-{light,dark}-2x.png` (the Java, Python and TypeScript row at DPR 2), a new `tech-icons-2x.png`, and new `tech-hover-{light,dark}-1440.png`.
+- **Checks:** typecheck, lint, format:check, check:data and build all pass.
+
+#### Open question
+- **The cup reads light.** Its strokes are thin and it is narrower than its neighbors (26px wide), so next to the solid Python and TypeScript marks it looks smaller and fainter, even more than the OpenJDK Duke did. An optical scale-up would make it bigger but not heavier. A heavier Java mark would need a different icon. Owner's call; I made no change.

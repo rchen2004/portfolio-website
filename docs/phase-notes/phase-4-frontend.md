@@ -391,3 +391,122 @@ Skills used: `frontend-design` (preloaded). No 21st components (§15 picks none 
 ### Open questions
 1. **Link weight and color:** I followed `labeled-link` (600 Charcoal), as Design's step 5 note asks. The preview's footer link was 400 Pebble, the same as the footer text. Design should confirm.
 2. **Wrapping:** with today's name, the footer never wraps at 320 or wider, so the 8px row gap applies only to a longer name or larger text zoom. I checked it with a forced narrow width.
+
+## Step 8: Rail nav and skip link
+
+Agent: Frontend. Branch `phase-4-sections`. Date 2026-10-18. Not committed. This step ends the temporary toggle placement (decisions.md, Phase 4).
+
+### What I did
+- **`src/components/Rail.tsx` (new, server component, §6.6, §6.9):** `<nav aria-label="Sections" class="rail">`, with `max-xl:hidden` (`display: none` below 1200px). It is sticky at `top: env(safe-area-inset-top)`, with `align-self: start` and 56px top and bottom padding. It sits in grid column 1 and spans the main and footer rows, so it stays stuck to the end of the page.
+  - Name row: a flex row with `space-between` and `items-center`. The name is `resume.basics.name` from the loader: 24px/1.25/600, Charcoal, no underline, 44px tall, a 4px focus radius, linking to `#top`. The rail `ThemeToggle` sits at the right.
+  - List: 20px below the name, a `<ul>` with 15px left padding. The links are UI copy (About, Technologies, Experience, Projects): block, 20px/29px, 8px vertical padding (45px tall), Pebble, no underline. `hover:` turns them Charcoal over 120ms ease (Tailwind's `hover:` already sits under `(hover: hover)`), and `aria-current="true"` makes them Charcoal. The server renders About as current.
+  - Marker: a 3 x 32px Accent span with a 2px radius, `aria-hidden`, absolute at the list's left edge. Its transform transition (200ms, `cubic-bezier(0.2,0,0,1)`) is declared only under `motion-safe:`, so under reduced motion it jumps. It starts at `translateY(6.5px)`, About's center, which matches the server's `aria-current` until the script runs.
+- **`src/components/RailScript.tsx` (new, client, renders nothing):** applies the §6.6 rule. The current link is the last section whose top is at or above `innerHeight * 0.35`. Before any section reaches the line it is About, and within 4px of the bottom it is Projects. The script moves `aria-current` and sets the marker's offset to `link.offsetTop + link.offsetHeight / 2 - 16`. A `matchMedia("(min-width: 1200px)")` gate attaches a passive `scroll`, a `resize` and a `timeline-settled` listener only while it matches, and detaches them on `change`. On attach, the transition is off for one frame while the marker is placed, so a page that loads (or widens) mid-scroll doesn't slide in from About.
+- **`src/components/TimelineScript.tsx`:** the step 5 hook now dispatches `timeline-settled` on `document` inside `settle()`. `settle()` already runs 320ms plus one rAF after a toggle, or on the next frame when the height doesn't animate.
+- **`src/app/page.tsx`:**
+  - Skip link: the first element in the shell, `<a href="#top">Skip to content</a>`, with `max-xl:hidden` and `not-focus:sr-only`. When focused it is `fixed` at `max(16px, safe-area)` from the top and left, on White, with 12px/8px padding, `z-10`, and the `labeled-link` style (15px/600 Charcoal, Accent underline, 44px tall, 4px focus radius).
+  - `<Rail />` follows the skip link, before `<main>`.
+  - `<main id="top" tabIndex={-1}>`, so `#top` links move focus, not just the scroll position.
+  - The corner `ThemeToggle` gets `xl:hidden`, and the temporary "every width" comment is gone.
+- **`src/app/globals.css`:** `main:focus { outline: none; }`. Main is only a focus target, so it draws no ring. Its specificity beats the global `:focus-visible` rule.
+
+### Decisions I made
+- **Skip link type and underline:** §6.7 gives the box but not the type. I used `labeled-link` (15px/600 Charcoal with the Accent underline), because §8 says links are always underlined and the skip link isn't one of its three exceptions.
+- **Skip link `fixed`, 16px from the top left:** my first version was `absolute` at the page top. Pressing Tab from mid-page then focused a link that was off screen (measured: `scrollY` stayed at 1338). With `fixed`, the link shows at the window's top left from any scroll position. 16px is the page padding.
+- **No ring on `<main>`, even after a keyboard skip:** in Chrome, Enter on the skip link makes main match `:focus-visible`, which would draw a ring around the whole column. Focus still moves, and the next Tab goes to the first hero link.
+- **No slide on first placement** (on load, or when widening past 1200px): §7 animates the marker only when the current section *changes*.
+- **Marker wrapper:** the marker sits in a `relative` `<div>` around the `<ul>`, not inside it, so the list has only `<li>` children.
+
+### Measurements (headless Chrome, `next start`, 1440 x 900 unless noted)
+- **Layout:**
+  - Nav: sticky, `top: 0px`, `align-self: flex-start`, padding 56/56, column 1, spanning 2 rows, 220px wide, 60px gap to main. After scrolling 1500px its top is still 0.
+  - Name: 24px/30px/600, `#24201D`, no underline, 44px tall, links to `#top`.
+  - Toggle: 44 x 44, flush right (0px), vertically centered on the name (0px).
+  - Name to list: 20px. The list's left padding: 15px.
+  - Links: 20px/29px, block, 45px tall, no underline. The current link is `#24201D` and the others `#5E5751`, with a 0.12s color transition.
+  - Marker: 3 x 32, `#C0362C`, 2px radius, `aria-hidden="true"`, at the list's left edge (0px). With motion its transition is `transform` 0.2s `cubic-bezier(0.2, 0, 0, 1)`. Under reduced motion it is 0s.
+- **Current section at scroll points.** The 35% line is at 315px. "Expected" is the §6.6 rule computed independently in the test. At every point the current link matched the expected one, and the marker's center was **0px** from the current link's center.
+
+  | scrollY | Position | Current |
+  |---|---|---|
+  | 0 | top of the page | About |
+  | 162 / 163 | About 1px below / on the line | About / About |
+  | 363 / 364 | Technologies 1px below / on the line | About / Technologies |
+  | 652 / 653 | Experience at 316.44 / 315.44 (fractional top, still below the line) | Technologies / Technologies |
+  | 1561 / 1562 | Projects at 316.38 / 315.38 (fractional) | Experience / Experience |
+  | 2161 | 5px from the bottom, Projects above the line | Projects |
+  | 2162 / 2166 | within 4px of / at the bottom | Projects / Projects |
+
+  Experience and Projects have fractional tops, so whole-pixel scroll steps leave them 0.44px and 0.38px below the line. One more pixel switches them (Experience is current at 663, below).
+- **Screenshot states (1200 and 1440, both themes):** About at the top, Experience after `scrollIntoView` on Experience, and Projects at the bottom. The marker offset is 0 in all 12.
+- **Slide:** scrolling from 0 to 663 with motion, the marker is at 81.8px after 90ms, still moving, and ends at 96.5px, Experience's center. Under reduced motion it is already at 96.5px after 90ms.
+- **Accordion, hook isolated:**
+  - Setup: all cards closed, then scrolled so Projects is 30px above the line (Projects current).
+  - I clicked Ventus Health's summary, which is visible at y = 121. Its content grows below the summary, so Projects drops to 356, under the line, with **no scroll or resize event**.
+  - At 150ms it is still Projects (Projects is mid-move, at 347).
+  - The event log shows `settled` at 332ms, then `current → Experience` at 332ms, and nothing else. The marker offset is 0.
+- **Accordion, longest card:**
+  - From the bottom of the page (Projects current), I opened Babel Street (545px of content).
+  - Scroll anchoring and the scroll correction then scroll the page.
+  - At 326ms `settled` fires, and Projects is still correct (the page is still at the bottom).
+  - The correction's smooth scroll then switches it to Experience at 489ms. The final state matches the rule, and the marker offset is 0.
+- **Resize gate** (`DOMDebugger.getEventListeners`):
+
+  | Width | `scroll` (window) | `resize` (window) | `timeline-settled` (document) |
+  |---|---|---|---|
+  | 1440 | 1 | 1 | 1 |
+  | 1199 | 0 | 0 | 0 |
+  | 1200 | 1 | 1 | 1 |
+  | 1199, then 1440 | 1 | 1 | 1 (no duplicates) |
+
+  At 1199, scrolling to Projects leaves `aria-current` on About. Back at 1200, Projects is current with a 0px marker offset.
+- **Tab order:**
+  - 1440: Skip to content, Ryan Chen, Dark mode (rail), About, Technologies, Experience, Projects, then the hero's Resume and Email.
+  - 1199 and 390: Dark mode (the corner instance, in main), Resume, Email.
+- **Skip link:**
+  - At rest it is 1 x 44px and clipped.
+  - On the first Tab it is 129 x 44 at (16, 16), with a White background, `#24201D` text at 15px/600, 8px 12px padding and the Accent underline. It matches `:focus-visible`: a 2px solid `#24201D` outline, 2px offset, 4px radius.
+  - Enter moves focus to `MAIN#top` (`:focus`, outline `none`), with `scrollY` 0 and hash `#top`. The next Tab goes to the hero's Resume link.
+  - From `scrollY` 1500, Tab shows the link at the window's top left without scrolling the page, and Enter goes to `MAIN#top` at 0.
+  - A mouse click on the rail name focuses main with no `:focus-visible` and outline `none`. A click on the About text does the same.
+  - At 1200, the focused link's box ends at 60px and the name's text box starts at 63px, so the ring (which reaches 64px) touches the top of the name row while the skip link is focused.
+- **Hover:** Projects goes from `#5E5751` to `#24201D`, with a pointer cursor and no underline.
+- **Toggle instances:**
+  - At 1440 the rail instance is `flex` and the corner instance `none`.
+  - Clicking the rail toggle switches to dark, and both instances have `aria-pressed="true"`.
+  - At 1199 the corner instance shows (the rail is `display: none`). Clicking it switches to light. Back at 1200, both are `false` and only the rail instance shows.
+  - Loading in dark, both are `true`.
+- **Below 1200px (390 and 1199):**
+  - The nav and the skip link are `display: none`, and the accessibility tree has no `navigation` node.
+  - The first button is the corner "Dark mode", at top 5px and 20px from the right edge (5px plus the 15px scrollbar).
+  - `scrollWidth` equals `clientWidth`.
+- **Screenshots** (scratchpad `shots8/`):
+  - `rail-{light,dark}-{1200,1440}.png`, plus `-experience.png` and `-bottom.png` for each (12 in all);
+  - `rail-hover-light-1440.png`;
+  - `skip-focus-light-1440.png` and `skip-focus-light-1200.png` (2x crops);
+  - `toggle-rail-{light,dark}-1440.png` (2x crops);
+  - `corner-toggle-light-390.png`, `rail-1199-light.png` and `rail-accordion-light-1440.png`.
+
+### Checks
+- `npm run typecheck`: pass
+- `npm run lint`: pass
+- `npm run format:check`: pass
+- `npm run check:data`: pass
+- `npm run build`: pass (`/` static)
+
+`next start` only; the server was stopped afterwards. `AGENTS.md` is untouched. `docs/design-spec.md` and `docs/decisions.md` were not touched.
+
+### Files changed
+- `src/components/Rail.tsx` (new)
+- `src/components/RailScript.tsx` (new)
+- `src/components/TimelineScript.tsx`
+- `src/app/page.tsx`
+- `src/app/globals.css`
+
+Skills used: `frontend-design` (preloaded). No 21st components (§15 picks none for the rail). No new dependencies.
+
+### Open questions
+1. **Skip link type and position:** §6.7 doesn't give the type size, the underline or the exact offset. I used `labeled-link` (15px/600 with the Accent underline, per §8), `fixed`, 16px from the top left. Design should confirm.
+2. **No focus ring on `<main>`:** after a keyboard skip, main is focused with no ring. The alternative is a ring around the whole content column. Design should confirm.
+3. **Skip link at exactly 1200px:** while it is focused, its ring touches the top of the rail's name row (by 1px). It only happens on focus and goes away with it. Is that acceptable, or should the link sit lower or further left?
+4. **Decisions note:** once this step is approved, the "Theme toggle placement until the rail exists" entry can be marked expired. Design owns `decisions.md`.

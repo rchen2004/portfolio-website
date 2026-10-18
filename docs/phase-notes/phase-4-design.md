@@ -395,3 +395,77 @@ From step 7:
 All restate the built values; none changes a visual rule.
 
 Not checked: `footer-{light,dark}-390`, `footer-light-1200`, `footer-dark-768` were not opened (neighbouring widths cover them); dark hover and dark focus shots (not supplied); a notched device for the safe-area padding; Safari and Firefox.
+
+---
+
+## Follow-up (2026-10-18): step 6 and step 7 clarifications closed
+
+The owner approved all five clarifications (relayed by the coordinator). Applied to `docs/design-spec.md`:
+- §6.5 header row: `align-items: baseline`; on wrap the date drops under the name, left-aligned.
+- §7 "Other rules": reduced motion is either `transform: none` or the transform declared only under `prefers-reduced-motion: no-preference`.
+- §1.2: the row is renamed "Footer text", with a note that the link follows §6.1 at 14px (600, Charcoal).
+- §4.6: "Narrow screens" becomes "Layout": a wrapping flex row with `space-between`, `align-items: center` and `gap: 8px 16px`. The "Style" line no longer says all footer text is Pebble.
+- §6.8: the link is the §6.1 labeled-link style without an icon, at 14px.
+- To keep the spec consistent, §9.1 (light and dark) now lists the footer link under Charcoal on Paper (14.5:1 / 14.7:1) and the copyright under Pebble on Paper (6.3:1 / 6.8:1). No ratio changed. §10 has no footer row.
+
+`docs/decisions.md`: one Phase 4 entry, "Spec clarifications from step 6 and step 7 QA". No older entry is superseded.
+
+Files changed: `docs/design-spec.md` (§1.2, §4.6, §6.5, §6.8, §7, §9.1), `docs/decisions.md`, this file. Not committed. Skills used: `frontend-design` (preloaded). No 21st lookups.
+
+**Step 6 and step 7 pass QA.**
+
+Open questions: none. The dark project-card hover shadow (step 6 ruling 2) stays as built unless the owner asks for a stronger one.
+
+---
+
+## Step 8 QA (2026-10-18): Rail nav, skip link, toggle in the rail
+
+Read-only review. Sources: `shots8/` `rail-{light,dark}-{1200,1440}`, `rail-light-1440-experience`, `rail-dark-1440-bottom`, `rail-dark-1200-experience`, `rail-light-1200-bottom`, `rail-dark-1440-experience`, `rail-hover-light-1440`, `skip-focus-light-{1440,1200}`, `toggle-rail-{light,dark}-1440`, `corner-toggle-light-390`, `rail-1199-light`, `rail-accordion-light-1440`; `Rail.tsx`, `RailScript.tsx`, `page.tsx`; Frontend's step 8 measurements. No file changed except this one. Skills used: `frontend-design` (preloaded). No 21st lookups (§15 picks none for the rail).
+
+| Item | Result | Evidence |
+|---|---|---|
+| Rail only at 1200px and up, `display: none` below, no nav node (§6.6, §2) | Pass | `Rail.tsx:19` `max-xl:hidden`; `rail-1199-light`, `corner-toggle-light-390`; AX tree |
+| Sticky, 56px top and bottom padding, column 1, 220px, 60px gap (§2, §6.6) | Pass | measurements; `-experience` and `-bottom` shots keep the rail at the top |
+| Name 24px/600 Charcoal, no underline, 44px, `#top`; toggle at the right of the same row, centered (§6.6, §6.9) | Pass | `toggle-rail-{light,dark}-1440`; 0px offsets measured |
+| Links 20px/29px, 45px tall, Pebble; current Charcoal with `aria-current="true"`; hover Charcoal 120ms (§6.6, §7) | Pass | all rail shots; `rail-hover-light-1440` (Projects Charcoal on hover) |
+| Marker 3 x 32 Accent, 2px radius, `aria-hidden`; 200ms slide, instant under reduced motion; 0px from the current link's center (§6.6, §7) | Pass | `Rail.tsx:34`; slide and reduced-motion measurements |
+| Current section: 35% line, About before it, Projects at the bottom (§6.6) | Pass | scroll table; `-bottom` shots show Projects |
+| Update after an accordion toggle (§6.6) | Pass | `rail-accordion-light-1440` (Ventus open, Experience current); `timeline-settled` at 332ms |
+| Script gated by `matchMedia`, no listeners below 1200px, no duplicates (§6.6) | Pass | listener table |
+| Skip link: first tab stop, hidden until focus, White, Charcoal, ring, 44px, to `#top` (§6.7) | Pass | `skip-focus-light-{1440,1200}`; 129 x 44 at (16, 16) |
+| Tab order at 1200px and up (§9.4) | Pass | skip, name, toggle, 4 rail links, then hero |
+| One toggle instance at any width; state synced (§6.9) | Pass | 1199/1200 checks; `aria-pressed` on both |
+| Toggle icons in the rail: `moon` light, `sun` dark (§6.9) | Pass | `toggle-rail-*` |
+| Dark: marker Accent `#E56B60`, inactive Pebble, current Charcoal (§9.1) | Pass | `rail-dark-*` |
+| Tokens only, no horizontal scroll | Pass | shots; `scrollWidth` |
+
+**Must-fix:** none. **Step 8 passes**, pending the owner's OK on the clarifications below.
+
+### Rulings on Frontend's questions
+1. **Skip link style: accept.** `labeled-link` (15px/600 Charcoal, 1px Accent underline at 4px offset) is right: §8 says links are always underlined, and the skip link is not one of the three exceptions. `position: fixed` at `max(16px, env(safe-area-inset-top))` / `max(16px, env(safe-area-inset-left))` is right too: an `absolute` link focused mid-page would be off screen. Contrast: Charcoal on White 16.1:1 light / 13.3:1 dark; Accent underline on White 5.5:1 / 5.0:1.
+2. **No ring on `<main>`: accept.** `<main tabindex="-1">` is a programmatic focus target, not a control the user operates; a ring around the whole column reads as an error. The skip link itself shows the ring, and the next Tab lands on the first hero link, which shows its own. This is a narrow exception to §8's "never remove the outline", so it goes in the spec (owner OK).
+3. **1px overlap at exactly 1200px: accept, no change.** The focused link is the topmost layer (`z-10`, opaque White), so the focused element is never obscured (WCAG 2.4.11), and the overlap lasts only while it is focused. At 1440 the rail starts 107px in, so there is no overlap. Moving the link down or left would break the 16px page margin for a transient, 1px case. Design's call; the owner need not decide.
+4. **Temporary toggle placement: yes, it can be marked expired** once the owner approves step 8 (batch item 4).
+
+### Spec clarifications for the owner (one batch; not applied)
+1. §6.7: "Type: the §6.1 labeled-link style without an icon (15px/600, Charcoal, 1px Accent underline at 4px offset; hover Accent and 2px). When focused it is `position: fixed`, `top: max(16px, env(safe-area-inset-top))`, `left: max(16px, env(safe-area-inset-left))`, above the rail (`z-index` 10), so it shows from any scroll position. At exactly 1200px its ring touches the rail's name row by 1px while focused; accepted." Add "skip link" to §9.1's Accent underline rows (5.5:1 light / 5.0:1 dark on White).
+2. §8 Focus: "Exception: `<main id="top" tabindex="-1">` is a focus target for `#top` links and draws no ring (`main:focus { outline: none }`). It is not a control; the next Tab reaches a control with a ring." Same note in §9.4.
+3. §6.6 "Which section is current": replace "on every experience `toggle`" with "after every experience toggle settles (320ms plus one frame, or the next frame without the height animation), via a `timeline-settled` event that the timeline script dispatches on `document`". The same wording in the listener bullet. Add: "On attach (load, or widening past 1200px) the marker is placed without the slide; it slides only when the current section changes (§7)."
+4. `decisions.md`: mark "Theme toggle placement until the rail exists" as `*Expired (2026-10-18): step 8 approved; the corner toggle shows below 1200px only and the rail holds it at 1200px and up (spec §6.9).*`
+
+Items 1 to 3 restate the built behavior; item 2 is the only one that relaxes a written rule (§8).
+
+Not checked: the skip link and rail-link focus rings in dark (no shots), the rail-link focus ring in light, Safari and Firefox (sticky inside a grid row span), a notched device, screen-reader output.
+
+### Follow-up (2026-10-18): clarifications closed
+The owner approved step 8 and all four clarifications (relayed by the coordinator). Applied:
+1. §6.7: skip link type (labeled-link style, 15px/600 Charcoal, Accent underline), focused position (`position: fixed` at `max(16px, env(safe-area-inset-top))` / `max(16px, env(safe-area-inset-left))`, `z-index: 10`), and the accepted 1px overlap at exactly 1200px. §9.1 (light and dark): the Accent underline rows name the skip link.
+2. §8 and §9.4: the `<main id="top" tabindex="-1">` no-ring exception, recorded as narrow and owner-approved.
+3. §6.6: the current section updates on `timeline-settled`, not the raw `toggle`; the marker is placed without sliding on load and when widening past 1200px. For consistency, also §6.4 ("Rail update") and §7 (rail marker slide row).
+4. `docs/decisions.md`: "Theme toggle placement until the rail exists" marked expired; one new Phase 4 entry, "Spec clarifications from step 8 QA".
+
+No color changed, so contrast is unchanged in both themes. Files changed: `docs/design-spec.md` (§6.4, §6.6, §6.7, §7, §8, §9.1, §9.4), `docs/decisions.md`, this file. Not committed. Skills used: `frontend-design` (preloaded). No 21st lookups.
+
+Open questions: none.
+
+**Step 8 passes QA. Phase 4 build steps 2 to 8 complete.**

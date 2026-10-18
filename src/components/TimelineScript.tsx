@@ -51,7 +51,8 @@ export function TimelineScript() {
           behavior: motion.matches ? "smooth" : "auto",
         });
       }
-      // Step 8: the rail's active-section update (§6.6) runs here, after the same settle timing.
+      // The rail (RailScript) updates its current section now that the height has settled (§6.6).
+      document.dispatchEvent(new Event("timeline-settled"));
     };
 
     // `toggle` doesn't bubble, so it is caught in the capture phase on the list.

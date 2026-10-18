@@ -59,7 +59,9 @@ There are two palettes, light and dark, with the same token names (owner decisio
 | Technology name | 15px | 15px | 600 | 1.45 | centered |
 | Rail name "Ryan Chen" (1200px and up only) | 24px | n/a | 600 | 1.25 | |
 | Rail section links (1200px and up only) | 20px | n/a | 400 | 1.45 | |
-| Footer | 14px | 14px | 400 | 1.45 | Pebble |
+| Footer text | 14px | 14px | 400 | 1.45 | Pebble |
+
+The "Footer text" row is the copyright line. The footer's "Back to top" link follows §6.1 at 14px: 600, Charcoal (§6.8).
 
 The root body size is 17px at 720px and up, and 16px below.
 
@@ -226,8 +228,8 @@ The hero greeting is the page's only h1.
 
 - **Placement:** after `<main>`, in the same column. Use a real `<footer>` element outside `<main>`, so it is the page's contentinfo landmark (the preview put it inside main; see §13).
 - **Content:** "© <year> Ryan Chen" on the left and "Back to top" on the right.
-- **Style:** 1px Rule top border, padding 24px top and `max(32px, env(safe-area-inset-bottom))` bottom (32px without an inset), 14px Pebble text.
-- **Narrow screens:** the two parts wrap with an 8px row gap.
+- **Style:** 1px Rule top border, padding 24px top and `max(32px, env(safe-area-inset-bottom))` bottom (32px without an inset). The copyright is 14px Pebble ("Footer text", §1.2); the link is styled per §6.8.
+- **Layout:** a wrapping flex row with `justify-content: space-between`, `align-items: center` and `gap: 8px 16px`. On narrow screens, when it wraps, the link drops under the copyright, left-aligned.
 
 ---
 
@@ -469,7 +471,7 @@ Unmarked slugs are Simple Icons.
   - Scrolling is smooth only under `prefers-reduced-motion: no-preference`; otherwise it is instant.
   - Running it after the close finishes means the summary ends in view at its final position. Scrolling earlier would aim at a position that keeps moving for 320ms.
   - The preview does not do this (§13).
-- **Rail update:** every `toggle` event also triggers the rail's active-section update (§6.6), after the same settle timing. Scroll events during the transition update the rail as usual.
+- **Rail update:** after the same settle timing, the timeline script dispatches a `timeline-settled` event on `document`; the rail's active-section update (§6.6) listens for it, not for the raw `toggle`. Scroll events during the transition update the rail as usual.
 - **Scroll reveal:** see §7.
 
 ### 6.5 Project card
@@ -480,7 +482,7 @@ Unmarked slugs are Simple Icons.
 1. **Header row:**
    - The project name as an h3, 21px/600 (18px under 720px).
    - The date on the right, in meta style, from `dateLabel`.
-   - The row wraps, with gaps of 2px vertically and 16px horizontally. When it wraps, the date drops under the name.
+   - The row wraps, with `align-items: baseline` and gaps of 2px vertically and 16px horizontally. Baseline seats the 15px date on the 21px name's text line. When it wraps, the date drops under the name, left-aligned.
 2. **Technologies:** `projects[].technologies` joined with ", " in meta style, 2px below. Plain text, not chips.
 3. **Highlights:** the same list style as the timeline cards, 16px below. No indent, since there is no logo.
 4. **Link row:** 12px below. A GitHub link in the labeled link style (§6.1, "Repo and project links"), with the 18px outline `brand-github` icon (§6.1 link icons), the label from `links[].label`, and a new tab.
@@ -528,10 +530,11 @@ Unmarked slugs are Simple Icons.
 - The current section is the last one whose top is at or above 35% of the viewport height.
 - If the page is scrolled to the bottom (within 4px), the last section (Projects) is current.
 - Before the first section reaches the 35% line, the first link (About) is current.
-- The check runs on scroll (a passive listener), on resize, and on every experience `toggle`.
+- The check runs on scroll (a passive listener), on resize, and after every experience toggle settles: on the `timeline-settled` event that the timeline script dispatches on `document` (320ms plus one frame after the `toggle`, or the next frame without the height animation; §6.4 settle timing). It does not run on the raw `toggle`.
+- **Placing the marker on attach:** on load, and when the window widens past 1200px, the marker is placed at the current link without the slide. It slides only when the current section changes (§7).
 - **The script runs only while the rail is shown.**
   - Gate it with `matchMedia("(min-width: 1200px)")`.
-  - Attach the scroll, resize and `toggle` listeners only while that query matches.
+  - Attach the scroll, resize and `timeline-settled` listeners only while that query matches.
   - Detach them when it stops matching (listen for the query's `change` event).
   - Below 1200px, no scroll tracking runs at all.
 
@@ -541,6 +544,9 @@ Unmarked slugs are Simple Icons.
 
 - **On desktop** it is the first focusable element: "Skip to content", linking to `#top` (`<main>`).
   - It is visually hidden until focused. When focused, it appears at the top left: White background, Charcoal text, 12px horizontal and 8px vertical padding, the focus ring, at least 44px tall.
+  - **Type:** the §6.1 labeled-link style without an icon: 15px/600, Charcoal, 1px Accent underline at a 4px offset; on hover, Accent and a 2px underline. Contrast on White: Charcoal 16.1:1 light / 13.3:1 dark; Accent underline 5.5:1 / 5.0:1 (§9.1).
+  - **Focused position:** `position: fixed`, `top: max(16px, env(safe-area-inset-top))`, `left: max(16px, env(safe-area-inset-left))`, above the rail (`z-index: 10`), so it shows from any scroll position.
+  - **Accepted overlap:** at exactly 1200px, the focused link overlaps the rail's name row by 1px. It is the topmost, opaque layer, so the focused element is never obscured (WCAG 2.4.11), and it lasts only while focused. At wider screens there is no overlap.
   - It exists because the rail's five links (the name and four sections) come before the content.
 - **Below 1200px** it is not rendered (`display: none`). With no nav, `<main>` is already the first content, so a skip link would skip nothing.
 
@@ -548,7 +554,7 @@ Unmarked slugs are Simple Icons.
 
 See §4.6.
 - **Year:** rendered at build time. It updates on the next deploy, which is acceptable for a static site.
-- **"Back to top":** links to `#top`. It uses the underline style from §6.1 at 14px, with a 44px minimum height.
+- **"Back to top":** links to `#top`. It uses the §6.1 labeled-link style ("Repo and project links") without an icon, at 14px: 600, Charcoal, 1px Accent underline at a 4px offset; on hover, Accent and a 2px underline. 44px minimum height.
 
 ### 6.9 Theme toggle
 
@@ -600,7 +606,7 @@ There are two ambient motions (the hero load and the timeline reveal), plus stat
 |---|---|---|---|---|
 | Hero load | Page load; plays once | Greeting and tagline words: opacity 0 to 1, `filter: blur(10px)` to none, translateY 4px to 0. Link row: opacity 0 to 1. Photo: none | Words: 700ms, `cubic-bezier(0.22, 1, 0.36, 1)`, delay = word index × 45ms (index runs on from the greeting into the tagline). Link row: 500ms, ease, 700ms delay | Not declared; everything is static at its resting state |
 | Timeline reveal | A timeline entry that was below the viewport at load scrolls 15% into view; it plays once per entry | opacity 0 to 1, translateY 12px to 0 | 320ms, `cubic-bezier(0.22, 1, 0.36, 1)` | Never applied; cards are always visible |
-| Rail marker slide | The current section changes | transform | 200ms, `cubic-bezier(0.2, 0, 0, 1)` | Jumps instantly |
+| Rail marker slide | The current section changes (not on load or when widening past 1200px, where it is placed without sliding; §6.6) | transform | 200ms, `cubic-bezier(0.2, 0, 0, 1)` | Jumps instantly |
 | Chevron rotate | A card opens or closes | transform | 200ms, `cubic-bezier(0.2, 0, 0, 1)` | Instant |
 | Open-dot color and ring | A card opens or closes | background-color, box-shadow | 200ms, ease | Instant |
 | Card height | A timeline card opens or closes | `::details-content` block-size (to and from `auto`), content-visibility (discrete) | 320ms, `cubic-bezier(0.2, 0, 0, 1)` | Not declared; snaps (native) |
@@ -653,7 +659,7 @@ There are two ambient motions (the hero load and the timeline reveal), plus stat
 - **Hover movement: only the technology lift (§6.3) and the project card lift (§6.5).** The hero links have no tilt and no movement (§6.1).
   - Both lifts are transform-only and move the element's contents, not the hovered `<li>`, so nothing shifts and the hover doesn't flicker.
   - Both sit under `@media (hover: hover)`.
-  - Under `prefers-reduced-motion: reduce`, set `transform: none`. Their color, border and shadow changes remain.
+  - Under reduced motion there is no transform: either set `transform: none` under `prefers-reduced-motion: reduce`, or declare the transform only under `prefers-reduced-motion: no-preference`. Their color, border and shadow changes remain.
   - Neither element is focusable, so neither has a keyboard state.
 - **The only movement on expand is the card height** (§6.4), plus the chevron and dot. It applies only under `prefers-reduced-motion: no-preference`.
 - No other load, scroll or hover animations. The hero load (rule 5) is the only load animation. The photo has no motion.
@@ -668,6 +674,7 @@ There are two ambient motions (the hero load and the timeline reveal), plus stat
   - Browsers draw `outline` along the element's `border-radius`, so the round controls need no extra rule. Color, width and offset are the same for both shapes, so the contrast below is unchanged.
   - **In dark the ring is light** (`#EDEAE6`), because it uses the Charcoal token: 14.7:1 on Paper and 13.3:1 on cards. No separate dark focus color is needed.
   - The corner toggle's ring reaches 4px past its box, so it ends 1px inside the viewport edge without an inset. It stays fully visible.
+  - **Exception (owner-approved, 2026-10-18):** `<main id="top" tabindex="-1">` draws no focus ring (`main:focus { outline: none }`). Main is a programmatic focus target for the `#top` links (skip link, rail name, "Back to top"), not a control, and a ring around the whole column would read as an error. The next Tab shows the normal ring on the first link. This is the only element exempt from "never remove the outline".
 - **Theme toggle hover:** the same soft circle and Accent icon as the hero links (§6.9), under `@media (hover: hover)`.
 - **Summary focus:** the outline is drawn on the `<summary>`, inside the card padding. Use `outline-offset: 4px` so the ring clears the logo and the text.
 - **Hover is never the only cue.** Links are always underlined, with three exceptions: nav links (identified by their position in the nav), the name link, and the icon-only hero links (identified by their icon glyphs, in a row directly under the tagline). Summaries always show the chevron.
@@ -684,9 +691,9 @@ I calculated the ratios by hand with the WCAG 2.x formula and rounded them down.
 
 | Foreground | Background | Ratio | Needed | Use |
 |---|---|---|---|---|
-| Charcoal | Paper | 14.5:1 | 4.5 | Body text, headings, hero links, tech names, current nav link |
+| Charcoal | Paper | 14.5:1 | 4.5 | Body text, headings, hero links, tech names, current nav link, footer link |
 | Charcoal | White | 16.1:1 | 4.5 | Card text, skip link |
-| Pebble | Paper | 6.3:1 | 4.5 | About heading, inactive nav, footer |
+| Pebble | Paper | 6.3:1 | 4.5 | About heading, inactive nav, footer copyright |
 | Pebble | White | 7.1:1 | 4.5 | Dates, titles, tech lists in cards |
 | Accent | Paper | 4.9:1 | 4.5 | Hovered link text on the page; hovered technology name (15px/600) |
 | Accent icon | 10% Accent circle over Paper (about `#EFE0DC`) | 4.3:1 | 3 (non-text) | Hovered hero icon |
@@ -696,7 +703,7 @@ I calculated the ratios by hand with the WCAG 2.x formula and rounded them down.
 | Pebble border, card-hover shadow | Paper / White | n/a | none (decorative) | Project card hover |
 | Accent | White | 5.5:1 | 4.5 | Hovered summary and link text inside cards |
 | Accent deep | Paper / White | 6.5:1 / 7.2:1 | 4.5 | Pressed link text |
-| Accent underline | Paper / White | 4.9:1 / 5.5:1 | 3 (non-text) | Link identification |
+| Accent underline | Paper / White | 4.9:1 / 5.5:1 | 3 (non-text) | Link identification, including the skip link (on White) |
 | Accent rail marker | Paper | 4.9:1 | 3 (non-text) | Current section |
 | Pebble chevron | White | 7.1:1 | 3 (non-text) | Open or closed state |
 | Charcoal focus ring | Paper / White | 14.5:1 / 16.1:1 | 3 (non-text) | Focus |
@@ -709,9 +716,9 @@ The light theme toggle uses the hero-link pairs above: Charcoal icon on Paper 14
 
 | Foreground | Background | Ratio | Needed | Use |
 |---|---|---|---|---|
-| Charcoal `#EDEAE6` | Paper `#1A1816` | 14.7:1 | 4.5 | Body text, headings, hero links, toggle icon, tech names and logos, current nav link |
+| Charcoal `#EDEAE6` | Paper `#1A1816` | 14.7:1 | 4.5 | Body text, headings, hero links, toggle icon, tech names and logos, current nav link, footer link |
 | Charcoal | White `#24211E` | 13.3:1 | 4.5 | Card text, skip link |
-| Pebble `#A8A09A` | Paper | 6.8:1 | 4.5 | About heading, inactive nav, footer |
+| Pebble `#A8A09A` | Paper | 6.8:1 | 4.5 | About heading, inactive nav, footer copyright |
 | Pebble | White | 6.2:1 | 4.5 | Dates, titles, tech lists in cards |
 | Accent `#E56B60` | Paper | 5.5:1 | 4.5 | Hovered link text on the page; hovered technology name |
 | Accent | White | 5.0:1 | 4.5 | Hovered summary and link text inside cards |
@@ -720,7 +727,7 @@ The light theme toggle uses the hero-link pairs above: Charcoal icon on Paper 14
 | Accent deep icon | 10% Accent circle over Paper | 7.0:1 | 3 (non-text) | Pressed hero icon and toggle icon |
 | Accent logo | Paper | 5.5:1 | 3 (non-text) | Hovered technology logo |
 | 10% Accent circle | Paper | about 1.13:1 | none (decorative) | Hover feedback; the icon color is the cue |
-| Accent underline | Paper / White | 5.5:1 / 5.0:1 | 3 (non-text) | Link identification |
+| Accent underline | Paper / White | 5.5:1 / 5.0:1 | 3 (non-text) | Link identification, including the skip link (on White) |
 | Accent rail marker | Paper | 5.5:1 | 3 (non-text) | Current section |
 | Pebble chevron | White | 6.2:1 | 3 (non-text) | Open or closed state |
 | Charcoal focus ring | Paper / White | 14.7:1 / 13.3:1 | 3 (non-text) | Focus |
@@ -760,7 +767,8 @@ The light theme toggle uses the hero-link pairs above: Charcoal icon on Paper 14
 
 ### 9.4 Other
 
-- **Landmarks:** `<nav aria-label="Sections">`, `<main id="top">` and `<footer>` outside main. Each section has `aria-labelledby` pointing at its h2.
+- **Landmarks:** `<nav aria-label="Sections">`, `<main id="top" tabindex="-1">` and `<footer>` outside main.
+- **Main focus:** `<main>` takes focus from the `#top` links and draws no ring, a narrow owner-approved exception to "never remove the outline" (§8). It is a focus target, not a control; the next Tab shows the normal ring on the first link. Each section has `aria-labelledby` pointing at its h2.
 - **Headings:** h1 is the greeting; h2s are the sections; h3s are the project names.
 - **Lists:** Technologies is a `<ul>`, Experience an `<ol>`, Projects a `<ul>`.
 - **Language:** `<html lang="en">`.

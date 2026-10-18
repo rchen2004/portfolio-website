@@ -323,3 +323,34 @@ Not checked: the dark repo-link underline at 2x (downscaled shots read pale; sen
 Files changed: `docs/design-spec.md` (§6.4), `docs/decisions.md` (one Phase 4 entry), this file. Not committed.
 
 **Step 5 passes QA.**
+
+---
+
+## Step 6 QA (2026-10-18): Projects
+
+Read-only review. Sources: `proj-light-{320,390}`, `proj-dark-{320,768}`, `proj-hover-{light,dark}-1440`, `proj-link-hover-light-1440`, `proj-focus-light-390`; `Projects.tsx`, the "Project cards" block in `globals.css`, Frontend's step 6 measurements. No file changed except this one. Skills used: `frontend-design` (preloaded). No 21st lookups (§15 picks none).
+
+| Item | Result | Evidence |
+|---|---|---|
+| `<ul>` of 3 `<li><article>`, data order, 20px gap, no images (§4.5) | Pass | `Projects.tsx:15-18`; measured 20px |
+| Card White, 1px Rule, 12px radius, 28/24px padding (§6.5) | Pass | `Projects.tsx:18`; measurements |
+| Header: h3 21/18px 600, date meta, `gap: 2px 16px`, wraps under the name (§6.5) | Pass | `proj-*-320`: Fakebook and Reversi wrap |
+| Tech plain text 2px below; highlights 16px, no indent; link row 12px (§6.5) | Pass | `Projects.tsx:27-36` |
+| GitHub link: 18px icon (0.92), 15px/600, 1px Accent underline, 2px + Accent on hover, 44px, new-tab hint (§6.1) | Pass | `proj-link-hover-light-1440` |
+| Hover: Pebble border, -3px, shadow; pointer only; detected on `<li>` (§6.5, §1.5) | Pass | `proj-hover-*`; `globals.css:284-303` |
+| Not a link: default cursor, no overlay or tabindex, name unchanged, no `:focus-within` lift | Pass | code; focus measurement |
+| Reduced motion: border and shadow only (§7) | Pass | measured 0 lift. Not declaring the transform equals §7's `transform: none` |
+| Focus ring 2px Charcoal, 2px offset, 4px radius (§8) | Pass | `proj-focus-light-390` |
+| Tokens, contrast (§9.1), no 320px scroll | Pass | shots; scrollWidth |
+
+**Must-fix:** none. **Step 6 passes.**
+
+### Rulings
+1. **Header `align-items: baseline`:** accepted. The name (21px) and date (15px) differ in size; baseline seats the date on the name's text line, where `center` would float it. When wrapped, the date sits left under the name, directly above the tech line, so the two meta lines read as one block. This differs from the timeline (dates right-aligned on wrap), which is fine: there the dates travel with the chevron group; projects have no chevron.
+2. **Dark hover shadow (75% black):** reads faintly, as a soft darkening under the card's bottom edge (`proj-hover-dark-1440`). That is near the ceiling: dark Paper `#1A1816` is already close to black, so raising the opacity to 100% adds almost nothing. The Pebble border (`#A8A09A`, clearly visible) carries the hover, as intended; the shadow is decorative (§9.1). Accept as built. **Owner call** only if a stronger shadow is still wanted: the lever is geometry, not opacity, e.g. `0 12px 32px -8px color-mix(in srgb, #000 80%, transparent)` in dark only; Design would re-check it against the "quiet" direction.
+
+### Spec clarifications (proposed; not edited)
+- §6.5 header row: "`align-items: baseline`; on wrap the date drops under the name, left-aligned."
+- §7 "Other rules": "set `transform: none`, or declare the transform only under `prefers-reduced-motion: no-preference`."
+
+Not checked: the remaining full-page shots (`proj-light-{768,1200,1440}`, `proj-dark-{390,1200,1440}`) were not opened (the hover shots cover 1440); real touch devices; Safari and Firefox.

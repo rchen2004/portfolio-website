@@ -290,3 +290,55 @@ Skills used: `frontend-design` (preloaded). No 21st components (spec §15 picks 
   - Babel Street open, both themes.
 - **New screenshot:** `exp-links-dark-2x.png` (Scout's repo links in dark at 2x). The underline is Accent `#E56B60` on the `#24211E` card, which is 5.0:1 (§9.1).
 - **Checks:** typecheck, lint, format:check, check:data and build all pass. `next start` only; the server is stopped. `AGENTS.md` is untouched.
+
+## Step 6: Projects
+
+Agent: Frontend. Branch `phase-4-sections`. Date 2026-10-18. Not committed.
+
+### What I did
+- **`src/components/Projects.tsx` (new, server component, §4.5, §6.5):** `<section id="projects" aria-labelledby="projects-heading">`, the h2 "Projects" (the only hardcoded text), then `<ul class="projects">` with a 20px gap over `resume.projects` in data order. Each `<li><article>` is a White card with a 1px Rule border, 12px radius, 28px padding (24px under 720px) and `cursor: default`.
+  - Header row: wrapping flex, `justify-content: space-between`, `align-items: baseline`, `gap: 2px 16px` (the preview's `.card-head`). The h3 is 21px/600 (18px under 720px); the date comes from `displayDate` (Backend's helper, which uses `dateLabel`) in meta style.
+  - Technologies joined with ", " as plain meta text, 2px below.
+  - Highlights 16px below: the timeline's list style (20px bullet indent, 8px gaps, 17px/1.6, 16px under 720px, Pebble markers), no 54px indent.
+  - Link row 12px below, `gap: 0 20px` like Scout's links: the `labeled-link` utility with the 18px Tabler `brand-github` icon (shared 0.92 scale) as a direct flex child, the label from `links[].label`, a hidden " (opens in a new tab)" hint, `target="_blank"`, `rel="noopener"`.
+- **`src/app/globals.css`, "Project cards" block:** the article transitions `border-color` and `box-shadow` (180ms ease) and `transform` (180ms `cubic-bezier(0.2,0,0,1)`). Under `(hover: hover)`, `.projects > li:hover > article` gets the Pebble border and `--shadow-card-hover`. The `translateY(-3px)` is only declared under `(hover: hover) and (prefers-reduced-motion: no-preference)`. No `:focus-within` rule. The dark shadow comes from the existing `--shadow-card-hover` override (§1.5); no new token.
+- **`src/app/page.tsx`:** `<Projects />` after `<Experience />`.
+
+### Decisions I made
+- **Header alignment `baseline`**, from the preview's `.card-head` (the spec gives none). The name and the date share a baseline on one line; when wrapped, the date sits left under the name.
+- **Reduced motion by not declaring the transform** rather than overriding with `transform: none`; the result is the same (measured below).
+
+### Measurements (headless Chrome, `next start`; full-page shots under reduced motion)
+- **Structure:** headings in the section are `H2:Projects`, then three `H3`s (CodeStack, Fakebook Crawler, Hexagonal Reversi). `LI>ARTICLE`, no `tabindex`, no overlay.
+- **Gap between cards:** 20px and 20px at 320, 390, 768, 1200 and 1440, both themes.
+- **Card:** padding 24px under 720px, 28px from 768; 1px border, 12px radius. Light `#FFFFFF` / `#DAD6D0`, dark `#24211E` / `#3A3531`. Name 18px/23.4 and 21px/27.3, 600, Charcoal. Date and tech 15px Pebble. Tech 2px below the header, highlights 16px below the tech, 0px extra indent, link row 12px below. Link: 15px/600, 44px tall, 1px Accent underline at 4px, 18px icon as a direct child of the `<a>`.
+- **Header wrap at 320:** CodeStack fits on one line (date right-aligned, 0px from the row's right edge). Fakebook Crawler and Hexagonal Reversi wrap: the date drops under the name, 2px below, left-aligned. At 390 and up, all three stay on one row.
+- **Lift (1440, CodeStack, pointer on the card padding, not the link):**
+  - Light, motion: rest lift 0, border `#DAD6D0`, shadow none. After 90ms: -2.75px. Settled: **-3px**, border `#5E5751` (Pebble), shadow `0 8px 24px -12px` Charcoal (`rgb(36,32,29)`) at **0.35**.
+  - Dark, motion: settled **-3px**, border `#A8A09A`, shadow `0 8px 24px -12px` `rgba(0,0,0,0.75)`.
+  - Reduced motion, both themes: lift **0**, transform none; border and shadow change as above.
+  - The other two cards stay at 0. The name stays Charcoal with no underline. Cursor `default` on the card.
+  - Bottom edge: with the pointer 1px above the `<li>`'s bottom edge, the card stays lifted (-3px). No flicker.
+- **GitHub link hover:** text and icon `#C0362C`, underline 2px, cursor pointer; the card is lifted too (the pointer is inside the `<li>`).
+- **Keyboard focus (390, 14 Tabs to the first GitHub link):** `:focus-visible`, 2px solid `#24201D`, 2px offset, 4px radius. Card: lift 0, transform none, border Rule, shadow none.
+- **Horizontal scroll:** none. `scrollWidth` equals `clientWidth` at every width in both themes.
+- **Screenshots** (scratchpad `shots/`): `proj-{light,dark}-{320,390,768,1200,1440}.png`, `proj-hover-{light,dark}-1440.png`, `proj-link-hover-light-1440.png`, `proj-focus-light-390.png` (2x).
+
+### Checks
+- `npm run typecheck`: pass
+- `npm run lint`: pass
+- `npm run format:check`: pass
+- `npm run check:data`: pass
+- `npm run build`: pass (`/` static)
+
+`next start` only; the server was stopped afterwards. `AGENTS.md` is untouched.
+
+### Files changed
+- `src/components/Projects.tsx` (new)
+- `src/app/globals.css`
+- `src/app/page.tsx`
+
+Skills used: `frontend-design` (preloaded). No 21st components (spec §15 picks none for project cards). No new dependencies.
+
+### Open questions
+None blocking. One note for Design: the spec doesn't give the header row's cross-axis alignment; I used the preview's `baseline`.

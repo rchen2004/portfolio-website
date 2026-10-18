@@ -1,6 +1,7 @@
 import { About } from "@/src/components/About";
 import { Experience } from "@/src/components/Experience";
 import { Hero } from "@/src/components/Hero";
+import { Projects } from "@/src/components/Projects";
 import { Technologies } from "@/src/components/Technologies";
 import { ThemeToggle } from "@/src/components/ThemeToggle";
 
@@ -19,6 +20,7 @@ export default function Home() {
         <About />
         <Technologies />
         <Experience />
+        <Projects />
       </main>
     </div>
   );

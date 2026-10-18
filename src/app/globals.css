@@ -278,3 +278,26 @@ html.theme-fade *::after {
       transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 }
+
+/* Project cards (spec §6.5, §7). Hover is read on the still <li> and moves the <article>, so the hover area
+   never shifts and the bottom edge doesn't flicker. Not on :focus-within (keyboard gets the link's ring only). */
+.projects > li > article {
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@media (hover: hover) {
+  .projects > li:hover > article {
+    border-color: var(--color-pebble);
+    box-shadow: var(--shadow-card-hover);
+  }
+}
+
+/* Reduced motion: no movement; the border and shadow change above stays. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .projects > li:hover > article {
+    transform: translateY(-3px);
+  }
+}

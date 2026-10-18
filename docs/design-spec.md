@@ -88,9 +88,9 @@ Named uses:
 |---|---|---|
 | `--radius-card` | 12px | Timeline cards, project cards, hero photo |
 | `--radius-logo` | 8px | Company logo box |
-| `--radius-focus` | 4px | Focus outline corners |
+| `--radius-focus` | 4px | Focus ring corners on every control that isn't round: text links (repo, project, footer, rail and name links), the skip link and the timeline summaries |
 | `--radius-marker` | 2px | Rail marker |
-| full | 50% | Timeline dots |
+| full | 50% | Timeline dots; the round controls (the hero icon links and the theme toggle) and their focus rings, which are circles (§8) |
 
 ### 1.5 Shadows
 
@@ -121,6 +121,7 @@ Naming: "mobile" means under 720px, "tablet" means 720 to 1199px, and "desktop" 
 
 ## 2. Layout grid
 
+- **`viewport-fit=cover` is required** in the viewport meta (in Next, `export const viewport: Viewport = { viewportFit: "cover" }` in `src/app/layout.tsx`). Without it, `env(safe-area-inset-*)` is 0 and every safe-area formula in this spec (§1.3, §2, §4.6, §6.6) does nothing.
 - **Below 1200px:** one column, centered, max 1000px wide, with 16px side padding. There is no nav: main comes first and opens on the hero. Main is max 880px.
   - **Main top padding is `calc(max(16px, env(safe-area-inset-top)) + 44px)`, which is 60px** without a top inset (§1.3). It clears a band for the theme toggle in the top-right corner (§6.9), so the toggle never overlaps the hero.
   - **Theme toggle corner: the browser window's top-right corner** (owner choice), not the page column. The toggle is `position: absolute` against the page itself, the initial containing block, so no ancestor of it may be positioned (neither the page container nor `<main>`). It scrolls away; it is not fixed or sticky.
@@ -225,7 +226,7 @@ The hero greeting is the page's only h1.
 
 - **Placement:** after `<main>`, in the same column. Use a real `<footer>` element outside `<main>`, so it is the page's contentinfo landmark (the preview put it inside main; see §13).
 - **Content:** "© <year> Ryan Chen" on the left and "Back to top" on the right.
-- **Style:** 1px Rule top border, padding 24px top and 32px bottom, 14px Pebble text.
+- **Style:** 1px Rule top border, padding 24px top and `max(32px, env(safe-area-inset-bottom))` bottom (32px without an inset), 14px Pebble text.
 - **Narrow screens:** the two parts wrap with an 8px row gap.
 
 ---
@@ -239,8 +240,8 @@ The hero greeting is the page's only h1.
   - `object-position: 50% 75%`
   - `transform: translateY(-8%) scale(1.6)`
   - `transform-origin: 51% 60%`
-  - **`height: auto`** is required. If the `<img>` has explicit width and height attributes (as `next/image` emits), the intrinsic height otherwise overrides the frame's aspect ratio.
-- **Rendering:** `next/image` with `priority`. It is the LCP element.
+  - **Use `fill`:** the `<img>` fills the frame at 100% x 100%, so the frame's aspect ratio sets its size. Do not give it explicit width and height attributes; the intrinsic height would override the frame's aspect ratio and render a tall sliver.
+- **Rendering:** `next/image` with `preload` (Next 16's name for `priority`). It is the LCP element.
   - `sizes`: `(min-width: 720px) 448px, 160vw`. That is 280px × 1.6 for the scale, so the zoomed image stays sharp.
 - **Pre-cropped alternative:** Frontend may instead export a pre-cropped copy that matches this framing. With it, no transform is needed and fewer bytes are sent. If the pre-crop is used, it must match the approved crop by eye at both aspect ratios.
 - **If `basics.image` is missing:** the hero is text only. The grid collapses to one column and no space is reserved.
@@ -269,18 +270,18 @@ There are five links in one matching style, in this order:
 - **Color:** the icon takes its color from the link, so it changes on hover along with the link.
 - **Optical sizing:** each glyph is scaled about the center of its 24-unit box, so all five look the same size.
   - Apply it inside the SVG, for example a `<g transform="translate(12 12) scale(s) translate(-12 -12)">` around the paths. A group inside the SVG is fine; the "no wrapper" rule below is about elements around the `<svg>`.
-  - **Starting values,** from the preview's Lucide-style shapes:
+  - **Tuned values** for the Tabler glyphs at 24px, confirmed by eye by Frontend and Design with the five side by side (Phase 4 step 2, 2026-10-18):
 
     | Icon | Scale |
     |---|---|
     | file-text | 0.95 |
     | mail | 1.00 |
-    | linkedin | 0.85 |
-    | github | 0.88 |
-    | instagram | 0.82 |
+    | linkedin | 0.90 |
+    | github | 0.92 |
+    | instagram | 0.90 |
 
-  - **These are starting points, not final values.** The build uses Tabler's glyphs, which are drawn differently. Frontend re-tunes each value with the Tabler glyphs at 24px, judging by eye with the five side by side, until none looks bigger or heavier.
-  - **The GitHub scale is shared:** the same tuned value applies to the GitHub icon in Scout's repo links and in the project links.
+  - LinkedIn and Instagram share the same rounded-square frame, so they share one value. The moon and sun in the theme toggle stay at 1.0 (§6.9).
+  - **The GitHub scale is shared:** 0.92 also applies to the GitHub icon in Scout's repo links and in the project links.
 - **No wrapper:** the `<svg>` is a **direct flex child of the `<a>`**, with no `<span>` or other element around it, and `flex: none`. A wrapper adds inline line-height and pushes the icon off-center, which is the bug the owner spotted.
 - **Hidden from assistive technology:** `aria-hidden="true"` and `focusable="false"`.
 - **No solid logos in links.** Solid brand logos look larger than outline glyphs at the same box size. The solid monochrome Simple Icons belong only to the Technologies component (§6.3).
@@ -308,7 +309,7 @@ There are five links in one matching style, in this order:
   - Wrap the hover rules (circle and color) in `@media (hover: hover)`. Touch browsers can leave a "sticky" hover after a tap, which would leave a circle behind.
   - The circle is fully inside the 44px box. With the row's -10px pull, the first circle reaches 10px into the page padding (at least 16px), which is fine.
 - **Pressed (`:active`):** the icon turns Accent deep. The circle stays while the pointer is down.
-- **Focus:** the standard ring (§8): 2px Charcoal, 2px offset, 4px radius, drawn around the 44px box. Keyboard `:focus-visible` gets the ring only, with no circle; the ring is the focus cue.
+- **Focus:** the standard ring (§8): 2px Charcoal, 2px offset, drawn around the 44px box. It is a **circle** (52px across), following the link's `border-radius: 50%` and its hover circle, not the 4px-radius ring. Keyboard `:focus-visible` gets the ring only, with no circle; the ring is the focus cue.
 - **Reduced motion:** nothing changes. The hover has no movement, so the circle, the color change and their 160ms fades all stay.
 - **No tooltip.** Do not add a `title` attribute or a custom tooltip.
   - `title` doesn't show on touch screens and isn't announced reliably.
@@ -557,12 +558,12 @@ Owner decision, 2026-10-16. One button that switches between light and dark. The
 
 **Look:**
 - A 44 x 44px box, `inline-flex`, centered both ways, `border-radius: 50%`. At rest: no background, border or box.
-- **Icon:** Tabler outline (v3.49.0, MIT, inlined like §6.1). **`moon` in light** (it switches to dark) and **`sun` in dark**. 22px box, 24 viewBox, and the same stroke rules as §6.1 link icons: `currentColor`, 2px with `vector-effect: non-scaling-stroke`, round caps and joins, a direct flex child of the button, `flex: none`, `aria-hidden="true"`, `focusable="false"`. Optical scale starts at 1.0 for both; Frontend tunes by eye so neither looks heavier.
+- **Icon:** Tabler outline (v3.49.0, MIT, inlined like §6.1). **`moon` in light** (it switches to dark) and **`sun` in dark**. 22px box, 24 viewBox, and the same stroke rules as §6.1 link icons: `currentColor`, 2px with `vector-effect: non-scaling-stroke`, round caps and joins, a direct flex child of the button, `flex: none`, `aria-hidden="true"`, `focusable="false"`. Optical scale 1.0 for both (confirmed by eye in Phase 4 step 2).
 - **Icon swap without JS state:** render both SVGs and show one with CSS, keyed on `html[data-theme="dark"]`. The server HTML is then the same for both themes, so there is no hydration mismatch and the right icon shows from the first paint.
 - **Color:** Charcoal at rest.
 - **Hover** (under `@media (hover: hover)`): the soft circle (10% Accent, §1.1) and an Accent icon, the same timing as the hero links (color 160ms `cubic-bezier(0.2, 0, 0, 1)`, background 160ms ease).
 - **Pressed (`:active`):** Accent deep icon; the circle stays while the pointer is down.
-- **Focus:** the standard ring (§8) around the 44px box. `:focus-visible` gets the ring only, no circle.
+- **Focus:** the standard ring (§8) around the 44px box, as a **circle** (52px across) that follows the button's `border-radius: 50%`, like the hero links (§6.1). `:focus-visible` gets the ring only, no hover circle.
 
 **Placement:**
 - **1200px and up:** inside the rail `<nav>`, on the same row as "Ryan Chen", at the right. The row is a flex row with `justify-content: space-between` and `align-items: center`; the name link keeps its 44px minimum height, so the row is 44px. The toggle sticks with the rail.
@@ -581,7 +582,7 @@ Owner decision, 2026-10-16. One button that switches between light and dark. The
 - **No flash of the wrong theme:** a small inline `<script>` in `<head>` (not deferred, not `next/script` with a lazy strategy) reads the key (inside `try`) and sets `data-theme` to `"dark"` if the key is `"dark"`, otherwise `"light"`, before first paint. It is a few lines, blocking, with no network request. `<html>` gets `suppressHydrationWarning`, because the attribute is added before React hydrates.
 - **`aria-pressed` after hydration:** the toggle renders `aria-pressed="false"` on the server and sets the real value from `document.documentElement.dataset.theme` after mount, so the first client render matches the server.
 - **Color fade on switch:** 240ms, `ease`, on `background-color`, `color`, `border-color`, `text-decoration-color` and `box-shadow` only. `text-decoration-color` is included as a color, so the Accent underlines change with the text rather than snapping ahead of it.
-  - Apply it **only during the switch:** on click, add a class to `<html>` that sets this transition on every element, flip the theme, and remove the class 240ms later (one timer, reset on a quick second click). There is no fade on page load.
+  - Apply it **only during the switch:** on click, add a class to `<html>` that sets this transition on every element and on its `::before` and `::after` (so colors drawn by pseudo-elements, such as timeline dots or lines, fade too), flip the theme, and remove the class 240ms later (one timer, reset on a quick second click). There is no fade on page load.
   - While the class is on, it replaces element transitions for those 240ms. That is fine, because nothing else moves during a theme switch.
   - **Reduced motion:** the class is never added; the switch is instant.
   - The photo and company logos don't change, so they don't fade.
@@ -659,7 +660,9 @@ There are two ambient motions (the hero load and the timeline reveal), plus stat
 
 ## 8. Hover and focus rules
 
-- **Focus:** every focusable element shows a 2px Charcoal outline with a 2px offset and 4px rounded corners on `:focus-visible`. This includes links, summaries, the theme toggle, and (at 1200px and up) the skip link and rail links. Never remove the outline without replacing it.
+- **Focus:** every focusable element shows a 2px Charcoal outline with a 2px offset on `:focus-visible`. This includes links, summaries, the theme toggle, and (at 1200px and up) the skip link and rail links. Never remove the outline without replacing it.
+  - **The ring follows the control's shape** (owner decision, 2026-10-18). Round controls (the 44px hero icon links and the theme toggle, both `border-radius: 50%`) get a **circular** ring, 52px across. Every other control (text links, the skip link, the timeline summaries) gets **4px** rounded corners (`--radius-focus`).
+  - Browsers draw `outline` along the element's `border-radius`, so the round controls need no extra rule. Color, width and offset are the same for both shapes, so the contrast below is unchanged.
   - **In dark the ring is light** (`#EDEAE6`), because it uses the Charcoal token: 14.7:1 on Paper and 13.3:1 on cards. No separate dark focus color is needed.
   - The corner toggle's ring reaches 4px past its box, so it ends 1px inside the viewport edge without an inset. It stays fully visible.
 - **Theme toggle hover:** the same soft circle and Accent icon as the hero links (§6.9), under `@media (hover: hover)`.
@@ -728,11 +731,11 @@ The light theme toggle uses the hero-link pairs above: Charcoal icon on Paper 14
 ### 9.2 Hit areas
 
 - Every interactive element is at least **44 x 44px**: hero links, repo and GitHub links, the rail's name and section links, the theme toggle, the footer link and the skip link.
-- **Theme toggle:** exactly 44 x 44px at every width, with a 22px icon. Its name is the hidden label "Dark mode" and its state is `aria-pressed` (§6.9). In the rail it shares a row with the name link, which keeps its own 44px height, so the two targets don't overlap.
+- **Theme toggle:** exactly 44 x 44px at every width, with a 22px icon and a circular focus ring (§8). Its name is the hidden label "Dark mode" and its state is `aria-pressed` (§6.9). In the rail it shares a row with the name link, which keeps its own 44px height, so the two targets don't overlap.
 - **Icon-only hero links (every width):**
   - Each is exactly 44 x 44px, with 8px between targets.
   - Each keeps its accessible name through the visually hidden label (§6.1).
-  - Visible focus is the standard ring around the 44px box.
+  - Visible focus is the standard ring around the 44px box, drawn as a circle (§8).
   - Hover adds the 10% Accent circle and turns the icon Accent; pressed turns it Accent deep. Nothing moves.
   - There is no tooltip.
   - The icons are `aria-hidden`, so the name is announced once, not twice.
@@ -834,7 +837,7 @@ These are notes, not code.
 - **Icons:** all inline SVG, with no CDN at runtime and no icon font.
   - **Link icons:** five Tabler outline glyphs, copied into the repo (§6.1).
   - **Technologies logos:** solid monochrome Simple Icons from a pinned version, plus the Lucide `database` icon for SQL (§6.3).
-- **Photo:** `next/image` with `priority` and `fill`; AVIF and WebP are on by default.
+- **Photo:** `next/image` with `preload` (Next 16's name for `priority`) and `fill`; AVIF and WebP are on by default.
 - **Fonts:** one Figtree file, Latin subset.
 - **Target:** Lighthouse 95+ on all four categories, on mobile and desktop.
 
@@ -844,7 +847,7 @@ These are notes, not code.
 
 | Preview | Spec | Why |
 |---|---|---|
-| Lucide-style link glyphs with preview optical scales | Tabler outline glyphs; the scales are starting values that Frontend re-tunes by eye at 24px | Lucide no longer ships brand icons, and Tabler's shapes differ |
+| Lucide-style link glyphs with preview optical scales | Tabler outline glyphs; the scales were tuned by eye at 24px in Phase 4 step 2 (see §6.1) | Lucide no longer ships brand icons, and Tabler's shapes differ |
 | Nav links with too little vertical padding for 44px | 8px padding on 20px text (45px tall), with the 32px marker centered | 44px hit areas |
 | Photo `<img>` in the preview | Same crop values, plus `sizes` set for the 1.6 scale, with a pre-cropped file allowed | Keeps the zoomed image sharp; a pre-crop sends fewer bytes |
 | Company name as an h3 inside `<summary>` | Plain text in the summary | Headings inside summaries are announced unreliably by screen readers |

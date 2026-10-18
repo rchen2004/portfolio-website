@@ -39,7 +39,7 @@ I check each step against the spec in **light and dark**, and again with **reduc
 - [ ] Main padding: top 60px below 1200px (56px at 1200px and up), bottom 80px. Sections 72px apart (§1.3).
 - [ ] Figtree 400/600/700. Greeting 36/48px, 700, line-height 1.1, -0.015em. Tagline 21/24px. Body text 16px below 720px, 17px from 720px (§1.2).
 - [ ] Layout: below 720px, photo first, full width, 4:3, then the text with 20px gaps. From 720px: text left, photo 280 x 350 right, 40px gap, aligned to the top (§4.1).
-- [ ] Photo crop matches the preview at both aspect ratios: face centered, zoomed, not a tall sliver (`height: auto`) (§5).
+- [ ] Photo crop matches the preview at both aspect ratios: face centered, zoomed, not a tall sliver (`fill`) (§5).
 - [ ] Hero links: one row of five, icon-only, 44px targets, 24px Tabler outline icons, 8px gap, pulled left 10px so the first glyph lines up with the text. No box at rest, no underline, no tooltip. All five look the same size (§6.1).
 - [ ] Hover: 10% Accent soft circle plus Accent icon, no movement. Pressed: Accent deep. Keyboard focus: the ring only (2px Charcoal, 2px offset), no circle (§6.1, §8).
 - [ ] Load: words blur in one by one (700ms, 45ms stagger), the link row fades in at 700ms, and the photo is static. The text ends crisp, with no leftover blur. Line breaks match the unsplit text at 320, 390, 720 and 1200px (§7 rule 5).
@@ -134,3 +134,67 @@ Skills used: `frontend-design` (preloaded). No 21st lookups needed.
 ### Open questions
 
 - None new. Backend owns the `skills` removal in `data/resume.json`, `data/schema.ts` and `src/lib/`; I did not touch them.
+
+---
+
+## Step 2 QA (2026-10-18): Hero, page shell, theme toggle
+
+Read-only review of the uncommitted step 2 build. Sources: Frontend's 25 screenshots (light and dark at 320, 390, 768, 1199, 1200, 1440; reduced motion; the 300ms blur-in frame; hover, focus, active; the preview at 1440), plus `globals.css`, `layout.tsx`, `page.tsx`, `Hero.tsx`, `ThemeToggle.tsx` and `icons.tsx`. No file changed except this one. Skills used: `frontend-design` (preloaded). No 21st lookups.
+
+### Results
+
+| Item | Result | Evidence |
+|---|---|---|
+| Shell (§2) | Pass | `page.tsx:8-11`; 1199 and 1200 shots |
+| Main padding, 72px gaps (§1.3) | Pass | `page.tsx:11` |
+| Type (§1.2) | Pass | `Hero.tsx:53,56`; `globals.css:59-69`; `layout.tsx:6-11` |
+| Hero layout (§4.1) | Pass | 320/390/768 shots |
+| Photo crop (§5) | Pass | `light-1440` vs `preview-1440`: face centered at about 60% height, same zoom; 4:3 on mobile |
+| Hero links: row, size, pull, no box, no tooltip | Pass | `Hero.tsx:59-85` |
+| Hero links: all five look the same size | **Fail** | `light-390`, `light-1440`: LinkedIn and Instagram read smaller than file and mail; `icons.tsx:24,41` |
+| Hover, pressed, focus (ring only) | Pass | `hover-*`, `active-light-390`, `focus-*` |
+| Load motion | Pass | `globals.css:109-142`; `anim-300ms-390` |
+| Reduced motion | Pass | `reduce-0ms-390`, `reduce-1440` |
+| Toggle below 1200px | Pass | `page.tsx:14`; 11px gap; first tab stop |
+| Toggle at 1200px and up (temporary corner) | Pass | 1200 and 1440 shots. Gap is 7px (accepted below) |
+| Toggle icons, hover, pressed, focus | Pass | `focus-toggle-*`, `active-light-390` |
+| Theme: head script, first visit light, fade | Pass | `layout.tsx:21,28`; `ThemeToggle.tsx:19-36` |
+| Dark: photo unchanged, light ring | Pass | `dark-*`, `focus-dark-390` |
+| Tokens only, no 320px scroll | Pass | `globals.css` uses the 7 tokens and `color-mix()` of them |
+
+### Must-fix for Frontend
+
+1. **Optical scales** (`icons.tsx`): LinkedIn **0.90**, Instagram **0.90**, GitHub **0.92**. Keep file-text 0.95, mail 1.00, moon and sun 1.0. LinkedIn and Instagram share the same 18-unit rounded frame, so they must use the same value. At 0.90 the frame is 16.2px, which roughly matches mail's area (18 x 14). GitHub's sparse outline needs slightly more. Then check by eye at 24px and send a crop of the row in both themes.
+2. **`viewport-fit=cover`:** add `export const viewport: Viewport = { viewportFit: "cover" }` in `src/app/layout.tsx` (Frontend owns it). Without it, the spec's safe-area formulas (§1.3, §2) do nothing.
+
+### Rulings on Frontend's questions
+
+1. **Ring shape:** use a circle on round controls. The ring follows the shape of the control and of its hover circle. A square ring around a round target would look like a mistake. This needs the owner's approval, because the spec says "4px radius".
+2. **Scales:** values given above. Under §6.1, Frontend and Design tune these by eye, so the owner does not need to decide. The owner can still look at them.
+3. **7px gap at 1200px and up, toggle far from the content:** accepted for now. It ends in step 8, so no change is needed and the owner does not need to decide.
+4. **`viewport-fit`:** Frontend adds it now (must-fix 2). It is a rendering setting, not SEO metadata.
+
+**Deviations:** `fill` meets §5's intent, and §12 already asks for `fill`. `preload` is Next 16's name for `priority`. The link row as a `<div>` is fine: the spec does not require a list, and the preview uses a `<div>`.
+
+### Spec clarifications (proposed; not edited)
+
+- §5: replace "`height: auto` is required" with "use `fill`; the img fills the frame at 100% x 100%". §5 and §12 currently contradict each other. Rename `priority` to `preload` in §5 and §12.
+- §1.4, §6.1, §8, §9.2: the ring follows the control's shape (a circle on the 44px round controls, a 4px radius elsewhere). Pending the owner's approval.
+- §6.1: replace the starting-value table with the tuned scales once they are confirmed.
+- §2: state that `viewport-fit=cover` is required. §4.6: footer bottom padding `max(32px, env(safe-area-inset-bottom))`.
+- §6.9: the fade class should also cover `::before` and `::after`, in case Experience draws its dots or line with pseudo-elements (check in step 5).
+
+### Not checked
+
+Lighthouse (LCP and CLS), real touch devices, Safari and Firefox, a device with a notch, and the `theme-fade` timing (only `aria-pressed` and `data-theme` were confirmed).
+
+### Follow-up (2026-10-18): open items closed
+
+- **Must-fix 1 (scales):** closed. Frontend confirmed by eye: file-text 0.95, mail 1.00, linkedin 0.90, github 0.92 (also Scout's and the project links), instagram 0.90; moon and sun 1.0. Now the values in §6.1 (and §6.9).
+- **Must-fix 2 (`viewport-fit=cover`):** closed. Frontend added it in `layout.tsx`; §2 now states it is required.
+- **Ruling 1 (ring shape):** closed. Owner approved (2026-10-18); see "Focus ring follows the control's shape" in `decisions.md`. Applied to §1.4, §6.1, §6.9, §8 and §9.2.
+- **Spec clarifications:** all applied. §5 uses `fill` instead of `height: auto`; §5 and §12 say `preload`; §4.6 footer bottom padding is `max(32px, env(safe-area-inset-bottom))`; §6.9's fade class covers `::before` and `::after`.
+
+Files changed: `docs/design-spec.md` (§1.4, §2, §4.6, §5, §6.1, §6.9, §8, §9.2, §12), `docs/decisions.md` (one Phase 4 entry), this file. Skills used: `frontend-design` (preloaded). No 21st lookups.
+
+**Step 2 passed QA after the fixes.**

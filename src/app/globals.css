@@ -33,6 +33,13 @@
 
 html {
   color-scheme: light;
+  scroll-padding-top: 24px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 html[data-theme="dark"] {
@@ -59,4 +66,96 @@ body {
   body {
     font-size: 1.0625rem;
   }
+}
+
+/* Spec §8: the standard focus ring. It follows the element's corners, so round controls get a round ring. */
+:focus-visible {
+  outline: 2px solid var(--color-charcoal);
+  outline-offset: 2px;
+}
+
+/* Spec §6.1 and §6.9: the 44px round icon target shared by the hero links and the theme toggle.
+   Hover sits under (hover: hover) so touch taps leave no sticky circle. */
+@utility soft-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: var(--color-charcoal);
+  text-decoration: none;
+  transition:
+    color 160ms cubic-bezier(0.2, 0, 0, 1),
+    background-color 160ms ease;
+
+  @media (hover: hover) {
+    &:hover {
+      background-color: color-mix(
+        in srgb,
+        var(--color-accent) 10%,
+        transparent
+      );
+      color: var(--color-accent);
+    }
+  }
+
+  &:active {
+    color: var(--color-accent-deep);
+  }
+}
+
+/* Spec §7 rule 5: hero blur-in. inline-block at every motion setting, so line breaks never change. */
+.hero-word {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-word {
+    animation: hero-word 700ms cubic-bezier(0.22, 1, 0.36, 1)
+      calc(var(--i) * 45ms) backwards;
+  }
+
+  .hero-links {
+    animation: hero-links 500ms ease 700ms backwards;
+  }
+
+  /* A keyboard user never focuses an invisible link. */
+  .hero-links:focus-within {
+    animation: none;
+  }
+}
+
+/* Only the start state: the resting CSS is the end state, so nothing lingers after the animation. */
+@keyframes hero-word {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(4px);
+  }
+}
+
+@keyframes hero-links {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Spec §6.9: theme toggle. Both icons are rendered; CSS shows the one for the current theme. */
+html:not([data-theme]) .theme-toggle,
+html[data-theme="dark"] .theme-icon-moon,
+html:not([data-theme="dark"]) .theme-icon-sun {
+  display: none;
+}
+
+/* Added by ThemeToggle for 240ms during a switch only (never under reduced motion). Unlayered, so it
+   overrides utility transitions for that time. */
+html.theme-fade,
+html.theme-fade * {
+  transition:
+    background-color 240ms ease,
+    color 240ms ease,
+    border-color 240ms ease,
+    text-decoration-color 240ms ease,
+    box-shadow 240ms ease;
 }

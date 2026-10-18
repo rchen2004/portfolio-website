@@ -1,3 +1,4 @@
+import { About } from "@/src/components/About";
 import { Hero } from "@/src/components/Hero";
 import { ThemeToggle } from "@/src/components/ThemeToggle";
 
@@ -13,6 +14,7 @@ export default function Home() {
         {/* Temporary (decisions.md, Phase 4): the corner toggle shows at every width until the rail exists. */}
         <ThemeToggle className="absolute top-[calc(max(16px,env(safe-area-inset-top))-11px)] right-[calc(max(16px,env(safe-area-inset-right))-11px)]" />
         <Hero />
+        <About />
       </main>
     </div>
   );

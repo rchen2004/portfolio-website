@@ -198,3 +198,27 @@ Lighthouse (LCP and CLS), real touch devices, Safari and Firefox, a device with 
 Files changed: `docs/design-spec.md` (§1.4, §2, §4.6, §5, §6.1, §6.9, §8, §9.2, §12), `docs/decisions.md` (one Phase 4 entry), this file. Skills used: `frontend-design` (preloaded). No 21st lookups.
 
 **Step 2 passed QA after the fixes.**
+
+---
+
+## Step 3 QA (2026-10-18): About
+
+Read-only review of the uncommitted step 3 build. Sources: `about-{light,dark}-{320,390,768,1200,1440}.png`, `src/components/About.tsx`, `src/app/page.tsx`, Frontend's measurements. No file changed except this one. Skills used: `frontend-design` (preloaded). No 21st lookups.
+
+| Item | Result | Evidence |
+|---|---|---|
+| h2 "About" 15px/600, line-height 1.45 (21.75px), Pebble, `text-wrap: balance` (§1.2, §4.2) | Pass | `About.tsx:9`; all 10 shots |
+| 8px heading-to-text gap (§4.2) | Pass | `mb-2`; measured |
+| Text 16px/1.55 (24.8px), Charcoal, max 68ch (§1.2, §4.2) | Pass | `About.tsx:13`; 697.41px cap; wraps short of it at 768/1200/1440 |
+| 72px gap under the hero (§1.3, §4.2) | Pass | `page.tsx:12` `gap-18`; 1200 shot: photo bottom 406 to heading 478 |
+| No card, no border (§4.2) | Pass | shots |
+| `aria-labelledby` to the h2 (§6.2, §9.4) | Pass | `About.tsx:6-8` |
+| Content from `basics.summary`, not hardcoded | Pass | `About.tsx:13` |
+| Contrast, both themes (§9.1): Pebble on Paper 6.3 / 6.8, Charcoal on Paper 14.5 / 14.7 | Pass | tokens only |
+| No 320px horizontal scroll | Pass | `about-*-320` |
+
+**16px vs the 17px body:** intended. §1.2 gives "About text" its own row, 16px at both sizes, separate from "Body, highlights" (17px from 720px); `decisions.md` asks for "smaller text" in About. Setting 16px on the `<p>` is correct, and it makes the 68ch cap resolve against 16px as wanted.
+
+**Must-fix:** none. **Step 3 passes.**
+
+Not checked: reduced motion (About has no motion), real devices, Safari and Firefox.

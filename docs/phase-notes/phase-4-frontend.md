@@ -68,3 +68,39 @@ Skills used: `frontend-design` (preloaded). No 21st components: spec §15 picks 
 - **`viewport` export** (`src/app/layout.tsx`): `{ viewportFit: "cover" }`. The rendered meta is `width=device-width, initial-scale=1, viewport-fit=cover`, so the safe-area insets now apply. This closes open question 4.
 - **Open question 2** is closed by the new scales.
 - **Checks after the fixes:** typecheck, lint, format:check, check:data and build all pass.
+
+## Step 3: About
+
+Agent: Frontend. Branch `phase-4-sections`. Date 2026-10-18. Not committed.
+
+### What I did
+- **`src/components/About.tsx` (new, server component, §4.2, §6.2):** `<section id="about" aria-labelledby="about-heading">` with an h2 "About" (15px/600, line-height 1.45, Pebble, `text-wrap: balance`, 8px margin below) and one `<p>` with `resume.basics.summary` from the loader (16px/1.55, max 68ch, Charcoal inherited). No card, border, background or motion. "About" is UI copy from the spec; the text is not hardcoded.
+- **`src/app/page.tsx`:** `<About />` after `<Hero />`. Main's existing 72px grid gap supplies the hero-to-About space, so the section has no margin of its own.
+
+### Decisions I made
+- The paragraph sets 16px explicitly, so at 720px and up (body 17px) the 68ch cap is measured in the 16px text's own `ch`, as the spec reads.
+- Heading id is `about-heading`. Later sections will follow the `<anchor>-heading` pattern.
+
+### Measurements (headless Chrome, `next start`, light and dark, 320/390/768/1200/1440)
+- Hero bottom to About top: 72px at every width.
+- h2 bottom to text top: 8px at every width.
+- 68ch at 16px Figtree: 697.41px. The paragraph is 697.41px wide at 768, 1200 and 1440 (main is 736 / 880 / 880), so the cap applies; at 320 and 390 it fills main (288 / 358). Lines: 10 / 8 / 4 / 4 / 4.
+- Computed: h2 15px, 600, 21.75px line-height, Pebble (`#5E5751` light, `#A8A09A` dark); text 16px, 24.8px line-height, Charcoal. Section border 0, background transparent.
+- No horizontal scroll at 320px. No console errors.
+- Screenshots: `about-{light,dark}-{320,390,768,1200,1440}.png`, full page, in the shots folder.
+
+### Checks
+- `npm run typecheck`: pass
+- `npm run lint`: pass
+- `npm run format:check`: pass
+- `npm run check:data`: pass
+- `npm run build`: pass (`/` static)
+
+### Files changed
+- `src/components/About.tsx` (new)
+- `src/app/page.tsx`
+
+Skills used: `frontend-design` (preloaded). No 21st components (spec §15 lists none for About). No new dependencies.
+
+### Open questions
+None.

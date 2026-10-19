@@ -6,6 +6,7 @@ import { Projects } from "@/src/components/Projects";
 import { Rail } from "@/src/components/Rail";
 import { Technologies } from "@/src/components/Technologies";
 import { ThemeToggle } from "@/src/components/ThemeToggle";
+import { personJsonLd } from "@/src/lib/site";
 
 // Spec §2. Neither the shell nor <main> may be positioned: the corner toggle is placed against the page itself.
 export default function Home() {
@@ -35,6 +36,11 @@ export default function Home() {
         <Projects />
       </main>
       <Footer />
+      {/* Backend-owned structured data (decisions.md, "SEO ownership"); the string is already "<"-escaped. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: personJsonLd }}
+      />
     </div>
   );
 }

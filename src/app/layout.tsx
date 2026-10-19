@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Figtree } from "next/font/google";
 import { resume } from "@/src/lib/resume";
+import { SITE_URL } from "@/src/lib/site";
 import "./globals.css";
 
 const figtree = Figtree({
@@ -10,10 +11,21 @@ const figtree = Figtree({
   display: "swap",
 });
 
-// Temporary Phase 3 metadata; Backend owns SEO in Phase 6.
+// Backend-owned (decisions.md, "SEO ownership"). og:image, icons and apple-icon come from the file conventions in this folder.
+const { name, tagline } = resume.basics;
 export const metadata: Metadata = {
-  title: resume.basics.name,
-  description: resume.basics.tagline,
+  metadataBase: new URL(SITE_URL),
+  title: name,
+  description: tagline,
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: name,
+    title: name,
+    description: tagline,
+  },
+  twitter: { card: "summary_large_image" },
 };
 
 // Lets env(safe-area-inset-*) report real insets on notched phones (spec §2).

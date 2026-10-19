@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Figtree } from "next/font/google";
 import { resume } from "@/src/lib/resume";
 import "./globals.css";
@@ -16,11 +16,23 @@ export const metadata: Metadata = {
   description: resume.basics.tagline,
 };
 
+// Lets env(safe-area-inset-*) report real insets on notched phones (spec §2).
+export const viewport: Viewport = { viewportFit: "cover" };
+
+// Spec §6.9: blocking, before first paint. Reads only the stored choice; every first visit is light.
+// If a Content Security Policy is added later, this needs a hash or nonce.
+const themeScript = `try{document.documentElement.dataset.theme=localStorage.getItem("theme")==="dark"?"dark":"light"}catch(e){document.documentElement.dataset.theme="light"}`;
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    // suppressHydrationWarning: the Phase 4 theme script sets data-theme before hydration (spec §6.9).
+    // suppressHydrationWarning: the theme script sets data-theme before hydration (spec §6.9).
     <html lang="en" className={figtree.variable} suppressHydrationWarning>
-      <body className="antialiased">{children}</body>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body className="pr-[max(16px,env(safe-area-inset-right))] pl-[max(16px,env(safe-area-inset-left))] antialiased">
+        {children}
+      </body>
     </html>
   );
 }

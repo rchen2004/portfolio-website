@@ -1,6 +1,16 @@
 // Self-check for the resume helpers. Run: npm run check:data (plain Node 24, no test framework).
 import assert from "node:assert/strict";
-import { resume, formatDateRange, sortByDate } from "./resume.ts";
+import { existsSync } from "node:fs";
+import { resume, formatDateRange, sortByDate, RESUME_PDF } from "./resume.ts";
+
+// Every site path in resume.json, plus the PDF, must exist in public/.
+for (const src of [
+  RESUME_PDF,
+  resume.basics.image?.src,
+  ...resume.experience.map((e) => e.logo),
+]) {
+  if (src) assert.ok(existsSync(`public${src}`), `missing public${src}`);
+}
 
 // The derived range must reproduce every existing dateLabel, so the overrides stay optional.
 for (const item of [...resume.experience, ...resume.projects]) {

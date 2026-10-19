@@ -59,7 +59,9 @@ There are two palettes, light and dark, with the same token names (owner decisio
 | Technology name | 15px | 15px | 600 | 1.45 | centered |
 | Rail name "Ryan Chen" (1200px and up only) | 24px | n/a | 600 | 1.25 | |
 | Rail section links (1200px and up only) | 20px | n/a | 400 | 1.45 | |
-| Footer | 14px | 14px | 400 | 1.45 | Pebble |
+| Footer text | 14px | 14px | 400 | 1.45 | Pebble |
+
+The "Footer text" row is the copyright line. The footer's "Back to top" link follows §6.1 at 14px: 600, Charcoal (§6.8).
 
 The root body size is 17px at 720px and up, and 16px below.
 
@@ -88,9 +90,9 @@ Named uses:
 |---|---|---|
 | `--radius-card` | 12px | Timeline cards, project cards, hero photo |
 | `--radius-logo` | 8px | Company logo box |
-| `--radius-focus` | 4px | Focus outline corners |
+| `--radius-focus` | 4px | Focus ring corners on every control that isn't round: text links (repo, project, footer, rail and name links), the skip link and the timeline summaries |
 | `--radius-marker` | 2px | Rail marker |
-| full | 50% | Timeline dots |
+| full | 50% | Timeline dots; the round controls (the hero icon links and the theme toggle) and their focus rings, which are circles (§8) |
 
 ### 1.5 Shadows
 
@@ -101,7 +103,7 @@ There are two, and no others:
 | (none, inline) | `0 0 0 5px color-mix(in srgb, var(--color-accent) 18%, transparent)` | The open timeline dot's ring (§1.1, §6.4) |
 | `--shadow-card-hover` | `0 8px 24px -12px color-mix(in srgb, var(--color-charcoal) 35%, transparent)` | Project card on hover only (§6.5). Cards have no shadow at rest. |
 
-Both are decorative. This supersedes the §1.1 sentence "no shadows except that ring" (owner decision, 2026-10-16).
+Both are decorative. The project card hover shadow was added by owner decision (2026-10-16), replacing the earlier "no shadows except that ring" rule; §1.1 now lists both shadows.
 
 **Dark:** the ring needs no change (it follows Accent). `--shadow-card-hover` is redefined under `html[data-theme="dark"]` with black in place of Charcoal, because Charcoal is light in dark, and at 75% instead of 35% so it still shows on the dark Paper (owner choice): `0 8px 24px -12px color-mix(in srgb, #000 75%, transparent)`. Light stays at 35% Charcoal.
 
@@ -121,6 +123,7 @@ Naming: "mobile" means under 720px, "tablet" means 720 to 1199px, and "desktop" 
 
 ## 2. Layout grid
 
+- **`viewport-fit=cover` is required** in the viewport meta (in Next, `export const viewport: Viewport = { viewportFit: "cover" }` in `src/app/layout.tsx`). Without it, `env(safe-area-inset-*)` is 0 and every safe-area formula in this spec (§1.3, §2, §4.6, §6.6) does nothing.
 - **Below 1200px:** one column, centered, max 1000px wide, with 16px side padding. There is no nav: main comes first and opens on the hero. Main is max 880px.
   - **Main top padding is `calc(max(16px, env(safe-area-inset-top)) + 44px)`, which is 60px** without a top inset (§1.3). It clears a band for the theme toggle in the top-right corner (§6.9), so the toggle never overlaps the hero.
   - **Theme toggle corner: the browser window's top-right corner** (owner choice), not the page column. The toggle is `position: absolute` against the page itself, the initial containing block, so no ancestor of it may be positioned (neither the page container nor `<main>`). It scrolls away; it is not fixed or sticky.
@@ -207,7 +210,7 @@ The hero greeting is the page's only h1.
 
   - **Gaps:** 28px between rows and **no column gap**. The cell widths do the spacing; 11 gaps of 16px would squeeze the cells.
   - **Alignment:** each item is centered in its span. Rows 1 and 3 line up with each other, and row 2 sits offset between them in a regular pattern.
-  - **Fit:** at 320px, the narrowest cell (a 3-column span) is about 80px. Row 2 holds the short names (C++, HTML, CSS, SQL), and TypeScript sits in a wider 4-column span, so no name wraps.
+  - **Fit:** at 320px, the narrowest cell (a 3-column span) is 72px (3 of 12 columns of the 288px content width). Row 2 holds the short names (C++, HTML, CSS, SQL), and TypeScript sits in a wider 4-column span, so no name wraps.
   - **Ties to 10 items:** the spans are set by position (`nth-child`), so they only fit a list of exactly 10. If the curated list ever changes length, fall back to a plain 3-column grid until the layout is revisited. Frontend should leave a comment noting this.
 
 ### 4.4 Experience
@@ -225,8 +228,8 @@ The hero greeting is the page's only h1.
 
 - **Placement:** after `<main>`, in the same column. Use a real `<footer>` element outside `<main>`, so it is the page's contentinfo landmark (the preview put it inside main; see §13).
 - **Content:** "© <year> Ryan Chen" on the left and "Back to top" on the right.
-- **Style:** 1px Rule top border, padding 24px top and 32px bottom, 14px Pebble text.
-- **Narrow screens:** the two parts wrap with an 8px row gap.
+- **Style:** 1px Rule top border, padding 24px top and `max(32px, env(safe-area-inset-bottom))` bottom (32px without an inset). The copyright is 14px Pebble ("Footer text", §1.2); the link is styled per §6.8.
+- **Layout:** a wrapping flex row with `justify-content: space-between`, `align-items: center` and `gap: 8px 16px`. On narrow screens, when it wraps, the link drops under the copyright, left-aligned.
 
 ---
 
@@ -239,8 +242,8 @@ The hero greeting is the page's only h1.
   - `object-position: 50% 75%`
   - `transform: translateY(-8%) scale(1.6)`
   - `transform-origin: 51% 60%`
-  - **`height: auto`** is required. If the `<img>` has explicit width and height attributes (as `next/image` emits), the intrinsic height otherwise overrides the frame's aspect ratio.
-- **Rendering:** `next/image` with `priority`. It is the LCP element.
+  - **Use `fill`:** the `<img>` fills the frame at 100% x 100%, so the frame's aspect ratio sets its size. Do not give it explicit width and height attributes; the intrinsic height would override the frame's aspect ratio and render a tall sliver.
+- **Rendering:** `next/image` with `preload` (Next 16's name for `priority`). It is the LCP element.
   - `sizes`: `(min-width: 720px) 448px, 160vw`. That is 280px × 1.6 for the scale, so the zoomed image stays sharp.
 - **Pre-cropped alternative:** Frontend may instead export a pre-cropped copy that matches this framing. With it, no transform is needed and fewer bytes are sent. If the pre-crop is used, it must match the approved crop by eye at both aspect ratios.
 - **If `basics.image` is missing:** the hero is text only. The grid collapses to one column and no space is reserved.
@@ -269,21 +272,21 @@ There are five links in one matching style, in this order:
 - **Color:** the icon takes its color from the link, so it changes on hover along with the link.
 - **Optical sizing:** each glyph is scaled about the center of its 24-unit box, so all five look the same size.
   - Apply it inside the SVG, for example a `<g transform="translate(12 12) scale(s) translate(-12 -12)">` around the paths. A group inside the SVG is fine; the "no wrapper" rule below is about elements around the `<svg>`.
-  - **Starting values,** from the preview's Lucide-style shapes:
+  - **Tuned values** for the Tabler glyphs at 24px, confirmed by eye by Frontend and Design with the five side by side (Phase 4 step 2, 2026-10-18):
 
     | Icon | Scale |
     |---|---|
     | file-text | 0.95 |
     | mail | 1.00 |
-    | linkedin | 0.85 |
-    | github | 0.88 |
-    | instagram | 0.82 |
+    | linkedin | 0.90 |
+    | github | 0.92 |
+    | instagram | 0.90 |
 
-  - **These are starting points, not final values.** The build uses Tabler's glyphs, which are drawn differently. Frontend re-tunes each value with the Tabler glyphs at 24px, judging by eye with the five side by side, until none looks bigger or heavier.
-  - **The GitHub scale is shared:** the same tuned value applies to the GitHub icon in Scout's repo links and in the project links.
+  - LinkedIn and Instagram share the same rounded-square frame, so they share one value. The moon and sun in the theme toggle stay at 1.0 (§6.9).
+  - **The GitHub scale is shared:** 0.92 also applies to the GitHub icon in Scout's repo links and in the project links.
 - **No wrapper:** the `<svg>` is a **direct flex child of the `<a>`**, with no `<span>` or other element around it, and `flex: none`. A wrapper adds inline line-height and pushes the icon off-center, which is the bug the owner spotted.
 - **Hidden from assistive technology:** `aria-hidden="true"` and `focusable="false"`.
-- **No solid logos in links.** Solid brand logos look larger than outline glyphs at the same box size. The solid monochrome Simple Icons belong only to the Technologies component (§6.3).
+- **No solid logos in links.** Solid brand logos look larger than outline glyphs at the same box size. The solid monochrome logos (Simple Icons and Devicon) belong only to the Technologies component (§6.3).
 
 **Source: inline all five SVGs in the repo**, copied from **Tabler Icons** (outline set, `@tabler/icons` v3.49.0, MIT license). The files are `file-text`, `mail`, `brand-linkedin`, `brand-github` and `brand-instagram`, all checked as present.
 - **Why Tabler:** Lucide removed its brand icons, so it can no longer supply LinkedIn, GitHub or Instagram. Tabler still has them, and its outline set uses the same 24px grid, 2px stroke and round caps and joins as Lucide.
@@ -308,7 +311,7 @@ There are five links in one matching style, in this order:
   - Wrap the hover rules (circle and color) in `@media (hover: hover)`. Touch browsers can leave a "sticky" hover after a tap, which would leave a circle behind.
   - The circle is fully inside the 44px box. With the row's -10px pull, the first circle reaches 10px into the page padding (at least 16px), which is fine.
 - **Pressed (`:active`):** the icon turns Accent deep. The circle stays while the pointer is down.
-- **Focus:** the standard ring (§8): 2px Charcoal, 2px offset, 4px radius, drawn around the 44px box. Keyboard `:focus-visible` gets the ring only, with no circle; the ring is the focus cue.
+- **Focus:** the standard ring (§8): 2px Charcoal, 2px offset, drawn around the 44px box. It is a **circle** (52px across), following the link's `border-radius: 50%` and its hover circle, not the 4px-radius ring. Keyboard `:focus-visible` gets the ring only, with no circle; the ring is the focus cue.
 - **Reduced motion:** nothing changes. The hover has no movement, so the circle, the color change and their 160ms fades all stay.
 - **No tooltip.** Do not add a `title` attribute or a custom tooltip.
   - `title` doesn't show on touch screens and isn't announced reliably.
@@ -342,31 +345,34 @@ See §4.2. The section has `aria-labelledby` pointing at its h2.
 - **Not interactive:** it stays a plain, non-focusable list item. No link, no box, no `tabindex`, `cursor: default`, so there is no keyboard state.
 - **Hover: Lift** (owner choice, 2026-10-16), only under `@media (hover: hover)`:
   - The item rises `translateY(-4px)` over 180ms with `cubic-bezier(0.2, 0, 0, 1)`.
-  - The name turns Accent over 180ms ease. The logo stays Charcoal.
+  - The logo and the name both turn Accent over 180ms ease (owner decision, 2026-10-18: the whole item goes Accent, as in the demo). Set `color` on the inner wrapper; the logo follows through `currentColor`.
   - **Detect the hover on the `<li>` but move its contents** (one inner wrapper around the logo and the name). The hover area then stays still, so a pointer at the item's bottom edge doesn't flicker the hover on and off.
   - Transform only, so the grid doesn't shift.
-- **Reduced motion:** no movement; only the name color changes.
-- **Contrast:** Accent on Paper is 4.9:1, which passes the 4.5:1 needed for 15px/600 text (not large text).
+- **Reduced motion:** no movement; the logo and name color change stays.
+- **Contrast:** Accent on Paper is 4.9:1 in light and 5.5:1 in dark. That passes the 4.5:1 needed for the 15px/600 name (not large text) and the 3:1 non-text minimum for the logo.
 - **Tradeoff:** a hover response on a non-interactive item can suggest it does something. The default cursor and the lack of any focus stop keep it from reading as a control.
-- **Logo source:** Simple Icons, pinned to a version (v16.35.0 has been checked). Inline the SVG; no CDN at runtime and no icon font.
+- **Logo source:** Simple Icons v16.35.0 for most logos, Devicon v2.16.0 (MIT) for Java and CSS, and Lucide for SQL, each pinned. Inline the SVG; no CDN at runtime and no icon font.
 
 | Name | Icon |
 |---|---|
-| Java | Simple Icons `java` |
+| Java | Devicon `java-plain` (the cup) |
 | Python | `python` |
 | TypeScript | `typescript` |
 | C++ | `cplusplus` |
 | HTML | `html5` |
-| CSS | `css` |
+| CSS | Devicon `css3-plain` (the shield) |
 | SQL | generic database icon, Lucide `database` (decided) |
 | React.js | `react` |
 | Tailwind | `tailwindcss` |
 | Next.js | `nextdotjs` |
 
+Unmarked slugs are Simple Icons.
+
 **Build notes:**
-- **Java:** the preview used `openjdk` because its v13 had no `java`. The real build uses `java`.
-- **HTML and CSS:** they should look similar but need not match (owner decision). Check them side by side during the build. If they look too different, use Devicon's `css3` shield, recolored to Charcoal.
-- **SQL:** Lucide is a stroke icon. Render it at 36px with a stroke width of 2 so its visual weight is close to the filled logos.
+- **Java:** Devicon `java-plain`, the coffee cup (owner left the choice to the orchestrator, 2026-10-18). It is filled, widely recognized as Java, and from the same set as the CSS shield. The data key is `java`. The visible name stays "Java".
+- **CSS:** Devicon `css3-plain`, so it pairs with the HTML5 shield (owner decision, 2026-10-18). Simple Icons' `css` tile did not pair with it. The data key stays `css`.
+- **Devicon paths:** both are one path in a 128-unit box (`viewBox="0 0 128 128"`). Remove the source's brand `fill` and use `fill="currentColor"`, like the Simple Icons logos. Render them from the 128-unit box: either give the `<svg>` `viewBox="0 0 128 128"`, or, inside the shared 24-unit `TechIcon`, wrap the path in `<g transform="scale(0.1875)">`. Note the source and version in a code comment.
+- **SQL:** Lucide is a stroke icon. Render it at 36px with stroke width 2 in Lucide's 24-unit grid, which is 3px at 36px. Do not use `non-scaling-stroke` here (unlike the link icons in §6.1), so its visual weight stays close to the filled logos.
 
 ### 6.4 Timeline accordion card
 
@@ -395,12 +401,11 @@ See §4.2. The section has `aria-labelledby` pointing at its h2.
 - Every card uses this one style. There is no featured or compact variant.
 
 **Summary (collapsed view):**
-- **Header row:** a flex row, centered vertically, that wraps.
+- **Header row:** a flex row, centered vertically, that wraps, with `gap: 2px 16px` (2px between wrapped lines, 16px between items).
   - On the left: the company logo box (40 x 40, 8px radius, 14px gap), then the company name (21px/600; 18px under 720px).
-  - On the right, pushed over with `margin-left: auto`: the dates in meta style (Pebble 15px), from `dateLabel`.
-  - Last: the chevron.
+  - On the right: one non-wrapping group, pushed over with `margin-left: auto`, holding the dates in meta style (Pebble 15px), from `dateLabel`, then the chevron 20px after the dates.
 - **Second line:** the title in meta style, 2px below. It is indented 54px at 720px and up so it lines up under the company name; no indent below 720px.
-- **Wrapping:** if the header row wraps on narrow screens, the dates drop under the company name. The chevron stays at the end of the row.
+- **Wrapping:** if the header row wraps on narrow screens, the dates and chevron drop together to the next line, under the company name and right-aligned. The chevron always stays at the end of the row.
 - **Chevron:**
   - A 9 x 9px corner drawn with 2px Pebble right and bottom borders.
   - Closed: rotated 45° and nudged up 3px, so it points down.
@@ -413,7 +418,7 @@ See §4.2. The section has `aria-labelledby` pointing at its h2.
 
 **Expanded content:**
 - **Highlights:** a list 16px below the summary, with a 20px bullet indent and 8px between items. Text is 17px/1.6 (16px under 720px). Bullet markers are Pebble. Indented 54px at 720px and up; no indent below.
-- **Scout's repo links:** 12px below the highlights, a wrapping row with a 20px gap. They use the labeled link style (§6.1, "Repo and project links") with the 18px outline `brand-github` icon (§6.1 link icons), labels from `links[].label`, and a new tab. Same 54px indent.
+- **Scout's repo links:** 12px below the highlights, a wrapping row with `gap: 0 20px` (20px between links; no extra space between wrapped lines, since the 44px link height already separates them). They use the labeled link style (§6.1, "Repo and project links") with the 18px outline `brand-github` icon (§6.1 link icons), labels from `links[].label`, and a new tab. Same 54px indent.
 
 **Company logo (box):**
 - 40 x 40, 8px radius, a **1px Rule border**, `object-fit: contain`. The files are the owner-supplied **100 x 100 JPGs in `public/`** (§11).
@@ -422,16 +427,15 @@ See §4.2. The section has `aria-labelledby` pointing at its h2.
 
 **Timeline dot:**
 - 12px circle, Charcoal, positioned in the list's left padding.
-- Its center lines up with the logo's center: 48px from the card top at 720px and up (28px padding + 20px), 44px below 720px.
-- Positioned at `left: -48px` and `top: 42px` (mobile: `-36px` and `38px`).
-- **Open card's dot:** Accent fill plus a 5px soft ring (§1.1). Fill and ring change over 200ms. Use `.entry:has(> details[open]) .dot` or an equivalent class.
+- Its center lines up with the logo's center: 49px from the card's outer top edge at 720px and up (1px border + 28px padding + 20px), 45px below 720px (1px + 24px + 20px).
+- Positioned at `left: -48px` and `top: 43px` (mobile: `-36px` and `39px`).- **Open card's dot:** Accent fill plus a 5px soft ring (§1.1). Fill and ring change over 200ms. Use `.entry:has(> details[open]) .dot` or an equivalent class.
 - **Only the open card's dot is Accent.** All other dots stay Charcoal.
 - **Opening is click-only.** Scrolling never opens, closes or highlights a card. The only scroll-driven behavior on the timeline is the one-time reveal (§7).
 
 **Timeline line:**
 - 2px wide, Rule color, decorative. It runs through the dot centers (x = 6px inside the list padding, so it is centered on the dot).
 - It must run **from the first dot to the last dot exactly**, whichever cards are open.
-- Draw it as a connector on each entry except the last: from that entry's dot center down to the next entry's dot center (the entry's height + the gap + 48px, or 44px on mobile).
+- Draw it as a connector on each entry except the last: from that entry's dot center down to the next entry's dot center. It starts at `top: 49px` (45px on mobile) with `height: calc(100% + 24px)` (the entry's height + the list gap; `+ 20px` on mobile).
 - The preview's single line with a fixed `bottom: 48px` overshoots past the last dot when the last card is open (§13).
 
 **Behavior:**
@@ -445,11 +449,13 @@ See §4.2. The section has `aria-labelledby` pointing at its h2.
     details::details-content {
       block-size: 0;
       overflow: clip;
+      overflow-clip-margin: 4px;
       transition: block-size 320ms cubic-bezier(0.2, 0, 0, 1),
                   content-visibility 320ms allow-discrete;
     }
     details[open]::details-content { block-size: auto; }
     ```
+  - **`overflow-clip-margin: 4px`** keeps the repo links' focus ring (2px offset + 2px width) visible at the content box edges. During the 320ms animation up to 4px of content can show past the clip edge; that stays inside the 24/28px card padding, so it is accepted.
   - Opening and closing both animate, including the card the browser closes when another opens.
   - **Keep the 16px space above the highlights inside the clipped box.** Make it the list's `padding-top`, not `margin-top`. `overflow: clip` does not stop margin collapsing, so a margin could leak outside the clip and jump at the end of the close.
   - **Fallback:** browsers without `::details-content` or `interpolate-size` snap open and closed (native behavior). Acceptable.
@@ -465,7 +471,7 @@ See §4.2. The section has `aria-labelledby` pointing at its h2.
   - Scrolling is smooth only under `prefers-reduced-motion: no-preference`; otherwise it is instant.
   - Running it after the close finishes means the summary ends in view at its final position. Scrolling earlier would aim at a position that keeps moving for 320ms.
   - The preview does not do this (§13).
-- **Rail update:** every `toggle` event also triggers the rail's active-section update (§6.6), after the same settle timing. Scroll events during the transition update the rail as usual.
+- **Rail update:** after the same settle timing, the timeline script dispatches a `timeline-settled` event on `document`; the rail's active-section update (§6.6) listens for it, not for the raw `toggle`. Scroll events during the transition update the rail as usual.
 - **Scroll reveal:** see §7.
 
 ### 6.5 Project card
@@ -476,7 +482,7 @@ See §4.2. The section has `aria-labelledby` pointing at its h2.
 1. **Header row:**
    - The project name as an h3, 21px/600 (18px under 720px).
    - The date on the right, in meta style, from `dateLabel`.
-   - The row wraps, with gaps of 2px vertically and 16px horizontally. When it wraps, the date drops under the name.
+   - The row wraps, with `align-items: baseline` and gaps of 2px vertically and 16px horizontally. Baseline seats the 15px date on the 21px name's text line. When it wraps, the date drops under the name, left-aligned.
 2. **Technologies:** `projects[].technologies` joined with ", " in meta style, 2px below. Plain text, not chips.
 3. **Highlights:** the same list style as the timeline cards, 16px below. No indent, since there is no logo.
 4. **Link row:** 12px below. A GitHub link in the labeled link style (§6.1, "Repo and project links"), with the 18px outline `brand-github` icon (§6.1 link icons), the label from `links[].label`, and a new tab.
@@ -524,10 +530,11 @@ See §4.2. The section has `aria-labelledby` pointing at its h2.
 - The current section is the last one whose top is at or above 35% of the viewport height.
 - If the page is scrolled to the bottom (within 4px), the last section (Projects) is current.
 - Before the first section reaches the 35% line, the first link (About) is current.
-- The check runs on scroll (a passive listener), on resize, and on every experience `toggle`.
+- The check runs on scroll (a passive listener), on resize, and after every experience toggle settles: on the `timeline-settled` event that the timeline script dispatches on `document` (320ms plus one frame after the `toggle`, or the next frame without the height animation; §6.4 settle timing). It does not run on the raw `toggle`.
+- **Placing the marker on attach:** on load, and when the window widens past 1200px, the marker is placed at the current link without the slide. It slides only when the current section changes (§7).
 - **The script runs only while the rail is shown.**
   - Gate it with `matchMedia("(min-width: 1200px)")`.
-  - Attach the scroll, resize and `toggle` listeners only while that query matches.
+  - Attach the scroll, resize and `timeline-settled` listeners only while that query matches.
   - Detach them when it stops matching (listen for the query's `change` event).
   - Below 1200px, no scroll tracking runs at all.
 
@@ -537,6 +544,9 @@ See §4.2. The section has `aria-labelledby` pointing at its h2.
 
 - **On desktop** it is the first focusable element: "Skip to content", linking to `#top` (`<main>`).
   - It is visually hidden until focused. When focused, it appears at the top left: White background, Charcoal text, 12px horizontal and 8px vertical padding, the focus ring, at least 44px tall.
+  - **Type:** the §6.1 labeled-link style without an icon: 15px/600, Charcoal, 1px Accent underline at a 4px offset; on hover, Accent and a 2px underline. Contrast on White: Charcoal 16.1:1 light / 13.3:1 dark; Accent underline 5.5:1 / 5.0:1 (§9.1).
+  - **Focused position:** `position: fixed`, `top: max(16px, env(safe-area-inset-top))`, `left: max(16px, env(safe-area-inset-left))`, above the rail (`z-index: 10`), so it shows from any scroll position.
+  - **Accepted overlap:** at exactly 1200px, the focused link overlaps the rail's name row by 1px. It is the topmost, opaque layer, so the focused element is never obscured (WCAG 2.4.11), and it lasts only while focused. At wider screens there is no overlap.
   - It exists because the rail's five links (the name and four sections) come before the content.
 - **Below 1200px** it is not rendered (`display: none`). With no nav, `<main>` is already the first content, so a skip link would skip nothing.
 
@@ -544,7 +554,7 @@ See §4.2. The section has `aria-labelledby` pointing at its h2.
 
 See §4.6.
 - **Year:** rendered at build time. It updates on the next deploy, which is acceptable for a static site.
-- **"Back to top":** links to `#top`. It uses the underline style from §6.1 at 14px, with a 44px minimum height.
+- **"Back to top":** links to `#top`. It uses the §6.1 labeled-link style ("Repo and project links") without an icon, at 14px: 600, Charcoal, 1px Accent underline at a 4px offset; on hover, Accent and a 2px underline. 44px minimum height.
 
 ### 6.9 Theme toggle
 
@@ -557,12 +567,12 @@ Owner decision, 2026-10-16. One button that switches between light and dark. The
 
 **Look:**
 - A 44 x 44px box, `inline-flex`, centered both ways, `border-radius: 50%`. At rest: no background, border or box.
-- **Icon:** Tabler outline (v3.49.0, MIT, inlined like §6.1). **`moon` in light** (it switches to dark) and **`sun` in dark**. 22px box, 24 viewBox, and the same stroke rules as §6.1 link icons: `currentColor`, 2px with `vector-effect: non-scaling-stroke`, round caps and joins, a direct flex child of the button, `flex: none`, `aria-hidden="true"`, `focusable="false"`. Optical scale starts at 1.0 for both; Frontend tunes by eye so neither looks heavier.
+- **Icon:** Tabler outline (v3.49.0, MIT, inlined like §6.1). **`moon` in light** (it switches to dark) and **`sun` in dark**. 22px box, 24 viewBox, and the same stroke rules as §6.1 link icons: `currentColor`, 2px with `vector-effect: non-scaling-stroke`, round caps and joins, a direct flex child of the button, `flex: none`, `aria-hidden="true"`, `focusable="false"`. Optical scale 1.0 for both (confirmed by eye in Phase 4 step 2).
 - **Icon swap without JS state:** render both SVGs and show one with CSS, keyed on `html[data-theme="dark"]`. The server HTML is then the same for both themes, so there is no hydration mismatch and the right icon shows from the first paint.
 - **Color:** Charcoal at rest.
 - **Hover** (under `@media (hover: hover)`): the soft circle (10% Accent, §1.1) and an Accent icon, the same timing as the hero links (color 160ms `cubic-bezier(0.2, 0, 0, 1)`, background 160ms ease).
 - **Pressed (`:active`):** Accent deep icon; the circle stays while the pointer is down.
-- **Focus:** the standard ring (§8) around the 44px box. `:focus-visible` gets the ring only, no circle.
+- **Focus:** the standard ring (§8) around the 44px box, as a **circle** (52px across) that follows the button's `border-radius: 50%`, like the hero links (§6.1). `:focus-visible` gets the ring only, no hover circle.
 
 **Placement:**
 - **1200px and up:** inside the rail `<nav>`, on the same row as "Ryan Chen", at the right. The row is a flex row with `justify-content: space-between` and `align-items: center`; the name link keeps its 44px minimum height, so the row is 44px. The toggle sticks with the rail.
@@ -581,7 +591,7 @@ Owner decision, 2026-10-16. One button that switches between light and dark. The
 - **No flash of the wrong theme:** a small inline `<script>` in `<head>` (not deferred, not `next/script` with a lazy strategy) reads the key (inside `try`) and sets `data-theme` to `"dark"` if the key is `"dark"`, otherwise `"light"`, before first paint. It is a few lines, blocking, with no network request. `<html>` gets `suppressHydrationWarning`, because the attribute is added before React hydrates.
 - **`aria-pressed` after hydration:** the toggle renders `aria-pressed="false"` on the server and sets the real value from `document.documentElement.dataset.theme` after mount, so the first client render matches the server.
 - **Color fade on switch:** 240ms, `ease`, on `background-color`, `color`, `border-color`, `text-decoration-color` and `box-shadow` only. `text-decoration-color` is included as a color, so the Accent underlines change with the text rather than snapping ahead of it.
-  - Apply it **only during the switch:** on click, add a class to `<html>` that sets this transition on every element, flip the theme, and remove the class 240ms later (one timer, reset on a quick second click). There is no fade on page load.
+  - Apply it **only during the switch:** on click, add a class to `<html>` that sets this transition on every element and on its `::before` and `::after` (so colors drawn by pseudo-elements, such as timeline dots or lines, fade too), flip the theme, and remove the class 240ms later (one timer, reset on a quick second click). There is no fade on page load.
   - While the class is on, it replaces element transitions for those 240ms. That is fine, because nothing else moves during a theme switch.
   - **Reduced motion:** the class is never added; the switch is instant.
   - The photo and company logos don't change, so they don't fade.
@@ -596,12 +606,12 @@ There are two ambient motions (the hero load and the timeline reveal), plus stat
 |---|---|---|---|---|
 | Hero load | Page load; plays once | Greeting and tagline words: opacity 0 to 1, `filter: blur(10px)` to none, translateY 4px to 0. Link row: opacity 0 to 1. Photo: none | Words: 700ms, `cubic-bezier(0.22, 1, 0.36, 1)`, delay = word index × 45ms (index runs on from the greeting into the tagline). Link row: 500ms, ease, 700ms delay | Not declared; everything is static at its resting state |
 | Timeline reveal | A timeline entry that was below the viewport at load scrolls 15% into view; it plays once per entry | opacity 0 to 1, translateY 12px to 0 | 320ms, `cubic-bezier(0.22, 1, 0.36, 1)` | Never applied; cards are always visible |
-| Rail marker slide | The current section changes | transform | 200ms, `cubic-bezier(0.2, 0, 0, 1)` | Jumps instantly |
+| Rail marker slide | The current section changes (not on load or when widening past 1200px, where it is placed without sliding; §6.6) | transform | 200ms, `cubic-bezier(0.2, 0, 0, 1)` | Jumps instantly |
 | Chevron rotate | A card opens or closes | transform | 200ms, `cubic-bezier(0.2, 0, 0, 1)` | Instant |
 | Open-dot color and ring | A card opens or closes | background-color, box-shadow | 200ms, ease | Instant |
 | Card height | A timeline card opens or closes | `::details-content` block-size (to and from `auto`), content-visibility (discrete) | 320ms, `cubic-bezier(0.2, 0, 0, 1)` | Not declared; snaps (native) |
 | Hero link soft circle | pointer hover on a hero link (`hover: hover`) | background (10% Accent circle); icon color | Color 160ms, `cubic-bezier(0.2, 0, 0, 1)`; background 160ms, ease | Kept in full (no movement) |
-| Technology lift | pointer hover on a technology item (`hover: hover`) | transform `translateY(-4px)` on the item's contents; name color | Transform 180ms, `cubic-bezier(0.2, 0, 0, 1)`; color 180ms, ease | No movement; name color only |
+| Technology lift | pointer hover on a technology item (`hover: hover`) | transform `translateY(-4px)` on the item's contents; logo and name color | Transform 180ms, `cubic-bezier(0.2, 0, 0, 1)`; color 180ms, ease | No movement; logo and name color only |
 | Project card lift | pointer hover on a project card (`hover: hover`) | transform `translateY(-3px)` on the article; border-color; box-shadow | Transform 180ms, `cubic-bezier(0.2, 0, 0, 1)`; border and shadow 180ms, ease | No movement; border and shadow kept |
 | Labeled link hover | hover | color, text-decoration-thickness | 120ms, ease | Kept (color only, no movement) |
 | Summary and rail hover | hover | color | 120ms, ease | Kept |
@@ -649,7 +659,7 @@ There are two ambient motions (the hero load and the timeline reveal), plus stat
 - **Hover movement: only the technology lift (§6.3) and the project card lift (§6.5).** The hero links have no tilt and no movement (§6.1).
   - Both lifts are transform-only and move the element's contents, not the hovered `<li>`, so nothing shifts and the hover doesn't flicker.
   - Both sit under `@media (hover: hover)`.
-  - Under `prefers-reduced-motion: reduce`, set `transform: none`. Their color, border and shadow changes remain.
+  - Under reduced motion there is no transform: either set `transform: none` under `prefers-reduced-motion: reduce`, or declare the transform only under `prefers-reduced-motion: no-preference`. Their color, border and shadow changes remain.
   - Neither element is focusable, so neither has a keyboard state.
 - **The only movement on expand is the card height** (§6.4), plus the chevron and dot. It applies only under `prefers-reduced-motion: no-preference`.
 - No other load, scroll or hover animations. The hero load (rule 5) is the only load animation. The photo has no motion.
@@ -659,9 +669,12 @@ There are two ambient motions (the hero load and the timeline reveal), plus stat
 
 ## 8. Hover and focus rules
 
-- **Focus:** every focusable element shows a 2px Charcoal outline with a 2px offset and 4px rounded corners on `:focus-visible`. This includes links, summaries, the theme toggle, and (at 1200px and up) the skip link and rail links. Never remove the outline without replacing it.
+- **Focus:** every focusable element shows a 2px Charcoal outline with a 2px offset on `:focus-visible`. This includes links, summaries, the theme toggle, and (at 1200px and up) the skip link and rail links. Never remove the outline without replacing it.
+  - **The ring follows the control's shape** (owner decision, 2026-10-18). Round controls (the 44px hero icon links and the theme toggle, both `border-radius: 50%`) get a **circular** ring, 52px across. Every other control (text links, the skip link, the timeline summaries) gets **4px** rounded corners (`--radius-focus`).
+  - Browsers draw `outline` along the element's `border-radius`, so the round controls need no extra rule. Color, width and offset are the same for both shapes, so the contrast below is unchanged.
   - **In dark the ring is light** (`#EDEAE6`), because it uses the Charcoal token: 14.7:1 on Paper and 13.3:1 on cards. No separate dark focus color is needed.
   - The corner toggle's ring reaches 4px past its box, so it ends 1px inside the viewport edge without an inset. It stays fully visible.
+  - **Exception (owner-approved, 2026-10-18):** `<main id="top" tabindex="-1">` draws no focus ring (`main:focus { outline: none }`). Main is a programmatic focus target for the `#top` links (skip link, rail name, "Back to top"), not a control, and a ring around the whole column would read as an error. The next Tab shows the normal ring on the first link. This is the only element exempt from "never remove the outline".
 - **Theme toggle hover:** the same soft circle and Accent icon as the hero links (§6.9), under `@media (hover: hover)`.
 - **Summary focus:** the outline is drawn on the `<summary>`, inside the card padding. Use `outline-offset: 4px` so the ring clears the logo and the text.
 - **Hover is never the only cue.** Links are always underlined, with three exceptions: nav links (identified by their position in the nav), the name link, and the icon-only hero links (identified by their icon glyphs, in a row directly under the tagline). Summaries always show the chevron.
@@ -678,18 +691,19 @@ I calculated the ratios by hand with the WCAG 2.x formula and rounded them down.
 
 | Foreground | Background | Ratio | Needed | Use |
 |---|---|---|---|---|
-| Charcoal | Paper | 14.5:1 | 4.5 | Body text, headings, hero links, tech names, current nav link |
+| Charcoal | Paper | 14.5:1 | 4.5 | Body text, headings, hero links, tech names, current nav link, footer link |
 | Charcoal | White | 16.1:1 | 4.5 | Card text, skip link |
-| Pebble | Paper | 6.3:1 | 4.5 | About heading, inactive nav, footer |
+| Pebble | Paper | 6.3:1 | 4.5 | About heading, inactive nav, footer copyright |
 | Pebble | White | 7.1:1 | 4.5 | Dates, titles, tech lists in cards |
 | Accent | Paper | 4.9:1 | 4.5 | Hovered link text on the page; hovered technology name (15px/600) |
 | Accent icon | 10% Accent circle over Paper (about `#EFE0DC`) | 4.3:1 | 3 (non-text) | Hovered hero icon |
 | Accent deep icon | 10% Accent circle over Paper | 5.6:1 | 3 (non-text) | Pressed hero icon |
+| Accent logo | Paper | 4.9:1 | 3 (non-text) | Hovered technology logo |
 | 10% Accent circle | Paper | about 1.16:1 | none (decorative) | Hover feedback; the icon color change is the meaningful cue |
 | Pebble border, card-hover shadow | Paper / White | n/a | none (decorative) | Project card hover |
 | Accent | White | 5.5:1 | 4.5 | Hovered summary and link text inside cards |
 | Accent deep | Paper / White | 6.5:1 / 7.2:1 | 4.5 | Pressed link text |
-| Accent underline | Paper / White | 4.9:1 / 5.5:1 | 3 (non-text) | Link identification |
+| Accent underline | Paper / White | 4.9:1 / 5.5:1 | 3 (non-text) | Link identification, including the skip link (on White) |
 | Accent rail marker | Paper | 4.9:1 | 3 (non-text) | Current section |
 | Pebble chevron | White | 7.1:1 | 3 (non-text) | Open or closed state |
 | Charcoal focus ring | Paper / White | 14.5:1 / 16.1:1 | 3 (non-text) | Focus |
@@ -702,17 +716,18 @@ The light theme toggle uses the hero-link pairs above: Charcoal icon on Paper 14
 
 | Foreground | Background | Ratio | Needed | Use |
 |---|---|---|---|---|
-| Charcoal `#EDEAE6` | Paper `#1A1816` | 14.7:1 | 4.5 | Body text, headings, hero links, toggle icon, tech names and logos, current nav link |
+| Charcoal `#EDEAE6` | Paper `#1A1816` | 14.7:1 | 4.5 | Body text, headings, hero links, toggle icon, tech names and logos, current nav link, footer link |
 | Charcoal | White `#24211E` | 13.3:1 | 4.5 | Card text, skip link |
-| Pebble `#A8A09A` | Paper | 6.8:1 | 4.5 | About heading, inactive nav, footer |
+| Pebble `#A8A09A` | Paper | 6.8:1 | 4.5 | About heading, inactive nav, footer copyright |
 | Pebble | White | 6.2:1 | 4.5 | Dates, titles, tech lists in cards |
 | Accent `#E56B60` | Paper | 5.5:1 | 4.5 | Hovered link text on the page; hovered technology name |
 | Accent | White | 5.0:1 | 4.5 | Hovered summary and link text inside cards |
 | Accent deep `#F2958C` | Paper / White | 7.9:1 / 7.2:1 | 4.5 | Pressed link text |
 | Accent icon | 10% Accent circle over Paper (about `#2E201D`) | 4.9:1 | 3 (non-text) | Hovered hero icon and toggle icon |
 | Accent deep icon | 10% Accent circle over Paper | 7.0:1 | 3 (non-text) | Pressed hero icon and toggle icon |
+| Accent logo | Paper | 5.5:1 | 3 (non-text) | Hovered technology logo |
 | 10% Accent circle | Paper | about 1.13:1 | none (decorative) | Hover feedback; the icon color is the cue |
-| Accent underline | Paper / White | 5.5:1 / 5.0:1 | 3 (non-text) | Link identification |
+| Accent underline | Paper / White | 5.5:1 / 5.0:1 | 3 (non-text) | Link identification, including the skip link (on White) |
 | Accent rail marker | Paper | 5.5:1 | 3 (non-text) | Current section |
 | Pebble chevron | White | 6.2:1 | 3 (non-text) | Open or closed state |
 | Charcoal focus ring | Paper / White | 14.7:1 / 13.3:1 | 3 (non-text) | Focus |
@@ -728,11 +743,11 @@ The light theme toggle uses the hero-link pairs above: Charcoal icon on Paper 14
 ### 9.2 Hit areas
 
 - Every interactive element is at least **44 x 44px**: hero links, repo and GitHub links, the rail's name and section links, the theme toggle, the footer link and the skip link.
-- **Theme toggle:** exactly 44 x 44px at every width, with a 22px icon. Its name is the hidden label "Dark mode" and its state is `aria-pressed` (§6.9). In the rail it shares a row with the name link, which keeps its own 44px height, so the two targets don't overlap.
+- **Theme toggle:** exactly 44 x 44px at every width, with a 22px icon and a circular focus ring (§8). Its name is the hidden label "Dark mode" and its state is `aria-pressed` (§6.9). In the rail it shares a row with the name link, which keeps its own 44px height, so the two targets don't overlap.
 - **Icon-only hero links (every width):**
   - Each is exactly 44 x 44px, with 8px between targets.
   - Each keeps its accessible name through the visually hidden label (§6.1).
-  - Visible focus is the standard ring around the 44px box.
+  - Visible focus is the standard ring around the 44px box, drawn as a circle (§8).
   - Hover adds the 10% Accent circle and turns the icon Accent; pressed turns it Accent deep. Nothing moves.
   - There is no tooltip.
   - The icons are `aria-hidden`, so the name is announced once, not twice.
@@ -752,7 +767,8 @@ The light theme toggle uses the hero-link pairs above: Charcoal icon on Paper 14
 
 ### 9.4 Other
 
-- **Landmarks:** `<nav aria-label="Sections">`, `<main id="top">` and `<footer>` outside main. Each section has `aria-labelledby` pointing at its h2.
+- **Landmarks:** `<nav aria-label="Sections">`, `<main id="top" tabindex="-1">` and `<footer>` outside main.
+- **Main focus:** `<main>` takes focus from the `#top` links and draws no ring, a narrow owner-approved exception to "never remove the outline" (§8). It is a focus target, not a control; the next Tab shows the normal ring on the first link. Each section has `aria-labelledby` pointing at its h2.
 - **Headings:** h1 is the greeting; h2s are the sections; h3s are the project names.
 - **Lists:** Technologies is a `<ul>`, Experience an `<ol>`, Projects a `<ul>`.
 - **Language:** `<html lang="en">`.
@@ -794,7 +810,7 @@ Backend owns `data/` and proposes the schema; the owner approves. The field name
 |---|---|---|---|
 | 1 | Hero greeting | A new string, e.g. `basics.greeting` = "Hello, I'm Ryan." | Required. It must not be hardcoded. |
 | 2 | Instagram profile | Add `{ "network": "Instagram", "url": "https://www.instagram.com/ryan.chen2" }` to `basics.profiles` | Hero order is LinkedIn, GitHub, Instagram. Rec.: render in array order, so put Instagram last. Frontend maps `network` to an icon. |
-| 3 | Curated technologies | A new ordered list, e.g. `technologies: [{ name, icon }]`, where `icon` is a Simple Icons slug or the marker `"database"` for SQL | The 10 entries in the §6.3 order. Validation could reject unknown icon values. |
+| 3 | Curated technologies | A new ordered list, e.g. `technologies: [{ name, icon }]`, where `icon` is a key Frontend maps to a logo (a Simple Icons slug, `java` and `css` for the Devicon logos, or `"database"` for SQL) | The 10 entries in the §6.3 order. Validation could reject unknown icon values. |
 | 4 | Company logo per experience | Optional, e.g. `experience[].logo` = a site-root `src` path | Rec.: `src` only, always decorative, because the name sits beside it. If Backend reuses the existing `image` shape (where `alt` is required), it must allow an empty `alt`. Files go in `public/` (Backend owns it). The owner has supplied **100 x 100 JPGs in `public/`** (more than 2x for the 40px box). Render them with `next/image` at 40 x 40, with a 1px Rule border. |
 | 5 | Photo | Populate the existing `basics.image`: `src` (e.g. `/images/...`) and `alt` "Ryan at the Golden Gate Bridge" | The file comes from the owner. An optional focal point (e.g. `basics.image.position`) is needed only if the face is off-center. |
 | 6 | Remove `featured` | Delete it from `data/schema.ts` and `resume.json` | Nothing renders it. This reverses the Phase 0 and Phase 1 decisions; record it in `decisions.md`. |
@@ -802,14 +818,13 @@ Backend owns `data/` and proposes the schema; the owner approves. The field name
 | 8 | Remove `projects[].image` | Delete it from the schema | No project images is decided. Rec.: remove. |
 | 9 | Resume PDF path | Today it is the fixed path `/resume.pdf`, and `public/resume.pdf` exists | Rec.: keep it as a constant in `src/lib/`. No data field is needed. |
 
-**Data that will no longer be rendered: `education` and the full `skills` lists**
+**Data that will no longer be rendered: `education` (and the full `skills` lists, now removed)**
 
 The site will no longer show GPA (3.6/4.0), Dean's List, the degree name or the 39-item skills list. The owner confirmed that this is intended. The About text keeps Northeastern and the December 2026 graduation.
 
-- **Decided: both stay in `resume.json`, unrendered.** Keep `education` and the full `skills` object (languages, frameworks, tools) as they are. The curated `technologies` list (#3) is **added alongside** `skills`. It does not replace it.
-- **Possible future use:** Backend may use them for SEO structured data in Phase 6 (schema.org `Person`: `alumniOf` from `education`, `knowsAbout` from `skills`).
+- **Decided: `education` stays in `resume.json`, unrendered. `skills` is removed (owner decision, 2026-10-18; see "Skills list removed" in `docs/decisions.md`).** The curated `technologies` list (#3) is the only skills data. The full list lives only in the resume PDF, and there is no "show all skills" control.
+- **Possible future use:** Backend may use the data for SEO structured data in Phase 6 (schema.org `Person`: `alumniOf` from `education`, `knowsAbout` from `technologies`).
 - **The resume PDF does not use `resume.json`.** `public/resume.pdf` is a separately exported file (`plan.md` §4). The JSON and the PDF don't affect each other.
-- **Drift risk:** `skills` and `technologies` overlap. If the owner renames a technology (for example "React.js"), both lists need the edit. Backend could add a build-time check that every `technologies[].name` also appears somewhere in `skills`. That is optional; it is Backend's call.
 - **`dateLabel`:** keep it. Cards display it.
 - **`profiles`, `email` and `links`:** keep them. They are all rendered.
 
@@ -834,8 +849,8 @@ These are notes, not code.
   - The card height animation and all hover effects are CSS only. The accordion scroll correction and the rail update wait for the 320ms settle timing (§6.4).
 - **Icons:** all inline SVG, with no CDN at runtime and no icon font.
   - **Link icons:** five Tabler outline glyphs, copied into the repo (§6.1).
-  - **Technologies logos:** solid monochrome Simple Icons from a pinned version, plus the Lucide `database` icon for SQL (§6.3).
-- **Photo:** `next/image` with `priority` and `fill`; AVIF and WebP are on by default.
+  - **Technologies logos:** solid monochrome Simple Icons (v16.35.0) and Devicon (v2.16.0, Java and CSS), plus the Lucide `database` icon for SQL (§6.3).
+- **Photo:** `next/image` with `preload` (Next 16's name for `priority`) and `fill`; AVIF and WebP are on by default.
 - **Fonts:** one Figtree file, Latin subset.
 - **Target:** Lighthouse 95+ on all four categories, on mobile and desktop.
 
@@ -845,7 +860,7 @@ These are notes, not code.
 
 | Preview | Spec | Why |
 |---|---|---|
-| Lucide-style link glyphs with preview optical scales | Tabler outline glyphs; the scales are starting values that Frontend re-tunes by eye at 24px | Lucide no longer ships brand icons, and Tabler's shapes differ |
+| Lucide-style link glyphs with preview optical scales | Tabler outline glyphs; the scales were tuned by eye at 24px in Phase 4 step 2 (see §6.1) | Lucide no longer ships brand icons, and Tabler's shapes differ |
 | Nav links with too little vertical padding for 44px | 8px padding on 20px text (45px tall), with the 32px marker centered | 44px hit areas |
 | Photo `<img>` in the preview | Same crop values, plus `sizes` set for the 1.6 scale, with a pre-cropped file allowed | Keeps the zoomed image sharp; a pre-crop sends fewer bytes |
 | Company name as an h3 inside `<summary>` | Plain text in the summary | Headings inside summaries are announced unreliably by screen readers |
@@ -855,7 +870,7 @@ These are notes, not code.
 | No skip link | Skip link at 1200px and up only | Five rail links come before the content on desktop. Below 1200px there is no nav to skip. |
 | Rail script runs at every width | Gated by `matchMedia("(min-width: 1200px)")` | No scroll work when the rail is hidden |
 | No scroll correction when the exclusive accordion closes a card above | Scroll the opened summary into view if it moves off screen | Otherwise a click can push the content out of view |
-| Simple Icons v13 from a CDN, `openjdk` and `css3` | Pinned v16.35.0, inlined, `java` and `css` (Devicon `css3` as the fallback) | Performance; the correct Java logo |
+| Simple Icons v13 from a CDN, `openjdk` and `css3` | Simple Icons pinned v16.35.0, inlined; Java and CSS from Devicon v2.16.0 (`java-plain`, `css3-plain`), inlined, `currentColor` | Performance. Simple Icons v16.35.0 has no `java`, and the Devicon cup is more recognizable than `openjdk`; the Devicon CSS shield pairs with the HTML5 shield (decisions of 2026-10-18). |
 | `.btn` styles and `.edu` styles | Removed | No button and no Education section |
 | Highlight lines about 85 characters | Kept | Matches the approved preview. It slightly exceeds the 80-character guideline; I am flagging it rather than changing it. |
 
@@ -868,7 +883,7 @@ All six questions were answered by the owner and are recorded in `docs/decisions
 | # | Question | Answer | Where applied |
 |---|---|---|---|
 | 1 | Is losing GPA and Dean's List from the site intended? | Yes | §11 |
-| 2 | Keep or remove `education` and `skills`? | Keep both, unrendered. `technologies` is added alongside them. | §11 |
+| 2 | Keep or remove `education` and `skills`? | Keep both, unrendered. `technologies` is added alongside them. *Superseded (2026-10-18): `skills` is removed; `education` stays.* | §11 |
 | 3 | Shorten `basics.summary`? | No, it stays as is | §4.2 (no change) |
 | 4 | Technologies layout on mobile | Rows of 3, 4 and 3 | §4.3 |
 | 5 | Company logo format | Originally PNG at least 80 x 80px. Now supplied as 100 x 100 JPGs. | §11 #4, §6.4 |
@@ -891,17 +906,17 @@ Scouted on 2026-10-16 with the read-only 21st tools. **This section changes noth
 | Spec component | Pick | Closest candidate checked, and why it was rejected |
 |---|---|---|
 | Rail nav (§6.6) | None | [Table of Contents](https://21st.dev/@mohammadshehadeh/components/toc) (mohammadshehadeh). Code checked: no npm dependencies, only shadcn's `cn` helper (`clsx` + `tailwind-merge`). Its smooth scroll respects reduced motion and it sets `aria-current`. But its active-section rule (first heading below a 56px offset, throttled to 200ms) is not the spec's 35% line with the bottom-of-page rule, it has no `toggle` hook and no `matchMedia` gate, its marker is a per-link border rather than the sliding 3 x 32px bar, and its label is a mono, all-caps, 10px eyebrow. Keeping it would mean rewriting almost all of it. |
-| Hero layout (§4.1, §5) | None | [Hero Block](https://21st.dev/@moumensoliman/components/hero-block-shadcnui) and [Portfolio Hero](https://21st.dev/@waleedkibhen/components/portfolio-hero). Both animate on load (staggered or blur-in text, an animated avatar, a scroll cue). §7 rule 5 says nothing in the hero animates on load, and the photo crop is specific to this photo. |
-| Hero links (§6.1) | None | [Social Media](https://21st.dev/@ravikatiyar162/components/social-media) and [Social Icons](https://21st.dev/@jatin-yadav05/components/social-icons). They add hover backgrounds, revealed labels or tooltips. §6.1 forbids a box around the icons and any tooltip, and requires Tabler outline glyphs with the -6° tilt. |
-| Technology item (§6.3) | None | [Integration Logos Grid](https://21st.dev/@ziegfiroyt/components/feature135) and [Pixel Logo Grid](https://21st.dev/@smammar/components/pixel-logo-grid). These are "trusted by" logo clouds with hover effects (grayscale, canvas shimmer in brand colors). §6.3 has no interaction and uses Charcoal logos, and the 3/4/3 mobile grid is specific to this list. |
-| Timeline accordion card (§6.4) | None | [Experience Timeline](https://21st.dev/@shadcnui-blocks/components/timeline-02) (shadcnui-blocks). It is a static list with tech badges and is not collapsible. The spec needs native `<details name="experience">` with one card open, the dot that matches the open card, per-entry connectors and scroll correction. The accordion candidates ([Accordion](https://21st.dev/@micka_design/components/accordion), [Interactive Accordion](https://21st.dev/@jatin-yadav05/components/interactive-accordion)) pull in Radix and `framer-motion` and animate height. §6.4 says expansion is not animated. |
-| Project card (§6.5) | None | [Project Card](https://21st.dev/@ravikatiyar162/components/project-card). It is built around an image with a hover zoom. The spec has no images and no card hover. |
+| Hero layout (§4.1, §5) | None | [Hero Block](https://21st.dev/@moumensoliman/components/hero-block-shadcnui) and [Portfolio Hero](https://21st.dev/@waleedkibhen/components/portfolio-hero). Both bring their own load animation (an animated avatar, a scroll cue), and the photo crop is specific to this photo. The hero's one load animation is the owner's Blur-in words, built in plain CSS (§7 rule 5). *History: when scouted, §7 rule 5 had no hero load animation; see the first update below.* |
+| Hero links (§6.1) | None | [Social Media](https://21st.dev/@ravikatiyar162/components/social-media) and [Social Icons](https://21st.dev/@jatin-yadav05/components/social-icons). They add revealed labels or tooltips. §6.1 has no tooltip, uses Tabler outline glyphs, and its soft-circle hover is a few lines of CSS. *History: when scouted, §6.1 had no hover box and a -6° tilt; both changed, see the updates below.* |
+| Technology item (§6.3) | None | [Integration Logos Grid](https://21st.dev/@ziegfiroyt/components/feature135) and [Pixel Logo Grid](https://21st.dev/@smammar/components/pixel-logo-grid). These are "trusted by" logo clouds with brand-color hover effects (grayscale, canvas shimmer). §6.3 uses Charcoal logos, a plain-CSS Lift hover, and a 3/4/3 mobile grid specific to this list. *History: when scouted, §6.3 had no hover; see the updates below.* |
+| Timeline accordion card (§6.4) | None | [Experience Timeline](https://21st.dev/@shadcnui-blocks/components/timeline-02) (shadcnui-blocks). It is a static list with tech badges and is not collapsible. The spec needs native `<details name="experience">` with one card open, the dot that matches the open card, per-entry connectors and scroll correction. The accordion candidates ([Accordion](https://21st.dev/@micka_design/components/accordion), [Interactive Accordion](https://21st.dev/@jatin-yadav05/components/interactive-accordion)) pull in Radix and `framer-motion`; §6.4 animates height in plain CSS on native `<details>`, so neither is needed. *History: when scouted, §6.4 had no height animation; see the updates below.* |
+| Project card (§6.5) | None | [Project Card](https://21st.dev/@ravikatiyar162/components/project-card). It is built around an image with a hover zoom. The spec has no images, and its Hover lift (border, -3px, shadow) is plain CSS. *History: when scouted, §6.5 had no card hover; see the updates below.* |
 | Skip link (§6.7) | None | Not searched for as a component. It is a single styled link. |
 | Footer (§6.8) | None | [Minimal Two-Column Footer](https://21st.dev/@ln-dev7/components/footer-17). It is a brand block with a link list. The spec footer is one line of copyright and a "Back to top" link. |
 
 **Update (2026-10-16):** §7 rule 5 now has a hero load animation, so the Hero layout row's "nothing animates on load" reason no longer applies. The pick stays "None": the animation is built in plain CSS from §7 rule 5, with no 21st component and no `framer-motion`.
 
-**Update (2026-10-16, owner variant picks):** the hero links now have a soft hover circle, technology items lift, project cards lift, and timeline cards animate their height (§6.1, §6.3, §6.4, §6.5). The hero tilt is dropped. The rejection reasons above that cite "no box", "the -6° tilt", "no interaction", "not animated" and "no card hover" no longer apply, but every pick stays "None": all four are plain CSS, with no Radix and no `framer-motion`.
+**Update (2026-10-16, owner variant picks):** the hero links now have a soft hover circle, technology items lift, project cards lift, and timeline cards animate their height (§6.1, §6.3, §6.4, §6.5). The hero tilt is dropped. The original rejection reasons that cited "no box", "the -6° tilt", "no interaction", "not animated" and "no card hover" no longer apply (the table above now gives the current reasons and marks the old ones as history), but every pick stays "None": all four are plain CSS, with no Radix and no `framer-motion`.
 
 **Update (2026-10-16, dark mode):** theme toggle (§6.9): pick "None". The candidates checked by metadata ([Theme Toggle](https://21st.dev/@luv-jeri_c92deb60/components/theme-toggle) with a morphing icon and page-reveal animation; [Theme Switch](https://21st.dev/@zweiundeins/components/theme-switch) with the light/dark/auto picker the owner rejected) add motion or options §6.9 doesn't have; the toggle is one button built from §6.9.
 
@@ -910,6 +925,6 @@ Scouted on 2026-10-16 with the read-only 21st tools. **This section changes noth
 - Skill tag: replaced by the technology item (§6.3).
 - Contact links row and "View Resume" button: there is no Contact section. Resume is one of the five icon-only hero links (§6.1).
 
-**Logos:** `search_logo` (svgl) was checked, but it is not proposed. The spec pins Simple Icons v16.35.0 for Technologies and Tabler for link icons (§6.1, §6.3). A query for "java" returned no results.
+**Logos:** `search_logo` (svgl) was checked, but it is not proposed. The spec pins Simple Icons v16.35.0 and Devicon v2.16.0 for Technologies and Tabler for link icons (§6.1, §6.3). A query for "java" returned no results. Simple Icons v16.35.0 has no `java` either, so Technologies uses Devicon `java-plain` (§6.3, decision of 2026-10-18).
 
 **Dependencies added by these proposals:** none.

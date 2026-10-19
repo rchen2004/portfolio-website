@@ -1,9 +1,14 @@
 {
   "basics": {
     "name": "Ryan Chen",
+    "greeting": "Hello, I'm Ryan.",
     "tagline": "Software engineer who learns fast, adapts quickly, and loves a challenging problem.",
     "summary": "I'm a Computer Science student at Northeastern, graduating in December 2026. I started programming because of video games, and that curiosity led to co-ops building API frameworks and data pipelines at Verisk and name-matching and search features at Babel Street. Outside of code, I'm usually learning a new board game, trying out a recipe, or out with friends.",
     "email": "ry.chen2004@gmail.com",
+    "image": {
+      "src": "/Professional.jpg",
+      "alt": "Ryan at the Golden Gate Bridge"
+    },
     "profiles": [
       {
         "network": "LinkedIn",
@@ -12,6 +17,10 @@
       {
         "network": "GitHub",
         "url": "https://github.com/rchen2004"
+      },
+      {
+        "network": "Instagram",
+        "url": "https://www.instagram.com/ryan.chen2"
       }
     ]
   },
@@ -27,62 +36,60 @@
       "honors": ["Dean's List"]
     }
   ],
-  "skills": {
-    "languages": [
-      "Java",
-      "Python",
-      "TypeScript",
-      "JavaScript",
-      "SQL",
-      "C++",
-      "HTML",
-      "CSS"
-    ],
-    "frameworks": [
-      "React.js",
-      "Next.js",
-      "Node.js",
-      "Express",
-      "Tailwind",
-      "Socket.io",
-      "Pandas",
-      "NumPy",
-      "JUnit",
-      "Jest"
-    ],
-    "tools": [
-      "Claude Code",
-      "GitHub Copilot",
-      "AWS S3",
-      "AWS Bedrock",
-      "AWS EC2",
-      "Docker",
-      "Jenkins",
-      "Jira",
-      "MongoDB",
-      "VS Code",
-      "Snowflake",
-      "Git",
-      "GitHub",
-      "Bitbucket",
-      "Confluence",
-      "Postman",
-      "Bamboo",
-      "Elasticsearch",
-      "OpenSearch"
-    ]
-  },
+  "technologies": [
+    {
+      "name": "Java",
+      "icon": "java"
+    },
+    {
+      "name": "Python",
+      "icon": "python"
+    },
+    {
+      "name": "TypeScript",
+      "icon": "typescript"
+    },
+    {
+      "name": "C++",
+      "icon": "cplusplus"
+    },
+    {
+      "name": "HTML",
+      "icon": "html5"
+    },
+    {
+      "name": "CSS",
+      "icon": "css"
+    },
+    {
+      "name": "SQL",
+      "icon": "database"
+    },
+    {
+      "name": "React.js",
+      "icon": "react"
+    },
+    {
+      "name": "Tailwind",
+      "icon": "tailwindcss"
+    },
+    {
+      "name": "Next.js",
+      "icon": "nextdotjs"
+    }
+  ],
   "experience": [
     {
       "company": "Babel Street",
       "title": "Software Engineer Co-op",
+      "logo": "/babelstreet_logo.jpg",
       "startDate": "2026-01",
       "endDate": "2026-06",
       "dateLabel": "Jan - Jun 2026",
       "highlights": [
         "Shipped a Region-of-Origin classifier answering an enterprise customer's top accuracy complaint, validated on 600 multi-regional names, by building its SDK endpoint, CLI, ranked top-k predictions, and license gating",
         "Fixed 4 customer-reported name-matching defects, including a cross-script false 100% match and a numeric leet-speak crash, by tracing normalization logic in the Java engine and adding regression tests",
-        "Produced multilingual person-name dictionaries of roughly 100K records in 13 languages by building Python pipelines that parse the Wikidata dump, merge OFAC-translated lists, filter by script, and deduplicate entries",
+        "Produced 13 multilingual person-name dictionaries (~100K records) covering 20+ languages by building Python pipelines that parse the Wikidata dump, merge OFAC-translated lists, filter by script, and deduplicate entries",
         "Migrated 5 repositories to Java 25, including both search plugins, by updating builds, Docker images, and Jenkins CI/CD, surfacing Solr and OpenSearch Security Manager blockers that shaped the team's runtime roadmap",
         "Corrected HTTP status codes on dynamic-config REST endpoints from 500 to 400/422 by remapping exception handling and adding integration tests, then back-ported to 5 Elasticsearch and OpenSearch release branches",
         "Placed 2nd of 8+ teams at a company hackathon by building the OFAC sanctions-screening tool for an LLM-agent vendor-vetting workflow with entity relationship graphing and risk scoring"
@@ -91,6 +98,7 @@
     {
       "company": "Verisk Analytics Inc.",
       "title": "Junior Software Developer Co-op",
+      "logo": "/verisk_analytics_logo.jpg",
       "startDate": "2025-01",
       "endDate": "2025-06",
       "dateLabel": "Jan - Jun 2025",
@@ -104,6 +112,7 @@
     {
       "company": "Scout",
       "title": "Senior Developer",
+      "logo": "/neuscout_logo.jpg",
       "startDate": "2025-09",
       "endDate": null,
       "dateLabel": "Sep 2025 - Present",
@@ -130,6 +139,7 @@
     {
       "company": "Ventus Health",
       "title": "Project Manager Assistant",
+      "logo": "/ventus.jpg",
       "startDate": "2024-06",
       "endDate": "2024-09",
       "dateLabel": "Jun - Sep 2024",

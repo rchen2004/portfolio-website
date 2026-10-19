@@ -33,6 +33,13 @@
 
 html {
   color-scheme: light;
+  scroll-padding-top: 24px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 html[data-theme="dark"] {
@@ -59,4 +66,244 @@ body {
   body {
     font-size: 1.0625rem;
   }
+}
+
+/* Spec §8: the standard focus ring. It follows the element's corners, so round controls get a round ring. */
+:focus-visible {
+  outline: 2px solid var(--color-charcoal);
+  outline-offset: 2px;
+}
+
+/* Spec §6.1 and §6.9: the 44px round icon target shared by the hero links and the theme toggle.
+   Hover sits under (hover: hover) so touch taps leave no sticky circle. */
+@utility soft-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: var(--color-charcoal);
+  text-decoration: none;
+  transition:
+    color 160ms cubic-bezier(0.2, 0, 0, 1),
+    background-color 160ms ease;
+
+  @media (hover: hover) {
+    &:hover {
+      background-color: color-mix(
+        in srgb,
+        var(--color-accent) 10%,
+        transparent
+      );
+      color: var(--color-accent);
+    }
+  }
+
+  &:active {
+    color: var(--color-accent-deep);
+  }
+}
+
+/* Spec §6.1 "Repo and project links": icon + label, underlined at every width, at least 44px tall.
+   The 4px radius rounds the focus ring (§8). */
+@utility labeled-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  border-radius: var(--radius-focus);
+  font-size: 15px;
+  line-height: 1.45;
+  font-weight: 600;
+  color: var(--color-charcoal);
+  text-decoration-line: underline;
+  text-decoration-color: var(--color-accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  transition:
+    color 120ms ease,
+    text-decoration-thickness 120ms ease;
+
+  @media (hover: hover) {
+    &:hover {
+      color: var(--color-accent);
+      text-decoration-thickness: 2px;
+    }
+  }
+
+  &:active {
+    color: var(--color-accent-deep);
+  }
+}
+
+/* Spec §7 rule 5: hero blur-in. inline-block at every motion setting, so line breaks never change. */
+.hero-word {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-word {
+    animation: hero-word 700ms cubic-bezier(0.22, 1, 0.36, 1)
+      calc(var(--i) * 45ms) backwards;
+  }
+
+  .hero-links {
+    animation: hero-links 500ms ease 700ms backwards;
+  }
+
+  /* A keyboard user never focuses an invisible link. */
+  .hero-links:focus-within {
+    animation: none;
+  }
+}
+
+/* Only the start state: the resting CSS is the end state, so nothing lingers after the animation. */
+@keyframes hero-word {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(4px);
+  }
+}
+
+@keyframes hero-links {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Spec §6.9: theme toggle. Both icons are rendered; CSS shows the one for the current theme. */
+html:not([data-theme]) .theme-toggle,
+html[data-theme="dark"] .theme-icon-moon,
+html:not([data-theme="dark"]) .theme-icon-sun {
+  display: none;
+}
+
+/* Added by ThemeToggle for 240ms during a switch only (never under reduced motion). Unlayered, so it
+   overrides utility transitions for that time. */
+html.theme-fade,
+html.theme-fade *,
+html.theme-fade *::before,
+html.theme-fade *::after {
+  transition:
+    background-color 240ms ease,
+    color 240ms ease,
+    border-color 240ms ease,
+    text-decoration-color 240ms ease,
+    box-shadow 240ms ease;
+}
+
+/* Timeline (spec §6.4, §7). The dot sits in the list's left padding, centered on the logo. Each entry but the
+   last draws a connector from its dot center to the next dot center (its own height + the list gap), so the
+   line ends exactly at the last dot and follows the card height animation every frame. */
+.timeline .dot {
+  position: absolute;
+  left: -36px;
+  top: 39px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--color-charcoal);
+}
+
+.timeline .entry:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: -31px;
+  top: 45px;
+  width: 2px;
+  height: calc(100% + 20px);
+  background-color: var(--color-rule);
+}
+
+@media (min-width: 45rem) {
+  .timeline .dot {
+    left: -48px;
+    top: 43px;
+  }
+
+  .timeline .entry:not(:last-child)::before {
+    left: -43px;
+    top: 49px;
+    height: calc(100% + 24px);
+  }
+}
+
+.timeline .entry:has(> details[open]) > .dot {
+  background-color: var(--color-accent);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--color-accent) 18%, transparent);
+}
+
+/* Unlayered, so it beats the global 2px offset: the ring clears the logo and the text (§8). */
+.timeline summary:focus-visible {
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .timeline .dot {
+    transition:
+      background-color 200ms ease,
+      box-shadow 200ms ease;
+  }
+
+  /* Owner-approved animated height. Browsers without ::details-content or interpolate-size snap (native). */
+  :root {
+    interpolate-size: allow-keywords;
+  }
+
+  /* The clip margin keeps the repo links' focus ring (2px offset + 2px) visible at the content box edges. */
+  .timeline details::details-content {
+    block-size: 0;
+    overflow: clip;
+    overflow-clip-margin: 4px;
+    transition:
+      block-size 320ms cubic-bezier(0.2, 0, 0, 1),
+      content-visibility 320ms allow-discrete;
+  }
+
+  .timeline details[open]::details-content {
+    block-size: auto;
+  }
+
+  /* Reveal (§7): TimelineScript adds these only to entries below the viewport at load. */
+  .timeline .reveal-pending {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  .timeline .reveal-shown {
+    transition:
+      opacity 320ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+/* Project cards (spec §6.5, §7). Hover is read on the still <li> and moves the <article>, so the hover area
+   never shifts and the bottom edge doesn't flicker. Not on :focus-within (keyboard gets the link's ring only). */
+.projects > li > article {
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+@media (hover: hover) {
+  .projects > li:hover > article {
+    border-color: var(--color-pebble);
+    box-shadow: var(--shadow-card-hover);
+  }
+}
+
+/* Reduced motion: no movement; the border and shadow change above stays. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .projects > li:hover > article {
+    transform: translateY(-3px);
+  }
+}
+
+/* Spec §6.7: <main> takes focus from the skip link and other #top links only as a target, so it draws no ring.
+   Beats the global :focus-visible rule on specificity. */
+main:focus {
+  outline: none;
 }

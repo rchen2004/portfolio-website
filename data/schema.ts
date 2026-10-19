@@ -10,13 +10,30 @@ const link = z.strictObject({
   url: z.url(),
 });
 
-// src is a site-root path served from public/, e.g. "/images/headshot.jpg"; alt is required for accessibility.
+// A site-root path served from public/, e.g. "/Professional.jpg".
+const sitePath = z
+  .string()
+  .regex(/^\/\S+$/, 'Use a site-root path, e.g. "/Professional.jpg"');
+
+// alt is required for accessibility.
 const image = z.strictObject({
-  src: z
-    .string()
-    .regex(/^\/\S+$/, 'Use a site-root path, e.g. "/images/headshot.jpg"'),
+  src: sitePath,
   alt: z.string().min(1),
 });
+
+// Icon keys: Simple Icons slugs, except "java" and "css" (Devicon) and "database" (Lucide, for SQL). Frontend maps each key to an inlined SVG.
+const technologyIcon = z.enum([
+  "java",
+  "python",
+  "typescript",
+  "cplusplus",
+  "html5",
+  "css",
+  "database",
+  "react",
+  "tailwindcss",
+  "nextdotjs",
+]);
 
 // "YYYY-MM" strings compare correctly as plain strings.
 const endNotBeforeStart = (d: { startDate: string; endDate: string | null }) =>
@@ -28,12 +45,17 @@ const endBeforeStartError = {
 
 const basics = z.strictObject({
   name: z.string().min(1),
+  greeting: z.string().min(1),
   tagline: z.string().min(1),
   summary: z.string().min(1),
   email: z.email(),
   image: image.optional(),
+  // Rendered in array order; Frontend maps network to an icon.
   profiles: z.array(
-    z.strictObject({ network: z.string().min(1), url: z.url() }),
+    z.strictObject({
+      network: z.enum(["LinkedIn", "GitHub", "Instagram"]),
+      url: z.url(),
+    }),
   ),
 });
 
@@ -57,6 +79,7 @@ const experience = z
     dateLabel: z.string().optional(), // override; otherwise derived from dates
     highlights: z.array(z.string().min(1)).min(1),
     links: z.array(link).optional(),
+    logo: sitePath.optional(), // decorative: the company name sits beside it
   })
   .refine(endNotBeforeStart, endBeforeStartError);
 
@@ -69,18 +92,19 @@ const project = z
     dateLabel: z.string().optional(),
     highlights: z.array(z.string().min(1)).min(1),
     links: z.array(link).optional(),
-    image: image.optional(), // screenshot
   })
   .refine(endNotBeforeStart, endBeforeStartError);
+
+const technology = z.strictObject({
+  name: z.string().min(1),
+  icon: technologyIcon,
+});
 
 export const resumeSchema = z.strictObject({
   basics,
   education: z.array(education),
-  skills: z.strictObject({
-    languages: z.array(z.string()),
-    frameworks: z.array(z.string()),
-    tools: z.array(z.string()),
-  }),
+  // Curated, ordered list shown as "Technologies"; the full skills list lives only in resume.pdf.
+  technologies: z.array(technology).min(1),
   experience: z.array(experience),
   projects: z.array(project),
 });
@@ -91,3 +115,6 @@ export type Project = Resume["projects"][number];
 export type Education = Resume["education"][number];
 export type Link = z.infer<typeof link>;
 export type Image = z.infer<typeof image>;
+export type Technology = z.infer<typeof technology>;
+export type TechnologyIcon = z.infer<typeof technologyIcon>;
+export type Profile = Resume["basics"]["profiles"][number];

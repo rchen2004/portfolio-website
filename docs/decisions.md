@@ -67,7 +67,7 @@
 - **`featured` removed (approved with the spec at the Phase 2 checkpoint, 2026-10-16):** Every experience uses one card style, with no featured or compact variant, ordered by date (see "Experience"). The `featured` flag is removed from `data/schema.ts` and `resume.json` (Backend; removed in Phase 3, 2026-10-16). Spec §6.4 and §11 #6. This supersedes the Phase 0 "Featured experiences" entry, the Phase 1 "`featured`" entry and "Compact experiences" above.
 - **Phase 2 checkpoint:** Approved by owner (2026-10-16). Merged into `main` in PR #2 (merge commit `76c7058`).
 
-# Phase 3 Decisions (in progress)
+# Phase 3 Decisions (2026-10-16 to 2026-10-17)
 
 - **App directory (2026-10-16):** The app moves from the root `app/` to `src/app/`. The `@/*` alias stays pointed at `./*`, so existing imports keep working.
 - **Formatter (2026-10-16):** Prettier plus `prettier-plugin-tailwindcss` (two dev dependencies, approved).
@@ -76,7 +76,7 @@
 - **Tooling defaults (2026-10-16):** npm (the existing lockfile), GitHub Actions for CI (type-check, lint, format check, `check:data`, build), and Node 24 pinned in `engines` and `.nvmrc`.
 - **Deploys (2026-10-16):** `main` is the production branch. Every other branch and PR gets a preview URL, and previews stay behind Vercel login. The custom domain waits until Phase 7.
 
-# Phase 4 Decisions (in progress)
+# Phase 4 Decisions (2026-10-18)
 
 - **Java icon (2026-10-18):** Technologies uses the Simple Icons `openjdk` logo for Java. Simple Icons v16.35.0 has no `java` icon (Design checked: 404). The visible name stays "Java". Spec §6.3, §13 and §15. *Superseded (2026-10-18): see "Java logo: Devicon `java-plain`".*
 - **Resume PDF keeps the phone (2026-10-18, owner choice):** `/resume.pdf` keeps the phone number. This is the one exception to the Phase 1 "Phone" rule: the phone is not shown on any page or in `resume.json`, only inside the downloadable PDF.
@@ -114,3 +114,8 @@
   4. "Theme toggle placement until the rail exists" is marked expired.
 
   No color changed; contrast is unchanged in both themes.
+
+# Phase 5 Decisions (2026-10-19)
+
+- **Project detail pages: not built (owner choice, 2026-10-19).** The owner chose to skip them. Project cards stay non-clickable; only their GitHub links are interactive (spec §6.5). Revisit only if the owner asks.
+- **Phase 5 complete.** Its other two items were already built in Phase 4: dark mode with the toggle (spec §1.1, §6.9) and the subtle motion (spec §7). Nothing else is approved for Phase 5, so the project moves to Phase 6.

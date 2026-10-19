@@ -103,7 +103,7 @@ Reviewed the 76 PNGs in the session scratchpad `qa6/` (HEAD 3d40139) against spe
 The ring is dropped because it is a mix of the Accent color, which is not a system color. The open card is marked by Highlight on its dot, and the chevron still shows it too.
 
 **Nice-to-have**
-- The spec text in §6.7 is wrong: the focused skip link also overlaps the rail's name box at 1440, by about 18 x 7px (`focus-skip-link-*-1440.png`). It does not cover the "Ryan Chen" text, and the skip link is the top layer. Only the spec wording needs fixing, which needs the owner.
+- ~~The spec text in §6.7 is wrong: the focused skip link also overlaps the rail's name box at 1440, by about 18 x 7px (`focus-skip-link-*-1440.png`). It does not cover the "Ryan Chen" text, and the skip link is the top layer. Only the spec wording needs fixing, which needs the owner.~~ Closed 2026-10-19: the owner kept the skip link as built; §6.7 now describes the overlap at 1200px and up, and `decisions.md` has "Skip link overlap: kept, spec wording fixed".
 - In the full-page shots, some company logos are blank (Babel Street, Verisk and Ventus at 320; Verisk and Ventus at `full-dark-390`). That comes from `next/image` lazy loading during a full-page capture. They load in `nojs-light-390`. Confirm once by scrolling on a real phone.
 
 **Not checked:** real Safari and iOS, Firefox, a screen reader, Windows High Contrast on real hardware (only Chrome's emulation), the favicon in a real tab at 16px (light and dark), and the ICO in Safari.

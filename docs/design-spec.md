@@ -546,7 +546,7 @@ Unmarked slugs are Simple Icons.
   - It is visually hidden until focused. When focused, it appears at the top left: White background, Charcoal text, 12px horizontal and 8px vertical padding, the focus ring, at least 44px tall.
   - **Type:** the §6.1 labeled-link style without an icon: 15px/600, Charcoal, 1px Accent underline at a 4px offset; on hover, Accent and a 2px underline. Contrast on White: Charcoal 16.1:1 light / 13.3:1 dark; Accent underline 5.5:1 / 5.0:1 (§9.1).
   - **Focused position:** `position: fixed`, `top: max(16px, env(safe-area-inset-top))`, `left: max(16px, env(safe-area-inset-left))`, above the rail (`z-index: 10`), so it shows from any scroll position.
-  - **Accepted overlap:** at exactly 1200px, the focused link overlaps the rail's name row by 1px. It is the topmost, opaque layer, so the focused element is never obscured (WCAG 2.4.11), and it lasts only while focused. At wider screens there is no overlap.
+  - **Accepted overlap (owner, 2026-10-19):** at 1200px and up, the focused link overlaps the rail name link's 44px box, by about 18 x 7px at 1440. It never covers the "Ryan Chen" text, it is the topmost, opaque layer, and it shows only while it has focus. The focused element is never obscured, so there is no WCAG 2.4.11 issue. The build does not change.
   - It exists because the rail's five links (the name and four sections) come before the content.
 - **Below 1200px** it is not rendered (`display: none`). With no nav, `<main>` is already the first content, so a skip link would skip nothing.
 

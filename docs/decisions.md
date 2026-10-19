@@ -119,3 +119,21 @@
 
 - **Project detail pages: not built (owner choice, 2026-10-19).** The owner chose to skip them. Project cards stay non-clickable; only their GitHub links are interactive (spec §6.5). Revisit only if the owner asks.
 - **Phase 5 complete.** Its other two items were already built in Phase 4: dark mode with the toggle (spec §1.1, §6.9) and the subtle motion (spec §7). Nothing else is approved for Phase 5, so the project moves to Phase 6.
+
+# Phase 6 Decisions (in progress)
+
+Owner answers from 2026-10-19.
+
+- **Font: demo first, no spec change yet (2026-10-19, owner choice):** The owner is "not sure" what felt off and wants to compare alternatives before deciding. The coordinator builds a throwaway demo artifact outside the repo that compares four options: Figtree as built, Figtree with lighter headings (600), Instrument Sans and Hanken Grotesk. The spec and `globals.css` do not change until the owner picks one.
+- **Java logo: thicker Devicon cup (2026-10-19, owner approved):** The Devicon `java-plain` cup gets a `currentColor` stroke so it reads heavier. The exact stroke width is picked from the demo. This updates "Java logo: Devicon `java-plain`" (Phase 4) and is applied to spec §6.3, §13 and §15 once the width is chosen.
+- **Test tools (2026-10-19, owner approved):** Lighthouse and axe-core run as one-off `npx` commands. Neither is added to `package.json`. Lighthouse runs once, not in CI.
+- **SEO ownership (2026-10-19, owner-approved exception to `CLAUDE.md`):** Backend builds the metadata export in `src/app/layout.tsx`, plus `src/app/opengraph-image.tsx`, `src/app/sitemap.ts`, `src/app/robots.ts`, the icon files, and the JSON-LD builder in `src/lib/`. `CLAUDE.md` gives `src/app/` to Frontend; this exception covers only these files.
+- **Title and description (2026-10-19, owner approved):** The page title is `basics.name` ("Ryan Chen") and the meta description is `basics.tagline`. No new text is written.
+- **Defaults accepted (2026-10-19, owner approved):**
+  - The Open Graph image is generated from `resume.json`.
+  - No script Content Security Policy.
+  - The email stays out of the JSON-LD.
+  - The dark project-card shadow and the Verisk timeline dot at 320px stay as built.
+  - The owner tests Safari on their phone against a preview, using Frontend's checklist.
+  - Backend makes a pre-cropped hero photo if Frontend's image work calls for it (allowed by "Hero photo crop", Phase 2).
+  - One `SITE_URL` constant, read from `VERCEL_PROJECT_PRODUCTION_URL`, falling back to `rchen2004.vercel.app`.

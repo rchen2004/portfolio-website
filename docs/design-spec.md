@@ -355,7 +355,7 @@ See §4.2. The section has `aria-labelledby` pointing at its h2.
 
 | Name | Icon |
 |---|---|
-| Java | Devicon `java-plain` (the cup) |
+| Java | Devicon `java-plain` (the cup), plus a 0.5px `currentColor` stroke |
 | Python | `python` |
 | TypeScript | `typescript` |
 | C++ | `cplusplus` |
@@ -370,6 +370,7 @@ Unmarked slugs are Simple Icons.
 
 **Build notes:**
 - **Java:** Devicon `java-plain`, the coffee cup (owner left the choice to the orchestrator, 2026-10-18). It is filled, widely recognized as Java, and from the same set as the CSS shield. The data key is `java`. The visible name stays "Java".
+  - **Stroke (owner decision, 2026-10-19):** the cup alone reads light, so its path gets `stroke="currentColor"`, `stroke-width="1.78"` and `stroke-linejoin="round"`. That is 0.5px at the 36px render (0.5 × 128 / 36 path units). It works with either rendering below, since the stroke scales with the path. Do not use `non-scaling-stroke`. Only the Java path gets a stroke; CSS and the other logos stay fill-only. The stroke follows the hover Accent with the fill through `currentColor`, so contrast is unchanged (§9.1).
 - **CSS:** Devicon `css3-plain`, so it pairs with the HTML5 shield (owner decision, 2026-10-18). Simple Icons' `css` tile did not pair with it. The data key stays `css`.
 - **Devicon paths:** both are one path in a 128-unit box (`viewBox="0 0 128 128"`). Remove the source's brand `fill` and use `fill="currentColor"`, like the Simple Icons logos. Render them from the 128-unit box: either give the `<svg>` `viewBox="0 0 128 128"`, or, inside the shared 24-unit `TechIcon`, wrap the path in `<g transform="scale(0.1875)">`. Note the source and version in a code comment.
 - **SQL:** Lucide is a stroke icon. Render it at 36px with stroke width 2 in Lucide's 24-unit grid, which is 3px at 36px. Do not use `non-scaling-stroke` here (unlike the link icons in §6.1), so its visual weight stays close to the filled logos.
@@ -870,7 +871,7 @@ These are notes, not code.
 | No skip link | Skip link at 1200px and up only | Five rail links come before the content on desktop. Below 1200px there is no nav to skip. |
 | Rail script runs at every width | Gated by `matchMedia("(min-width: 1200px)")` | No scroll work when the rail is hidden |
 | No scroll correction when the exclusive accordion closes a card above | Scroll the opened summary into view if it moves off screen | Otherwise a click can push the content out of view |
-| Simple Icons v13 from a CDN, `openjdk` and `css3` | Simple Icons pinned v16.35.0, inlined; Java and CSS from Devicon v2.16.0 (`java-plain`, `css3-plain`), inlined, `currentColor` | Performance. Simple Icons v16.35.0 has no `java`, and the Devicon cup is more recognizable than `openjdk`; the Devicon CSS shield pairs with the HTML5 shield (decisions of 2026-10-18). |
+| Simple Icons v13 from a CDN, `openjdk` and `css3` | Simple Icons pinned v16.35.0, inlined; Java and CSS from Devicon v2.16.0 (`java-plain`, `css3-plain`), inlined, `currentColor`; the Java cup also gets a 0.5px `currentColor` stroke | Performance. Simple Icons v16.35.0 has no `java`, and the Devicon cup is more recognizable than `openjdk`; the Devicon CSS shield pairs with the HTML5 shield (decisions of 2026-10-18). The stroke makes the thin cup read closer to its neighbors' weight (decision of 2026-10-19). |
 | `.btn` styles and `.edu` styles | Removed | No button and no Education section |
 | Highlight lines about 85 characters | Kept | Matches the approved preview. It slightly exceeds the 80-character guideline; I am flagging it rather than changing it. |
 
@@ -925,6 +926,6 @@ Scouted on 2026-10-16 with the read-only 21st tools. **This section changes noth
 - Skill tag: replaced by the technology item (§6.3).
 - Contact links row and "View Resume" button: there is no Contact section. Resume is one of the five icon-only hero links (§6.1).
 
-**Logos:** `search_logo` (svgl) was checked, but it is not proposed. The spec pins Simple Icons v16.35.0 and Devicon v2.16.0 for Technologies and Tabler for link icons (§6.1, §6.3). A query for "java" returned no results. Simple Icons v16.35.0 has no `java` either, so Technologies uses Devicon `java-plain` (§6.3, decision of 2026-10-18).
+**Logos:** `search_logo` (svgl) was checked, but it is not proposed. The spec pins Simple Icons v16.35.0 and Devicon v2.16.0 for Technologies and Tabler for link icons (§6.1, §6.3). A query for "java" returned no results. Simple Icons v16.35.0 has no `java` either, so Technologies uses Devicon `java-plain` with a 0.5px `currentColor` stroke (§6.3, decisions of 2026-10-18 and 2026-10-19).
 
 **Dependencies added by these proposals:** none.

@@ -307,3 +307,30 @@ html.theme-fade *::after {
 main:focus {
   outline: none;
 }
+
+/* Forced colors drop background colors, which would hide the timeline dots, the connector and the rail marker.
+   Unlayered, so it beats the bg-accent utility on the marker. */
+@media (forced-colors: active) {
+  .timeline .dot,
+  .timeline .entry:not(:last-child)::before,
+  .rail-marker {
+    forced-color-adjust: none;
+  }
+
+  .timeline .dot {
+    background-color: CanvasText;
+  }
+
+  .timeline .entry:has(> details[open]) > .dot {
+    background-color: Highlight;
+    box-shadow: none;
+  }
+
+  .timeline .entry:not(:last-child)::before {
+    background-color: GrayText;
+  }
+
+  .rail-marker {
+    background-color: Highlight;
+  }
+}

@@ -171,3 +171,70 @@ Skills used: `frontend-design` (preloaded). No new dependencies.
 - Desktop still gets the 640w file, not 384w: the bare `100vw` makes Next drop every width below 640. Writing `calc(100vw)` would bring back 384w (about 21 KB, about -21 KB). That is a one-token change; does the owner want it?
 
 - **Follow-up (owner approved):** `sizes` is now `(min-width: 720px) 280px, calc(100vw)`; `object-position` stays at 76%. All five checks pass and the build prints no `sizes` warnings. From `next start`: 1440 at DPR 1 picks `w=384`, 20.7 KB (was 42.0 KB); 390 at DPR 2 picks `w=828`, 58.1 KB (unchanged). One Lighthouse 13.5.0 run each: mobile 97/100/100/100 (LCP 2.58 s), desktop 100/100/100/100 (LCP 0.53 s).
+
+## QA screenshots for Design, and Safari-on-iPhone checklist, 2026-10-19
+
+Agent: Frontend. Branch `phase-6-polish` at 3d40139. No source files changed. I ran `next build` and `next start`, and took the screenshots in Chrome 155 headless over CDP. The server and Chrome were stopped afterwards. `AGENTS.md` was not touched.
+
+### What I did
+
+- I captured 76 PNGs in the scratchpad `qa6/` folder, with an `index.md` there: full pages at 9 widths in both themes, the hover, focus, active, open and mid-animation states at 390 and 1440, a no-JS page, 200% zoom and forced colors. Every shot listed in the task was captured.
+- **No-JS check:** `<html>` gets no `data-theme`, both toggles are `display: none`, and nothing in `<main>` is at opacity 0.
+- **Forced colors** (Chrome's emulation works headless): the timeline dots and connector and the rail's current-section marker disappear, because they are background colors. Text, borders, underlines, icons and focus rings remain. Design decides whether that matters.
+
+### Safari-on-iPhone checklist (owner, on a Vercel preview)
+
+1. **Hero blur-in:** on first load the words blur in one after another and the links fade in after them. Look for no flicker, no layout jump, and no text left blurred.
+2. **Theme toggle:** tap the moon and the page goes dark with a short fade. Reload or reopen the tab: it should still be dark. Tap again and it returns to light.
+3. **Opening a timeline card:** tap Babel Street. It opens and Scout closes. Safari will probably snap open with no height animation; that is acceptable. The chevron should still rotate.
+4. **Scroll correction:** scroll down, then tap Ventus (the last card) while Scout is open above. When it settles, Ventus's header should be in view, not pushed above the top of the screen.
+5. **No sticky hover:** after tapping a hero icon, the theme toggle, a technology or a repo link and coming back, there should be no leftover Accent circle, color or lift.
+6. **Notch and corner toggle:** in portrait and in landscape, the corner moon or sun should sit clear of the notch or Dynamic Island and the rounded corners. In landscape, check that the side text is not under the notch either.
+7. **Link preview:** paste the URL into Messages (or share it). The card should show "Ryan Chen", the tagline and the light preview image, not a blank or cropped one.
+8. **Home Screen icon:** Share, then "Add to Home Screen". The icon should be the Charcoal tile with the "R", and have no black corners.
+9. **Private Browsing:** open the site in a private tab. It loads light and the toggle still works for the visit. It may not be remembered after closing, which is expected.
+10. **Smooth scroll and Back to top:** "Back to top" scrolls to the top and the page does not jump. With Settings > Accessibility > Motion > Reduce Motion on, the scroll jumps instantly, the hero shows with no blur-in, and the cards snap open.
+
+### Files changed
+
+- `docs/phase-notes/phase-6-frontend.md` (this section)
+
+Skills used: `frontend-design` (preloaded). No new dependencies; nothing installed.
+
+### Open questions
+
+- Forced colors hides the timeline dots and connector and the rail marker. Should they get a `forced-colors` fallback (for example `CanvasText`), or is that acceptable? This is for Design.
+
+## Forced-colors fix and logo check (Design QA must-fix), 2026-10-19
+
+Agent: Frontend. Branch `phase-6-polish`. Not committed. `AGENTS.md` was not touched. The server and headless Chrome were stopped afterwards.
+
+### What I did
+
+- **Forced colors:** I added Design's `@media (forced-colors: active)` block, unlayered, at the end of `src/app/globals.css`. Design's selectors already match the code: the connector is `.timeline .entry:not(:last-child)::before`, the dot is `.timeline .dot`, and the marker is `.rail-marker`. Its `bg-accent` utility is layered, so the unlayered rule wins. In the recaptured `forced-colors-{light,dark}-1440.png`:
+  - the dots show in CanvasText;
+  - the open Scout dot and the rail marker show in Highlight;
+  - the connector shows in GrayText, which Chrome's emulated black palette draws in green.
+- **Normal mode is unchanged:** I compared all 18 full pages pixel by pixel against the shots taken before the fix, using the same capture method.
+  - At 320 and 390 they are identical.
+  - At the other widths the only differences are inside the hero photo's rectangle (for example cols 1010 to 1289, rows 56 to 405 at 1440). The mean difference is 0.32 out of 255 and the largest is 7. Nothing outside the photo changed.
+  - A second capture on the same build is identical, so the photo difference comes from the image being re-encoded after the rebuild, not from the CSS. The new rule only applies inside the forced-colors media query.
+- **Logos:** the logos are fine in normal use. The blank logos came from how the capture works. `next/image` lazy-loads by default, and Chrome's beyond-the-viewport capture does not trigger lazy loading.
+  - I recaptured all 18 full pages and the 4 Ventus-open shots after scrolling through each page first.
+  - Every `<img>` reported loaded. Babel Street, Verisk and Ventus show at 320 and 390 in both themes.
+  - I did not change any loading behavior.
+
+### Checks
+
+`typecheck`, `lint`, `format:check`, `check:data` and `build`: see the summary returned to the coordinator. All passed.
+
+### Files changed
+
+- `src/app/globals.css` (the forced-colors block)
+- `docs/phase-notes/phase-6-frontend.md` (this section)
+
+Skills used: `frontend-design` (preloaded). No new dependencies.
+
+### Open questions
+
+- None.

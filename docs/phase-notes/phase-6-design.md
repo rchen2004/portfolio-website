@@ -70,4 +70,42 @@ Visual QA of the built site against `docs/design-spec.md`, in light and dark. Re
 - Spec §5: source `/hero.jpg`, `object-position: 50% 76%`, `fill` + `preload` + `fetchPriority="high"`, `sizes` `(min-width: 720px) 280px, calc(100vw)`. §12 photo line updated to match. "Hero photo: pre-cropped" entry in `decisions.md` updated to these values.
 - **Result:** photo bytes 58KB on phones, down from 210KB; Lighthouse 97 mobile and 100 desktop, with the mobile LCP limited by render, not the photo.
 
+## Full visual QA (2026-10-19)
+
+Reviewed the 76 PNGs in the session scratchpad `qa6/` (HEAD 3d40139) against spec §1 to §16, and read `globals.css` and `Experience.tsx` where a screenshot left a doubt. Read-only: no source or spec edits.
+
+**Pass or fail by area**
+
+| Area | Result |
+|---|---|
+| Layout at 320, 390, 600, 720, 768, 1199, 1200, 1440, 1920 | Pass. Rail appears at 1200 only; Technologies grid is 3/4/3 below 600px and 5+5 from 600px; the hero switches at 720px; the timeline header wraps as §6.4 says |
+| Type, spacing, tokens, both themes | Pass |
+| Hover, focus, pressed | Pass: soft circle, lift, card border and shadow, 2px underline, round 52px rings, 4px-offset summary ring, Accent deep on `:active` |
+| Open card, mid-animation, blur-in at 300ms | Pass. The connector ends at the last dot when Ventus is open |
+| No JS, 200% zoom | Pass. Both toggles are hidden with no JS, and the 200% zoom layout matches 720 |
+| Forced colors | **Fail**: the dots, the connector and the rail marker disappear |
+| Phase 6 changes (pre-cropped photo, Java stroke) | Pass, no regression. The favicon is not in the screenshots |
+
+**Must-fix (Frontend, `globals.css`, unlayered so it beats `bg-accent`).** Shown in `forced-colors-light-1440.png` and `forced-colors-dark-1440.png`:
+
+```css
+@media (forced-colors: active) {
+  .timeline .dot,
+  .timeline .entry:not(:last-child)::before,
+  .rail-marker { forced-color-adjust: none; }
+  .timeline .dot { background-color: CanvasText; }
+  .timeline .entry:has(> details[open]) > .dot { background-color: Highlight; box-shadow: none; }
+  .timeline .entry:not(:last-child)::before { background-color: GrayText; }
+  .rail-marker { background-color: Highlight; }
+}
+```
+
+The ring is dropped because it is a mix of the Accent color, which is not a system color. The open card is marked by Highlight on its dot, and the chevron still shows it too.
+
+**Nice-to-have**
+- The spec text in §6.7 is wrong: the focused skip link also overlaps the rail's name box at 1440, by about 18 x 7px (`focus-skip-link-*-1440.png`). It does not cover the "Ryan Chen" text, and the skip link is the top layer. Only the spec wording needs fixing, which needs the owner.
+- In the full-page shots, some company logos are blank (Babel Street, Verisk and Ventus at 320; Verisk and Ventus at `full-dark-390`). That comes from `next/image` lazy loading during a full-page capture. They load in `nojs-light-390`. Confirm once by scrolling on a real phone.
+
+**Not checked:** real Safari and iOS, Firefox, a screen reader, Windows High Contrast on real hardware (only Chrome's emulation), the favicon in a real tab at 16px (light and dark), and the ICO in Safari.
+
 3. ~~**Font and Java cup:** after the owner picks a font and a stroke width, I update spec §1.2 (type) and §6.3, §13 and §15 (Java), with the related `decisions.md` entries.~~ Closed 2026-10-19: Figtree kept (no §1.2 change); Java stroke 0.5px applied to §6.3, §13 and §15.

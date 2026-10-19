@@ -133,3 +133,41 @@ Skills used: `frontend-design` (preloaded). No new dependencies.
 
 - Does the owner want the pre-crop (fix 1), which Backend makes, or the `sizes`-only fix (2)?
 - Fix 4 touches config Backend owns.
+
+## Pre-cropped hero photo (audit fixes 1 and 3), 2026-10-19
+
+Agent: Frontend. Branch `phase-6-polish`. Uses Backend's uncommitted `public/hero.jpg` (1350x1688) and `basics.image.src: "/hero.jpg"`. Not committed. `AGENTS.md` was not touched. I stopped the server and every headless Chrome I started.
+
+### What I did
+
+- `src/components/Hero.tsx`: removed the transform and `transform-origin`. Kept `fill`, `object-cover` and the frame (4:3 below 720px, 4:5 at 720px and up). Set `sizes="(min-width: 720px) 280px, 100vw"` and added `fetchPriority="high"` next to `preload`. The preload `<link>` now carries `fetchpriority="high"` too.
+- **`object-position` is `50% 76%`, not 78%.** I compared the 4:3 frame at 390 pixel by pixel with the old crop (`light-390.png`) at 75 to 80%. The mean absolute difference was 10.4 at 75%, **4.6 at 76%**, 10.5 at 77%, 14.2 at 78% and 19.1 at 80%. A difference of 4.6 is resampling noise; the 4:5 frame at 1440 scores 4.59 against the old crop. At 78% the face sits visibly higher than before. By eye, 76% gives the same face position and zoom as the old crop at both widths.
+- Shots (scratchpad `shots/`): `hero-precrop-{390,1440}.png`, plus `cmp-{390,1440}.png` side-by-side images.
+
+### CI checks
+
+`typecheck`, `lint`, `format:check`, `check:data` and `build` all pass (run after the 76% change).
+
+### Lighthouse 13.5.0, Chrome 155 headless, median of 3, light (scratchpad `audit2/`)
+
+| Preset  | Perf / A11y / BP / SEO | LCP (element: hero `<img>`)   | Total transfer          |
+| ------- | ---------------------- | ----------------------------- | ----------------------- |
+| Mobile  | 97 / 100 / 100 / 100   | 2.58 s (was 2.54 s)           | 256 KB (was 317 KB)     |
+| Desktop | 100 / 100 / 100 / 100  | 0.57 s (was 0.55 s)           | 246 KB (was 307 KB)     |
+
+- The LCP-discovery insight now passes. Simulated mobile LCP did not move: on localhost the image phases take about 6 ms each, so the simulated time comes from elsewhere on the critical path, not from the photo's bytes.
+- Photo transferred (WebP, measured with CDP): **390 at DPR 2: 58.1 KB (`w=828`)**, down from 209.5 KB. **1440 at DPR 1: 42.0 KB (`w=640`)**, down from 103.1 KB. Lighthouse mobile (412 at DPR 1.75) gets 51.7 KB (`w=750`).
+
+### Files changed
+
+- `src/components/Hero.tsx`
+- `docs/phase-notes/phase-6-frontend.md` (this section)
+
+Skills used: `frontend-design` (preloaded). No new dependencies.
+
+### Open questions
+
+- Spec §5 says `50% 78%`. Design should change it to `50% 76%`, or say whether to keep 78%.
+- Desktop still gets the 640w file, not 384w: the bare `100vw` makes Next drop every width below 640. Writing `calc(100vw)` would bring back 384w (about 21 KB, about -21 KB). That is a one-token change; does the owner want it?
+
+- **Follow-up (owner approved):** `sizes` is now `(min-width: 720px) 280px, calc(100vw)`; `object-position` stays at 76%. All five checks pass and the build prints no `sizes` warnings. From `next start`: 1440 at DPR 1 picks `w=384`, 20.7 KB (was 42.0 KB); 390 at DPR 2 picks `w=828`, 58.1 KB (unchanged). One Lighthouse 13.5.0 run each: mobile 97/100/100/100 (LCP 2.58 s), desktop 100/100/100/100 (LCP 0.53 s).

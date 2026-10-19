@@ -72,3 +72,16 @@ Shots (scratchpad `shots/`; `apple-icon.png`, `icon.svg` and `fav48-zoom.png` ar
 3. **Real-browser tab check** (§16.2): Chrome and Firefox with the OS in light and dark mode, and the ICO in Safari. I only checked rasterized PNGs.
 
 Skills used: none fit beyond the Next docs in `node_modules/next/dist/docs` (metadata file conventions, `opengraph-image`, `app-icons`, `sitemap`, `robots`).
+
+## Hero photo pre-crop (2026-10-19)
+Approved by the owner ("Hero photo: pre-cropped"); Design passed the sample.
+
+- **What I did:** exported `public/hero.jpg` from `public/Professional.jpg` with the installed `sharp` (no new dependency, one-off script kept in the scratchpad). Crop rectangle from `phase-6-frontend.md`: x 413..1763, y 877..2565 (`extract` left 413, top 877, 1350 x 1688). JPEG quality 80, progressive, mozjpeg. Set `basics.image.src` to `/hero.jpg`; alt unchanged. `Professional.jpg` stays as the source.
+- **Result:** 1350 x 1688 (4:5), 207,075 bytes (about 202 KB). `sharp` metadata shows no EXIF, ICC, XMP or IPTC.
+- **Match with Frontend's sample** (`audit/precrop/precrop-1350x1688.jpg`): same size, mean absolute pixel difference 1.57 / 255, which is JPEG re-encoding noise, so the crop is the same.
+- **Checks:** `check:data` (still asserts `public/hero.jpg` exists), `lint`, `typecheck`, `format:check` and `build` all pass. `resume.check.ts` is unchanged.
+- **Side effect:** the JSON-LD `image` now points at `/hero.jpg`, since it reads `basics.image.src`.
+- **Files changed:** `public/hero.jpg` (new), `data/resume.json`, this note.
+- **Skills used:** none fit.
+- **Handoff to Frontend:** Hero still uses the old transform. Next step is spec §5: drop the transform, set `object-position: 50% 78%`, and set `sizes` to `(min-width: 720px) 280px, 100vw`.
+- **Open questions:** none.

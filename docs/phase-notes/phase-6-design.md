@@ -56,11 +56,18 @@ Visual QA of the built site against `docs/design-spec.md`, in light and dark. Re
 5. ~~**Figtree TTFs:**~~ Closed 2026-10-19: static WOFF from `@fontsource/figtree@5.3.0` accepted (spec §16.1).
 6. ~~**Apple icon format:**~~ Closed 2026-10-19: §16.2 now names `apple-icon.tsx` (`ImageResponse`, 180 x 180, square, opaque, light Charcoal pair).
 7. ~~**Hero photo fix:**~~ Closed 2026-10-19: pre-crop, spec §5.
-8. **Pre-crop recheck:** after Backend ships the file and Frontend wires it in, check 390px and 1440px against today's shots once more. `78%` is an eyeball estimate; anything from 75% to 80% is acceptable.
+8. ~~**Pre-crop recheck:**~~ Closed 2026-10-19: Frontend matched the old mobile framing pixel for pixel at 76%.
+9. ~~**§13 photo row:**~~ Closed 2026-10-19: the row now names `/hero.jpg`, no transform, and `sizes` per §5.
 
 ## Hero pre-crop check (2026-10-19)
 
 - **4:5 (1440px): pass.** The sample matches the live 280 x 350 frame: face centered, hair at about 49% of the height, hoodie at about 26% to 79% of the width, logo at about 85% of the height.
 - **4:3 (390px): pass with `object-position: 50% 78%`.** At full width the 4:3 frame shows about 60% of the file's height. 78% puts the hair about a third of the way down and the logo near the bottom, as in today's shot. No separate mobile crop is needed.
 - Spec §5 rewritten (pre-crop, no transform, `sizes` `(min-width: 720px) 280px, 100vw`, old values kept for reference). §16.2 Apple icon reworded. Two new `decisions.md` entries; "Phase 6 audit" marked superseded for the photo fix.
+
+## Hero photo final values (2026-10-19, owner approved)
+
+- Spec §5: source `/hero.jpg`, `object-position: 50% 76%`, `fill` + `preload` + `fetchPriority="high"`, `sizes` `(min-width: 720px) 280px, calc(100vw)`. §12 photo line updated to match. "Hero photo: pre-cropped" entry in `decisions.md` updated to these values.
+- **Result:** photo bytes 58KB on phones, down from 210KB; Lighthouse 97 mobile and 100 desktop, with the mobile LCP limited by render, not the photo.
+
 3. ~~**Font and Java cup:** after the owner picks a font and a stroke width, I update spec §1.2 (type) and §6.3, §13 and §15 (Java), with the related `decisions.md` entries.~~ Closed 2026-10-19: Figtree kept (no §1.2 change); Java stroke 0.5px applied to §6.3, §13 and §15.

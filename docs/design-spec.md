@@ -235,15 +235,15 @@ The hero greeting is the page's only h1.
 
 ## 5. Photo
 
-- **Source:** `basics.image` (`src`, `alt` = "Ryan at the Golden Gate Bridge", approved). It points to a **pre-cropped copy** of `public/Professional.jpg` (owner choice, 2026-10-19): 1350 x 1688 (4:5), cut from the 2160 x 2880 original to the approved crop. Backend sets the file name and makes the file. The original stays in `public/` as the source.
+- **Source:** `basics.image` (`src`, `alt` = "Ryan at the Golden Gate Bridge", approved). It points to `/hero.jpg`, a **pre-cropped copy** of `public/Professional.jpg` (owner choice, 2026-10-19): 1350 x 1688 (4:5), cut from the 2160 x 2880 original to the approved crop. Backend made the file. The original stays in `public/` as the source.
 - **Frame (the box):** 4:5 at 280 x 350 at 720px and up; 4:3 at full column width under 720px. It has a 12px radius and `overflow: hidden`. No border, filter or tint.
 - **Image inside the frame:**
   - `object-fit: cover`
-  - `object-position: 50% 78%`. In the 4:5 frame it has no effect (the file is already 4:5). In the 4:3 frame it keeps today's mobile framing: the hair about a third of the way down and the hoodie logo near the bottom edge.
+  - `object-position: 50% 76%`. In the 4:5 frame it has no effect (the file is already 4:5). In the 4:3 frame it matches the old mobile framing pixel for pixel (Frontend, 2026-10-19): the hair about a third of the way down and the hoodie logo near the bottom edge. 78% sat the face too high.
   - **No transform** and no `transform-origin`. The zoom and the 8% upward shift are baked into the file.
   - **Use `fill`:** the `<img>` fills the frame at 100% x 100%, so the frame's aspect ratio sets its size. Do not give it explicit width and height attributes; the intrinsic height would override the frame's aspect ratio and render a tall sliver.
-- **Rendering:** `next/image` with `preload` (Next 16's name for `priority`). It is the LCP element.
-  - `sizes`: `(min-width: 720px) 280px, 100vw`. With no scale, the frame width is the display width. The 1350px file covers 280px at 3x and a 390px phone at 3x.
+- **Rendering:** `next/image` with `fill`, `preload` (Next 16's name for `priority`) and `fetchPriority="high"`. It is the LCP element.
+  - `sizes`: `(min-width: 720px) 280px, calc(100vw)`. With no scale, the frame width is the display width. Write `calc(100vw)`, not `100vw`: with a bare `100vw` Next drops the widths below 640 from `srcset`, so desktop would get a larger file than it needs. The 1350px file covers 280px at 3x and a 390px phone at 3x.
 - **Approved crop (for reference):** the original framing was `object-position: 50% 75%`, `transform: translateY(-8%) scale(1.6)`, `transform-origin: 51% 60%` on `Professional.jpg`. The pre-crop was checked by eye against it at both aspect ratios (Design, 2026-10-19).
 - **If `basics.image` is missing:** the hero is text only. The grid collapses to one column and no space is reserved.
 
@@ -850,7 +850,7 @@ These are notes, not code.
 - **Icons:** all inline SVG, with no CDN at runtime and no icon font.
   - **Link icons:** five Tabler outline glyphs, copied into the repo (§6.1).
   - **Technologies logos:** solid monochrome Simple Icons (v16.35.0) and Devicon (v2.16.0, Java and CSS), plus the Lucide `database` icon for SQL (§6.3).
-- **Photo:** `next/image` with `preload` (Next 16's name for `priority`) and `fill`; AVIF and WebP are on by default.
+- **Photo:** `next/image` with `preload` (Next 16's name for `priority`), `fetchPriority="high"` and `fill`; `sizes` and framing as in §5. AVIF and WebP are on by default.
 - **Fonts:** one Figtree file, Latin subset.
 - **Target:** Lighthouse 95+ on all four categories, on mobile and desktop.
 
@@ -862,7 +862,7 @@ These are notes, not code.
 |---|---|---|
 | Lucide-style link glyphs with preview optical scales | Tabler outline glyphs; the scales were tuned by eye at 24px in Phase 4 step 2 (see §6.1) | Lucide no longer ships brand icons, and Tabler's shapes differ |
 | Nav links with too little vertical padding for 44px | 8px padding on 20px text (45px tall), with the 32px marker centered | 44px hit areas |
-| Photo `<img>` in the preview | Same crop values, plus `sizes` set for the 1.6 scale, with a pre-cropped file allowed | Keeps the zoomed image sharp; a pre-crop sends fewer bytes |
+| Photo `<img>` in the preview | The pre-cropped `/hero.jpg` with the approved crop baked in, no transform, and `sizes` per §5 | The image stays sharp without a zoom; the pre-crop sends fewer bytes |
 | Company name as an h3 inside `<summary>` | Plain text in the summary | Headings inside summaries are announced unreliably by screen readers |
 | One timeline line with a fixed `bottom` | A connector per entry, from dot to next dot | The line overshoots when the last card is open |
 | Email link `title` tooltip with the address | No `title` | Hover-only text isn't available to keyboard or touch users. The address is hidden by owner decision. |

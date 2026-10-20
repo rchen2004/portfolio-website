@@ -82,7 +82,7 @@ Each phase ends with a **review checkpoint**. Nothing moves forward until I appr
 
 ### Phase 0 — Foundations and Decisions
 **Lead:** Me (all agents advise)
-- Confirm tech stack and hosting. (Domain: none yet; purchased at launch, Phase 7.)
+- Confirm tech stack and hosting. (Domain: none; launched on the free Vercel URL, see `docs/decisions.md` Phase 7.)
 - ~~Decide site structure~~ **Decided:** single-page scroll (see §6).
 - ~~Decide which projects to feature~~ **Decided:** all three shown equally (see §6).
 - Decide whether to include: ~~dark mode~~ (**decided in Phase 2:** light and dark with a toggle; see `docs/decisions.md`), project case-study pages, blog.
@@ -152,7 +152,7 @@ There are no Skills, Education or Contact sections (see `docs/decisions.md`).
 **Checkpoint:** Lighthouse 95+ across the board; no accessibility errors.
 
 ### Phase 7 — Launch
-- Connect the custom domain.
+- ~~Connect the custom domain.~~ Skipped for launch (owner decision 2026-10-20); the site runs on `rchen2004.vercel.app`.
 - Add the site link to resume, LinkedIn, and GitHub profile.
 - Document how to update content in a short README.
 
@@ -165,7 +165,7 @@ There are no Skills, Education or Contact sections (see `docs/decisions.md`).
 - **Featured experiences:** The two co-ops, Babel Street and Verisk, get the most prominent treatment (larger cards, all highlights shown, placed first). Scout and Ventus Health appear in a lighter, more compact style. *Superseded (2026-10-16): one card style for all, ordered by date; see `docs/decisions.md`, "`featured` removed".*
 - **Experience links:** Experiences can carry links, just like projects. Scout will link to the GitHub repos for its client work (NUMAC and 3 Stones), shown as small repo links on the Scout entry.
 - **Projects:** All three (CodeStack, Fakebook Crawler, Hexagonal Reversi) are displayed equally, with no single featured project. Each links to its GitHub repo; no live demos.
-- **Domain:** None yet. The site runs on the free Vercel URL until launch, when a domain is purchased and connected (Phase 7).
+- **Domain:** None. The site launched on `rchen2004.vercel.app` (owner decision, Phase 7); a custom domain can be added later with no code change.
 
 - **Tagline:** "Software engineer who learns fast, adapts quickly, and loves a challenging problem." Stored in `resume.json` as `basics.tagline` and shown in the hero section.
 - **About section:** A short personal blurb directly below the hero, covering background, co-op work, and interests outside code. Stored in `resume.json` as `basics.summary`.
@@ -174,7 +174,7 @@ There are no Skills, Education or Contact sections (see `docs/decisions.md`).
 
 ## 7. Definition of Done
 
-- The site is live on a custom domain.
+- The site is live at `https://rchen2004.vercel.app` (custom domain optional; see `docs/decisions.md` Phase 7).
 - All content comes from `data/resume.json`, and editing it is documented.
 - The resume PDF opens from the site in one click.
 - The site is responsive, accessible (WCAG AA), and scores 95+ on Lighthouse.

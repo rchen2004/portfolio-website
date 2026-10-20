@@ -120,7 +120,7 @@
 - **Project detail pages: not built (owner choice, 2026-10-19).** The owner chose to skip them. Project cards stay non-clickable; only their GitHub links are interactive (spec §6.5). Revisit only if the owner asks.
 - **Phase 5 complete.** Its other two items were already built in Phase 4: dark mode with the toggle (spec §1.1, §6.9) and the subtle motion (spec §7). Nothing else is approved for Phase 5, so the project moves to Phase 6.
 
-# Phase 6 Decisions (in progress)
+# Phase 6 Decisions (2026-10-19)
 
 Owner answers from 2026-10-19.
 
@@ -151,3 +151,9 @@ Owner answers from 2026-10-19.
 - **Apple icon generated (2026-10-19, owner approved):** `src/app/apple-icon.tsx` generates the Apple icon with `ImageResponse` (180 x 180, square, every pixel opaque, light Charcoal pair) instead of a static `apple-icon.png`. Backend confirmed the size and opacity. Spec §16.2.
 - **Hero photo: pre-cropped (owner, 2026-10-19):** The hero uses `/hero.jpg`, a pre-cropped 1350 x 1688 (4:5) copy of `Professional.jpg` made by Backend, as "Hero photo crop" (Phase 2) allows. `basics.image.src` points at it. No transform; `object-fit: cover` with `object-position: 50% 76%`, which matches the old mobile 4:3 framing pixel for pixel (no separate mobile crop; 78% sat the face too high). `sizes` is `(min-width: 720px) 280px, calc(100vw)`; `calc()` keeps Next from dropping the widths below 640, so desktop gets a smaller file. `next/image` with `fill`, `preload` and `fetchPriority="high"`. Design checked the sample by eye against the live hero at 1440px and 390px: pass. Final values owner approved 2026-10-19. Spec §5 and §12.
 - **Skip link overlap: kept, spec wording fixed (2026-10-19, owner choice):** At 1200px and up the focused skip link overlaps the rail name link's 44px box (about 18 x 7px at 1440), never the "Ryan Chen" text; it is the top layer and shows only on focus, so there is no WCAG 2.4.11 issue and the build does not change. Spec §6.7.
+- **Phase 6 checkpoint: approved by owner (2026-10-20).** Lighthouse: 97 mobile performance, 100 in every other category on mobile and desktop; no axe violations. The owner completed the Safari iPhone check and the final read-through, and merged Phase 6 (PR #5).
+
+# Phase 7 Decisions (2026-10-20)
+
+- **Domain: none for launch (owner choice).** The site launches on `https://rchen2004.vercel.app`. A custom domain can be added later in Vercel with no code change (`SITE_URL` reads `VERCEL_PROJECT_PRODUCTION_URL`). This supersedes the plan's "domain purchased at launch".
+- **Profile links:** the owner adds the site URL to the resume PDF, LinkedIn and GitHub themselves.

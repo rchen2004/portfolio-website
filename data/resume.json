@@ -87,7 +87,7 @@
       "endDate": "2026-06",
       "dateLabel": "Jan - Jun 2026",
       "highlights": [
-        "Shipped a Region-of-Origin classifier answering an enterprise customer's top accuracy complaint, validated on 600 multi-regional names, by building its SDK endpoint, CLI, ranked top-k predictions, and license gating",
+        "Shipped a Region-of-Origin classifier requested by the company’s largest customer, stress-tested on 600 multi-regional names, by building its SDK endpoint, CLI, configurable top-k ranked predictions, and license gating",
         "Fixed 4 customer-reported name-matching defects, including a cross-script false 100% match and a numeric leet-speak crash, by tracing normalization logic in the Java engine and adding regression tests",
         "Produced 13 multilingual person-name dictionaries (~100K records) covering 20+ languages by building Python pipelines that parse the Wikidata dump, merge OFAC-translated lists, filter by script, and deduplicate entries",
         "Migrated 5 repositories to Java 25, including both search plugins, by updating builds, Docker images, and Jenkins CI/CD, surfacing Solr and OpenSearch Security Manager blockers that shaped the team's runtime roadmap",

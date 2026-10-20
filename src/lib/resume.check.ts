@@ -2,6 +2,7 @@
 import assert from "node:assert/strict";
 import { existsSync } from "node:fs";
 import { resume, formatDateRange, sortByDate, RESUME_PDF } from "./resume.ts";
+import { personJsonLd, SITE_URL } from "./site.ts";
 
 // Every site path in resume.json, plus the PDF, must exist in public/.
 for (const src of [
@@ -37,5 +38,22 @@ assert.deepEqual(
   ]).map((d) => d.startDate),
   ["2024-01", "2024-04", "2024-02", "2023-01"],
 );
+
+// JSON-LD: script-safe, the expected keys only, and never the email.
+assert.ok(!personJsonLd.includes("<"), "JSON-LD must escape <");
+assert.ok(!personJsonLd.includes(resume.basics.email), "JSON-LD leaks email");
+const person = JSON.parse(personJsonLd);
+assert.deepEqual(Object.keys(person).sort(), [
+  "@context",
+  "@type",
+  "alumniOf",
+  "image",
+  "knowsAbout",
+  "name",
+  "sameAs",
+  "url",
+]);
+assert.equal(person.url, SITE_URL);
+assert.equal(person.name, resume.basics.name);
 
 console.log("resume helpers: all checks passed");

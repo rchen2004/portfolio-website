@@ -67,7 +67,7 @@
 - **`featured` removed (approved with the spec at the Phase 2 checkpoint, 2026-10-16):** Every experience uses one card style, with no featured or compact variant, ordered by date (see "Experience"). The `featured` flag is removed from `data/schema.ts` and `resume.json` (Backend; removed in Phase 3, 2026-10-16). Spec §6.4 and §11 #6. This supersedes the Phase 0 "Featured experiences" entry, the Phase 1 "`featured`" entry and "Compact experiences" above.
 - **Phase 2 checkpoint:** Approved by owner (2026-10-16). Merged into `main` in PR #2 (merge commit `76c7058`).
 
-# Phase 3 Decisions (in progress)
+# Phase 3 Decisions (2026-10-16 to 2026-10-17)
 
 - **App directory (2026-10-16):** The app moves from the root `app/` to `src/app/`. The `@/*` alias stays pointed at `./*`, so existing imports keep working.
 - **Formatter (2026-10-16):** Prettier plus `prettier-plugin-tailwindcss` (two dev dependencies, approved).
@@ -76,7 +76,7 @@
 - **Tooling defaults (2026-10-16):** npm (the existing lockfile), GitHub Actions for CI (type-check, lint, format check, `check:data`, build), and Node 24 pinned in `engines` and `.nvmrc`.
 - **Deploys (2026-10-16):** `main` is the production branch. Every other branch and PR gets a preview URL, and previews stay behind Vercel login. The custom domain waits until Phase 7.
 
-# Phase 4 Decisions (in progress)
+# Phase 4 Decisions (2026-10-18)
 
 - **Java icon (2026-10-18):** Technologies uses the Simple Icons `openjdk` logo for Java. Simple Icons v16.35.0 has no `java` icon (Design checked: 404). The visible name stays "Java". Spec §6.3, §13 and §15. *Superseded (2026-10-18): see "Java logo: Devicon `java-plain`".*
 - **Resume PDF keeps the phone (2026-10-18, owner choice):** `/resume.pdf` keeps the phone number. This is the one exception to the Phase 1 "Phone" rule: the phone is not shown on any page or in `resume.json`, only inside the downloadable PDF.
@@ -108,9 +108,46 @@
 
   The footer link uses Charcoal on Paper, 14.5:1 light and 14.7:1 dark; the copyright stays Pebble on Paper, 6.3:1 and 6.8:1. Both pass AA. §9.1's "Use" columns now name the footer link and the footer copyright separately.
 - **Spec clarifications from step 8 QA (2026-10-18, owner approved via the coordinator, with step 8):** Four items. Items 1 and 3 restate the built behavior; item 2 is the only one that relaxes a written rule.
-  1. §6.7 skip link: the §6.1 labeled-link style without an icon (15px/600 Charcoal, 1px Accent underline). When focused it is `position: fixed` at `top: max(16px, env(safe-area-inset-top))`, `left: max(16px, env(safe-area-inset-left))`, `z-index: 10`. The 1px overlap with the rail's name row at exactly 1200px is accepted. §9.1's Accent underline rows now name the skip link (on White: 5.5:1 light, 5.0:1 dark).
+  1. §6.7 skip link: the §6.1 labeled-link style without an icon (15px/600 Charcoal, 1px Accent underline). When focused it is `position: fixed` at `top: max(16px, env(safe-area-inset-top))`, `left: max(16px, env(safe-area-inset-left))`, `z-index: 10`. The 1px overlap with the rail's name row at exactly 1200px is accepted. *Superseded (2026-10-19): the overlap wording, see "Skip link overlap: kept, spec wording fixed".* §9.1's Accent underline rows now name the skip link (on White: 5.5:1 light, 5.0:1 dark).
   2. §8 and §9.4, main-outline exception: `<main id="top" tabindex="-1">` draws no focus ring. A narrow exception to "never remove the outline": main is a focus target, not a control, and the next Tab shows the normal ring on the first link.
   3. §6.6 (also §6.4 and §7): the current section updates on the `timeline-settled` event (320ms plus one frame after an accordion toggle, or the next frame without the animation), not on the raw `toggle`. The marker is placed without sliding on load and when widening past 1200px.
   4. "Theme toggle placement until the rail exists" is marked expired.
 
   No color changed; contrast is unchanged in both themes.
+
+# Phase 5 Decisions (2026-10-19)
+
+- **Project detail pages: not built (owner choice, 2026-10-19).** The owner chose to skip them. Project cards stay non-clickable; only their GitHub links are interactive (spec §6.5). Revisit only if the owner asks.
+- **Phase 5 complete.** Its other two items were already built in Phase 4: dark mode with the toggle (spec §1.1, §6.9) and the subtle motion (spec §7). Nothing else is approved for Phase 5, so the project moves to Phase 6.
+
+# Phase 6 Decisions (in progress)
+
+Owner answers from 2026-10-19.
+
+- **Font: demo first, no spec change yet (2026-10-19, owner choice):** The owner is "not sure" what felt off and wants to compare alternatives before deciding. The coordinator builds a throwaway demo artifact outside the repo that compares four options: Figtree as built, Figtree with lighter headings (600), Instrument Sans and Hanken Grotesk. The spec and `globals.css` do not change until the owner picks one. *Superseded (2026-10-19): see "Font: Figtree kept".*
+- **Font: Figtree kept (2026-10-19, owner choice, after the Font Lab demo):** Figtree stays, unchanged: weights 400, 600 and 700 and the sizes in spec §1.2. The owner compared it with Hanken Grotesk. The earlier "something felt off" came from the coordinator's preview artifact rendering in the system font, not from Figtree. No spec change.
+- **Java logo: thicker Devicon cup (2026-10-19, owner approved; width picked in the Font Lab demo):** The Devicon `java-plain` cup gets a 0.5px `currentColor` stroke at its 36px render size so it reads heavier. In the 128-unit path box that is `stroke-width="1.78"` (0.5 × 128 / 36), with `stroke-linejoin="round"`, on the Java path only. The stroke follows the hover Accent like the fill. Stroke and fill share one color, so contrast is unchanged (Charcoal on Paper 14.5:1 light / 14.7:1 dark; Accent on Paper 4.9:1 / 5.5:1, above the 3:1 non-text minimum). This updates "Java logo: Devicon `java-plain`" (Phase 4). Spec §6.3, §13 and §15.
+- **Test tools (2026-10-19, owner approved):** Lighthouse and axe-core run as one-off `npx` commands. Neither is added to `package.json`. Lighthouse runs once, not in CI.
+- **SEO ownership (2026-10-19, owner-approved exception to `CLAUDE.md`):** Backend builds the metadata export in `src/app/layout.tsx`, plus `src/app/opengraph-image.tsx`, `src/app/sitemap.ts`, `src/app/robots.ts`, the icon files, and the JSON-LD builder in `src/lib/`. `CLAUDE.md` gives `src/app/` to Frontend; this exception covers only these files.
+- **Title and description (2026-10-19, owner approved):** The page title is `basics.name` ("Ryan Chen") and the meta description is `basics.tagline`. No new text is written.
+- **Defaults accepted (2026-10-19, owner approved):**
+  - The Open Graph image is generated from `resume.json`.
+  - No script Content Security Policy.
+  - The email stays out of the JSON-LD.
+  - The dark project-card shadow and the Verisk timeline dot at 320px stay as built.
+  - The owner tests Safari on their phone against a preview, using Frontend's checklist.
+  - Backend makes a pre-cropped hero photo if Frontend's image work calls for it (allowed by "Hero photo crop", Phase 2).
+  - One `SITE_URL` constant, read from `VERCEL_PROJECT_PRODUCTION_URL`, falling back to `rchen2004.vercel.app`.
+- **Link preview and icons spec (2026-10-19, content owner-approved; visual values are Design's defaults pending owner confirmation):** Spec §16, for Backend's SEO files.
+  - Open Graph image: 1200 x 630, light palette only (Paper), no photo. An Accent rule (56 x 6), then `basics.name` in Figtree 700 at 96px and `basics.tagline` in Figtree 400 at 40px (max 960px wide), both Charcoal, left-aligned with 96px side padding and vertically centered. `ImageResponse` gets static Figtree 400 and 700 TTFs. Alt is `basics.name` + ". " + `basics.tagline`; no new text.
+  - Icons: a single "R" drawn as one stroked path (round caps and joins) on a full-bleed Accent rounded square, glyph in Paper. `icon.svg` switches to the dark tokens under `prefers-color-scheme: dark`, because tabs follow the OS, not the site toggle. `apple-icon.png` (180 x 180) and `favicon.ico` (16/32/48) are the light version; the Apple icon is a plain square with no transparency.
+  - Contrast: OG text 14.5:1; icon glyph 4.9:1 light, 5.5:1 dark.
+  - Owner to confirm: the Accent tile (default) or a Charcoal tile.
+
+  *Superseded (2026-10-19): the tile color and icon contrast, see "Favicon tile: Charcoal". The fonts' file format, see "OG fonts: static WOFF".*
+- **Favicon tile: Charcoal (2026-10-19, owner choice):** The icon tile is Charcoal, not Accent. Light: tile `#24201D` with a Paper `#F4F3F0` "R". OS dark (`prefers-color-scheme` in `icon.svg`): tile `#EDEAE6` with a `#1A1816` "R" (the dark tokens). Glyph geometry, the Apple icon and the ICO rules are unchanged; the PNG and ICO use the light pair. Contrast: about 14.5:1 light, 14.7:1 dark, above 3:1 non-text. Spec §16.2.
+- **OG fonts: static WOFF (2026-10-19, accepted from Backend's open question 1):** The OG image uses static Figtree 400 and 700 WOFF files from `@fontsource/figtree@5.3.0` instead of TTF, because Satori accepts WOFF. Spec §16.1 now reads "static TTF or WOFF". No visual change.
+- **Phase 6 audit (2026-10-19, Frontend):** Lighthouse 97 mobile performance and 100 in every other category; no axe violations. The hero photo fix is pending the owner; the spec does not change for it yet. *Superseded (2026-10-19): the photo fix, see "Hero photo: pre-cropped (owner, 2026-10-19)".*
+- **Apple icon generated (2026-10-19, owner approved):** `src/app/apple-icon.tsx` generates the Apple icon with `ImageResponse` (180 x 180, square, every pixel opaque, light Charcoal pair) instead of a static `apple-icon.png`. Backend confirmed the size and opacity. Spec §16.2.
+- **Hero photo: pre-cropped (owner, 2026-10-19):** The hero uses `/hero.jpg`, a pre-cropped 1350 x 1688 (4:5) copy of `Professional.jpg` made by Backend, as "Hero photo crop" (Phase 2) allows. `basics.image.src` points at it. No transform; `object-fit: cover` with `object-position: 50% 76%`, which matches the old mobile 4:3 framing pixel for pixel (no separate mobile crop; 78% sat the face too high). `sizes` is `(min-width: 720px) 280px, calc(100vw)`; `calc()` keeps Next from dropping the widths below 640, so desktop gets a smaller file. `next/image` with `fill`, `preload` and `fetchPriority="high"`. Design checked the sample by eye against the live hero at 1440px and 390px: pass. Final values owner approved 2026-10-19. Spec §5 and §12.
+- **Skip link overlap: kept, spec wording fixed (2026-10-19, owner choice):** At 1200px and up the focused skip link overlaps the rail name link's 44px box (about 18 x 7px at 1440), never the "Ryan Chen" text; it is the top layer and shows only on focus, so there is no WCAG 2.4.11 issue and the build does not change. Spec §6.7.

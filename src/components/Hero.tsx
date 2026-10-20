@@ -85,7 +85,7 @@ export function Hero() {
         </div>
       </div>
       {image && (
-        // Approved crop (spec §5). `fill` makes the img absolute at 100% x 100% with no width/height
+        // Pre-cropped 4:5 photo (spec §5). `fill` makes the img absolute at 100% x 100% with no width/height
         // attributes, so the intrinsic height can't override the frame's aspect ratio.
         <div className="relative order-first aspect-[4/3] overflow-hidden rounded-card md:order-none md:aspect-[4/5]">
           <Image
@@ -93,8 +93,9 @@ export function Hero() {
             alt={image.alt}
             fill
             preload
-            sizes="(min-width: 720px) 448px, 160vw"
-            className="origin-[51%_60%] [transform:translateY(-8%)_scale(1.6)] object-cover object-[50%_75%]"
+            fetchPriority="high"
+            sizes="(min-width: 720px) 280px, calc(100vw)"
+            className="object-cover object-[50%_76%]"
           />
         </div>
       )}

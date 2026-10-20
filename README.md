@@ -19,6 +19,7 @@ Personal portfolio site for Ryan Chen. Built with Next.js (App Router), TypeScri
 | `npm run format` | Format with Prettier |
 | `npm run format:check` | Check formatting without writing |
 | `npm run check:data` | Self-check for the resume data helpers |
+| `npm run build:favicon` | Rebuild `src/app/favicon.ico` (16, 32, 48 px) from `src/app/icon.svg`; run after changing the icon |
 
 CI (`.github/workflows/ci.yml`) runs typecheck, lint, format:check, check:data and build on every push and pull request.
 

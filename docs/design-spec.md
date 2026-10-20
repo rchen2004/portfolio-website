@@ -235,17 +235,16 @@ The hero greeting is the page's only h1.
 
 ## 5. Photo
 
-- **Source:** `basics.image` (`src`, `alt` = "Ryan at the Golden Gate Bridge", approved). The real file is `public/Professional.jpg`, 2160 x 2880 (3:4).
+- **Source:** `basics.image` (`src`, `alt` = "Ryan at the Golden Gate Bridge", approved). It points to `/hero.jpg`, a **pre-cropped copy** of `public/Professional.jpg` (owner choice, 2026-10-19): 1350 x 1688 (4:5), cut from the 2160 x 2880 original to the approved crop. Backend made the file. The original stays in `public/` as the source.
 - **Frame (the box):** 4:5 at 280 x 350 at 720px and up; 4:3 at full column width under 720px. It has a 12px radius and `overflow: hidden`. No border, filter or tint.
-- **Image inside the frame** (the approved crop, matching the preview):
+- **Image inside the frame:**
   - `object-fit: cover`
-  - `object-position: 50% 75%`
-  - `transform: translateY(-8%) scale(1.6)`
-  - `transform-origin: 51% 60%`
+  - `object-position: 50% 76%`. In the 4:5 frame it has no effect (the file is already 4:5). In the 4:3 frame it matches the old mobile framing pixel for pixel (Frontend, 2026-10-19): the hair about a third of the way down and the hoodie logo near the bottom edge. 78% sat the face too high.
+  - **No transform** and no `transform-origin`. The zoom and the 8% upward shift are baked into the file.
   - **Use `fill`:** the `<img>` fills the frame at 100% x 100%, so the frame's aspect ratio sets its size. Do not give it explicit width and height attributes; the intrinsic height would override the frame's aspect ratio and render a tall sliver.
-- **Rendering:** `next/image` with `preload` (Next 16's name for `priority`). It is the LCP element.
-  - `sizes`: `(min-width: 720px) 448px, 160vw`. That is 280px × 1.6 for the scale, so the zoomed image stays sharp.
-- **Pre-cropped alternative:** Frontend may instead export a pre-cropped copy that matches this framing. With it, no transform is needed and fewer bytes are sent. If the pre-crop is used, it must match the approved crop by eye at both aspect ratios.
+- **Rendering:** `next/image` with `fill`, `preload` (Next 16's name for `priority`) and `fetchPriority="high"`. It is the LCP element.
+  - `sizes`: `(min-width: 720px) 280px, calc(100vw)`. With no scale, the frame width is the display width. Write `calc(100vw)`, not `100vw`: with a bare `100vw` Next drops the widths below 640 from `srcset`, so desktop would get a larger file than it needs. The 1350px file covers 280px at 3x and a 390px phone at 3x.
+- **Approved crop (for reference):** the original framing was `object-position: 50% 75%`, `transform: translateY(-8%) scale(1.6)`, `transform-origin: 51% 60%` on `Professional.jpg`. The pre-crop was checked by eye against it at both aspect ratios (Design, 2026-10-19).
 - **If `basics.image` is missing:** the hero is text only. The grid collapses to one column and no space is reserved.
 
 ---
@@ -355,7 +354,7 @@ See §4.2. The section has `aria-labelledby` pointing at its h2.
 
 | Name | Icon |
 |---|---|
-| Java | Devicon `java-plain` (the cup) |
+| Java | Devicon `java-plain` (the cup), plus a 0.5px `currentColor` stroke |
 | Python | `python` |
 | TypeScript | `typescript` |
 | C++ | `cplusplus` |
@@ -370,6 +369,7 @@ Unmarked slugs are Simple Icons.
 
 **Build notes:**
 - **Java:** Devicon `java-plain`, the coffee cup (owner left the choice to the orchestrator, 2026-10-18). It is filled, widely recognized as Java, and from the same set as the CSS shield. The data key is `java`. The visible name stays "Java".
+  - **Stroke (owner decision, 2026-10-19):** the cup alone reads light, so its path gets `stroke="currentColor"`, `stroke-width="1.78"` and `stroke-linejoin="round"`. That is 0.5px at the 36px render (0.5 × 128 / 36 path units). It works with either rendering below, since the stroke scales with the path. Do not use `non-scaling-stroke`. Only the Java path gets a stroke; CSS and the other logos stay fill-only. The stroke follows the hover Accent with the fill through `currentColor`, so contrast is unchanged (§9.1).
 - **CSS:** Devicon `css3-plain`, so it pairs with the HTML5 shield (owner decision, 2026-10-18). Simple Icons' `css` tile did not pair with it. The data key stays `css`.
 - **Devicon paths:** both are one path in a 128-unit box (`viewBox="0 0 128 128"`). Remove the source's brand `fill` and use `fill="currentColor"`, like the Simple Icons logos. Render them from the 128-unit box: either give the `<svg>` `viewBox="0 0 128 128"`, or, inside the shared 24-unit `TechIcon`, wrap the path in `<g transform="scale(0.1875)">`. Note the source and version in a code comment.
 - **SQL:** Lucide is a stroke icon. Render it at 36px with stroke width 2 in Lucide's 24-unit grid, which is 3px at 36px. Do not use `non-scaling-stroke` here (unlike the link icons in §6.1), so its visual weight stays close to the filled logos.
@@ -546,7 +546,7 @@ Unmarked slugs are Simple Icons.
   - It is visually hidden until focused. When focused, it appears at the top left: White background, Charcoal text, 12px horizontal and 8px vertical padding, the focus ring, at least 44px tall.
   - **Type:** the §6.1 labeled-link style without an icon: 15px/600, Charcoal, 1px Accent underline at a 4px offset; on hover, Accent and a 2px underline. Contrast on White: Charcoal 16.1:1 light / 13.3:1 dark; Accent underline 5.5:1 / 5.0:1 (§9.1).
   - **Focused position:** `position: fixed`, `top: max(16px, env(safe-area-inset-top))`, `left: max(16px, env(safe-area-inset-left))`, above the rail (`z-index: 10`), so it shows from any scroll position.
-  - **Accepted overlap:** at exactly 1200px, the focused link overlaps the rail's name row by 1px. It is the topmost, opaque layer, so the focused element is never obscured (WCAG 2.4.11), and it lasts only while focused. At wider screens there is no overlap.
+  - **Accepted overlap (owner, 2026-10-19):** at 1200px and up, the focused link overlaps the rail name link's 44px box, by about 18 x 7px at 1440. It never covers the "Ryan Chen" text, it is the topmost, opaque layer, and it shows only while it has focus. The focused element is never obscured, so there is no WCAG 2.4.11 issue. The build does not change.
   - It exists because the rail's five links (the name and four sections) come before the content.
 - **Below 1200px** it is not rendered (`display: none`). With no nav, `<main>` is already the first content, so a skip link would skip nothing.
 
@@ -850,7 +850,7 @@ These are notes, not code.
 - **Icons:** all inline SVG, with no CDN at runtime and no icon font.
   - **Link icons:** five Tabler outline glyphs, copied into the repo (§6.1).
   - **Technologies logos:** solid monochrome Simple Icons (v16.35.0) and Devicon (v2.16.0, Java and CSS), plus the Lucide `database` icon for SQL (§6.3).
-- **Photo:** `next/image` with `preload` (Next 16's name for `priority`) and `fill`; AVIF and WebP are on by default.
+- **Photo:** `next/image` with `preload` (Next 16's name for `priority`), `fetchPriority="high"` and `fill`; `sizes` and framing as in §5. AVIF and WebP are on by default.
 - **Fonts:** one Figtree file, Latin subset.
 - **Target:** Lighthouse 95+ on all four categories, on mobile and desktop.
 
@@ -862,7 +862,7 @@ These are notes, not code.
 |---|---|---|
 | Lucide-style link glyphs with preview optical scales | Tabler outline glyphs; the scales were tuned by eye at 24px in Phase 4 step 2 (see §6.1) | Lucide no longer ships brand icons, and Tabler's shapes differ |
 | Nav links with too little vertical padding for 44px | 8px padding on 20px text (45px tall), with the 32px marker centered | 44px hit areas |
-| Photo `<img>` in the preview | Same crop values, plus `sizes` set for the 1.6 scale, with a pre-cropped file allowed | Keeps the zoomed image sharp; a pre-crop sends fewer bytes |
+| Photo `<img>` in the preview | The pre-cropped `/hero.jpg` with the approved crop baked in, no transform, and `sizes` per §5 | The image stays sharp without a zoom; the pre-crop sends fewer bytes |
 | Company name as an h3 inside `<summary>` | Plain text in the summary | Headings inside summaries are announced unreliably by screen readers |
 | One timeline line with a fixed `bottom` | A connector per entry, from dot to next dot | The line overshoots when the last card is open |
 | Email link `title` tooltip with the address | No `title` | Hover-only text isn't available to keyboard or touch users. The address is hidden by owner decision. |
@@ -870,7 +870,7 @@ These are notes, not code.
 | No skip link | Skip link at 1200px and up only | Five rail links come before the content on desktop. Below 1200px there is no nav to skip. |
 | Rail script runs at every width | Gated by `matchMedia("(min-width: 1200px)")` | No scroll work when the rail is hidden |
 | No scroll correction when the exclusive accordion closes a card above | Scroll the opened summary into view if it moves off screen | Otherwise a click can push the content out of view |
-| Simple Icons v13 from a CDN, `openjdk` and `css3` | Simple Icons pinned v16.35.0, inlined; Java and CSS from Devicon v2.16.0 (`java-plain`, `css3-plain`), inlined, `currentColor` | Performance. Simple Icons v16.35.0 has no `java`, and the Devicon cup is more recognizable than `openjdk`; the Devicon CSS shield pairs with the HTML5 shield (decisions of 2026-10-18). |
+| Simple Icons v13 from a CDN, `openjdk` and `css3` | Simple Icons pinned v16.35.0, inlined; Java and CSS from Devicon v2.16.0 (`java-plain`, `css3-plain`), inlined, `currentColor`; the Java cup also gets a 0.5px `currentColor` stroke | Performance. Simple Icons v16.35.0 has no `java`, and the Devicon cup is more recognizable than `openjdk`; the Devicon CSS shield pairs with the HTML5 shield (decisions of 2026-10-18). The stroke makes the thin cup read closer to its neighbors' weight (decision of 2026-10-19). |
 | `.btn` styles and `.edu` styles | Removed | No button and no Education section |
 | Highlight lines about 85 characters | Kept | Matches the approved preview. It slightly exceeds the 80-character guideline; I am flagging it rather than changing it. |
 
@@ -925,6 +925,85 @@ Scouted on 2026-10-16 with the read-only 21st tools. **This section changes noth
 - Skill tag: replaced by the technology item (§6.3).
 - Contact links row and "View Resume" button: there is no Contact section. Resume is one of the five icon-only hero links (§6.1).
 
-**Logos:** `search_logo` (svgl) was checked, but it is not proposed. The spec pins Simple Icons v16.35.0 and Devicon v2.16.0 for Technologies and Tabler for link icons (§6.1, §6.3). A query for "java" returned no results. Simple Icons v16.35.0 has no `java` either, so Technologies uses Devicon `java-plain` (§6.3, decision of 2026-10-18).
+**Logos:** `search_logo` (svgl) was checked, but it is not proposed. The spec pins Simple Icons v16.35.0 and Devicon v2.16.0 for Technologies and Tabler for link icons (§6.1, §6.3). A query for "java" returned no results. Simple Icons v16.35.0 has no `java` either, so Technologies uses Devicon `java-plain` with a 0.5px `currentColor` stroke (§6.3, decisions of 2026-10-18 and 2026-10-19).
 
 **Dependencies added by these proposals:** none.
+
+---
+
+## 16. Link preview and icons
+
+Added 2026-10-19 (Phase 6) for Backend's SEO files (owner-approved ownership exception, `decisions.md` "SEO ownership"). Content is owner-approved (name and tagline only). The visual values are Design's defaults, except the favicon tile, which the owner picked on 2026-10-19 (§16.2). Nothing here changes §0 to §15 or anything on the page.
+
+### 16.1 Open Graph image (`src/app/opengraph-image.tsx`)
+
+- **Size:** 1200 x 630, PNG, generated at build time with `next/og` `ImageResponse`. Static, no request data.
+- **Content:** `basics.name` and `basics.tagline` from `resume.json`, nothing else. No photo, no URL, no logo, no icons.
+- **Light palette only.** Previews render inside other apps' cards, in those apps' themes, and the site itself always opens light (§6.9). The preview then matches the page a visitor lands on. Paper also reads as a distinct image card on a dark app background, where a dark image would blend into it.
+- **No photo** (Design agrees). It would need its own pre-crop at a third aspect ratio, and at thumbnail size a face pulls the eye off the name.
+
+**Layout** (one flex column; Satori needs `display: flex` on every element with more than one child):
+
+```
++------------------------------------------------------------+
+|  96px                                                      |
+|  ====  Accent rule 56 x 6                                  |
+|        48px                                                |
+|  Ryan Chen                     96px / 700                  |
+|        28px                                                |
+|  Software engineer who learns fast, adapts quickly,        |
+|  and loves a challenging problem.        40px / 400        |
++------------------------------------------------------------+
+```
+
+| Property | Value |
+|---|---|
+| Root | `width: 1200`, `height: 630`, `display: flex`, `flexDirection: column`, `justifyContent: center`, `alignItems: flex-start`, `padding: 0 96px`, `background: #F4F3F0` (Paper), `fontFamily: Figtree` |
+| Accent rule | first child: `width: 56`, `height: 6`, `borderRadius: 3`, `background: #C0362C` (Accent). The one Accent detail; it echoes the rail marker. 48px gap below it. |
+| Name | `basics.name`, Figtree **700**, `fontSize: 96`, `lineHeight: 1.05`, `letterSpacing: -1.44` (-0.015em, as the hero h1), `color: #24201D` (Charcoal). One line. |
+| Tagline | `basics.tagline`, Figtree **400**, `fontSize: 40`, `lineHeight: 1.3`, `color: #24201D` (Charcoal, as in the hero), `maxWidth: 960`, `marginTop: 28`. Wraps naturally to two lines (about 46 characters per line). |
+| Alignment | Left-aligned, block centered vertically. Total block is about 290px tall, so about 170px of Paper sits above and below. |
+
+- **Fonts passed to `ImageResponse`:** Figtree **400** and **700** as **static TTF or WOFF** files (OFL). The build uses the static WOFF files from `@fontsource/figtree@5.3.0` (accepted 2026-10-19). Satori reads TTF, OTF and WOFF, not WOFF2 or variable fonts, so the files from `next/font` cannot be reused. Weight 600 is not used.
+- **Alt text:** `` `${basics.name}. ${basics.tagline}` ``, which today reads "Ryan Chen. Software engineer who learns fast, adapts quickly, and loves a challenging problem." No new words; the period is punctuation joining the two strings.
+- **Contrast (light only):** Charcoal on Paper 14.5:1 (text); Accent rule on Paper 4.9:1 (decorative, above 3:1 anyway). There is no dark version, so no dark check applies.
+- **Safe area:** the 96px side padding and the 170px top and bottom margins keep everything clear of the corner rounding and center crops that LinkedIn, Slack, iMessage and X apply.
+- **Twitter/X:** no separate `twitter-image`; X falls back to `og:image`.
+
+### 16.2 Favicon and app icons
+
+**Glyph: a single "R"** (Design's default). "RC" needs two letters with 2px strokes in a 16px tile, about 5px each with no room for counters; it turns to a blur. One letter stays legible at 16px. It is drawn as **one stroked path** (no `<text>`, so no font dependency), in the same language as the site's link icons: round caps and joins (§6.1). Building it from strokes avoids outlining Figtree, which needs a font tool.
+
+**Tile: Charcoal, full-bleed rounded square, glyph in Paper** (owner choice, 2026-10-19, over Design's Accent default). Quieter than Accent; the tile inverts the page's own Charcoal-on-Paper pair.
+
+**`src/app/icon.svg`** (scalable, switches with the OS theme):
+
+```svg
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    .tile { fill: #24201D }
+    .glyph { stroke: #F4F3F0 }
+    @media (prefers-color-scheme: dark) {
+      .tile { fill: #EDEAE6 }
+      .glyph { stroke: #1A1816 }
+    }
+  </style>
+  <rect class="tile" width="32" height="32" rx="8"/>
+  <path class="glyph" d="M10 24V8h6a4 4 0 0 1 0 8h-6m6 0l6 8" fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+```
+
+- **Geometry:** 32-unit viewBox; tile 32 x 32, `rx="8"` (4px at 16px). Stem x = 10 from y = 8 to 24; bowl from (10, 8) to (16, 8), a radius-4 half circle to (16, 16), back to (10, 16); leg from (16, 16) to (22, 24). Stroke 4 units.
+- **Legibility at 16px:** 1 unit = 0.5px, so the stroke is 2px. The stem and the bowl's horizontals sit on even units, so their edges land on whole pixels and render crisp. The bowl's counter is 3 x 2px, and the leg is about 4px clear of the stem at the baseline. The glyph's ink spans x 8 to 23.4 and y 6 to 26 (with round caps), so it is optically centered in the tile.
+- **Dark mode: yes, it switches** with `prefers-color-scheme`. Tabs follow the OS, not the site toggle, so the site's "always start light" rule does not apply. The dark values are the dark tokens (tile = dark Charcoal `#EDEAE6`, glyph = dark Paper `#1A1816`), so the pair stays "Paper on Charcoal" in both. A light Charcoal tile on a dark tab bar would nearly vanish, which is why it switches. Browsers that ignore the SVG's media query (or SVG favicons) use `favicon.ico`.
+- **Contrast:** glyph on tile about 14.5:1 light (Paper `#F4F3F0` on Charcoal `#24201D`) and about 14.7:1 dark (`#1A1816` on `#EDEAE6`), well above 3:1 non-text.
+
+**`src/app/apple-icon.tsx`** (generated with `next/og` `ImageResponse`, 180 x 180, PNG output):
+- The light version of the SVG above (Charcoal `#24201D` tile, Paper `#F4F3F0` "R"), rendered at 180 x 180 as a **plain square** (no corner radius) with **every pixel opaque**. iOS applies its own rounded mask, and transparent pixels turn black. Same glyph geometry, scaled 5.625x (stroke 22.5px). Light only; the PNG can't switch.
+
+**`src/app/favicon.ico`** (replaces the Next default):
+- The light SVG above, **with** `rx="8"`, rasterized at 16, 32 and 48px into one ICO. Light only. It is the fallback for Safari and for browsers without SVG favicons.
+
+**Check (Backend, then Design QA):** view the built tab at 16px in Chrome and Firefox with the OS in light and in dark, and the ICO in Safari. The "R" must read at 100% zoom.
+
+**Tool for the PNG and ICO:** Backend's choice (for example a one-off conversion from the SVG). No new dependency is needed in `package.json`.

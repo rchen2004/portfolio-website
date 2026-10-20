@@ -137,7 +137,7 @@ There are no Skills, Education or Contact sections (see `docs/decisions.md`).
 ### Phase 5 — Enhancements (only what `docs/decisions.md` approves)
 **Leads:** Frontend and Backend
 - Dark mode: approved and specified in Phase 2 (spec §1.1, §6.9) and built in Phase 4 with the Hero (step 2).
-- Project detail pages: not approved; I decide before Phase 5.
+- Project detail pages: skipped (owner decision, 2026-10-19). **Phase 5 is complete;** see `docs/decisions.md`.
 - Subtle motion (respecting `prefers-reduced-motion`): specified in Phase 2 (spec §7) and built in Phase 4 with each component.
 
 **Checkpoint:** Each enhancement reviewed individually.
